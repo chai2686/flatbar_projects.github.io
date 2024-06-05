@@ -1,0 +1,217 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
+    <title>บันทึกนับสต๊อกท่อเกรดบี</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <style>
+        /* Set the height and width to match the desired resolution */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff; /* White background color */
+        }
+        .container {
+            width: 100%;
+            max-width: 768px;
+            height: 100%;
+            max-height: 1280px;
+            background-color: #f0f0f0; /* Light grey background color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dropdown {
+            width: 300px;
+            height: 50px;
+            font-size: 24px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 20px;
+        }
+        .radio-label {
+            margin-right: 20px;
+        }
+        .text-input {
+            width: 300px;
+            height: 50px;
+            font-size: 24px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 300px;
+        }
+        .button {
+            width: 200px;
+            height: 40px;
+            font-size: 14px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <select class="dropdown" id="size">
+	    <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4&quot;</option>
+	    <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2&quot;</option>
+	    <option value="ท่อดำ 1&quot;">ท่อดำ 1&quot;</option>
+	    <option value="ท่อดำ 1 1/4&quot;">ท่อดำ 1 1/4&quot;</option>
+	    <option value="ท่อดำ 1 1/2&quot;">ท่อดำ 1 1/2&quot;</option>
+	    <option value="ท่อดำ 2&quot;">ท่อดำ 2&quot;</option>
+	    <option value="ท่อดำ 2 1/2&quot;">ท่อดำ 2 1/2&quot;</option>
+	    <option value="ท่อดำ 3&quot;">ท่อดำ 3&quot;</option>
+	    <option value="ท่อดำ 3 1/2&quot;">ท่อดำ 3 1/2&quot;</option>
+	    <option value="ท่อดำ 4&quot;">ท่อดำ 4&quot;</option>
+	    <option value="ท่อดำ 5&quot;">ท่อดำ 5&quot;</option>
+	    <option value="ท่อดำ 6&quot;">ท่อดำ 6&quot;</option>
+	    <option value="ท่อดำ 7&quot;">ท่อดำ 7&quot;</option>
+	    
+	    <option value="ท่อเหลี่ยม 19x19">ท่อเหลี่ยม 19x19</option>
+	    <option value="ท่อเหลี่ยม 25x25">ท่อเหลี่ยม 25x25</option>
+	    <option value="ท่อเหลี่ยม 32x32">ท่อเหลี่ยม 32x32</option>
+	    <option value="ท่อเหลี่ยม 38x38">ท่อเหลี่ยม 38x38</option>
+	    <option value="ท่อเหลี่ยม 50x50">ท่อเหลี่ยม 50x50</option>
+	    <option value="ท่อเหลี่ยม 70x65">ท่อเหลี่ยม 70x65</option>
+	    <option value="ท่อเหลี่ยม 75x75">ท่อเหลี่ยม 75x75</option>
+	    <option value="ท่อเหลี่ยม 100x100">ท่อเหลี่ยม 100x100</option>
+		
+	    <option value="แป๊บแบน 50x25">แป๊บแบน 50x25</option>
+	    <option value="แป๊บแบน 70x45">แป๊บแบน 70x45</option>
+	    <option value="แป๊บแบน 75x38">แป๊บแบน 75x38</option>
+	    <option value="แป๊บแบน 75x50">แป๊บแบน 75x50</option>
+	    <option value="แป๊บแบน 100x50">แป๊บแบน 100x50</option>
+	    <option value="แป๊บแบน 125x75">แป๊บแบน 125x75</option>
+        </select>
+        <div class="radio-group">
+            <label class="radio-label" >
+                <input type="radio" name="option" value="ท่อเหล็กดำ" id="nongi">
+                ท่อเหล็กดำ
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="option" value="ท่อGI">
+                ท่อ GI
+            </label>
+        </div>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="option2" value="BJ" id="bj">
+                ท่อ BJ
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="option2" value="BN">
+                ท่อ BN
+            </label>
+        </div>
+        <input type="number" class="text-input" placeholder="จำนวนเส้นของท่อ" id="quantity">
+        <div class="button-group">
+            <button onclick="save()" class="button">บันทึก</button>
+            <button onclick="clearScreen()" class="button">ล้างจอ</button>
+            <button onclick="goToReport()" class="button">ตารางสรุป</button>
+        </div>
+    </div>
+    <script>
+	    //สร้างฟังชั่นล้างหน้าจอ
+            function clearScreen() {
+            // รีเซ็ตค่าตัวเลือกไซส์
+            document.querySelector('.dropdown').selectedIndex = -1;
+            
+            // ล้างการเลือกค่าชนิดเหล็ก
+            document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            
+            // ล้างค่าตัวเลขจำนวน
+            document.querySelector('.text-input').value = '';
+	    //แสดงข้อความล้างหน้าจอสำเร็จ
+            alert('ล้างหน้าจอสำเร็จ');
+        }
+	function save() {
+            //ประกาศตัวแปรในการคำนวณ
+
+	    //เก็บค่าตัวแปร ไซส์ จากตัวเลือกไซส์
+	    var size = document.getElementById('size').value;
+	    //เก็บค่าตัวแปร nongi จากตัวเลือก ท่อเหล็กดำ
+            var nongi = document.getElementById('nongi').checked;
+	    //เก็บค่าตัวแปร bj จากตัวเลือก ท่อ BJ
+            var bj = document.getElementById('bj').checked;
+	    //เก็บค่าตัวแปร จำนวน จากช่องใส่จำนวน
+            var quantity = document.getElementById('quantity').value;
+	    //เปิดค่าตัวแปรว่างสำหรับเก็บข้อมูลจำนวนท่อในแต่ละชนิด
+            var nongibj = "";
+            var nongibn = "";
+            var gibj = "";
+            var gibn = "";
+
+	    //ถ้าตัวเลือก ท่อเหล็กดำ ถูกเลือก
+            if ( nongi == true) {
+		//ถ้าตัวเลือก ท่อ BJ ถูกเลือก
+            	if ( bj == true) {
+		    //เมื่อตัวเลือกเป็น ท่อเหล็กดำ BJ ตัวแปรท่อเหล็กดำ BJ จะเท่ากับจำนวนที่ใส่ในช่องจำนวน
+            	    nongibj = nongibj+quantity;
+		    //แสดงข้อความข้อมูลที่ถูกบันทึก
+                    alert(size+" เหล็กดำ BJ จำนวน "+ nongibj + " เส้น");
+		    //บันทึกข้อมูลลง Google Sheets ผ่าน API google forms
+                    var i = document.createElement("img");
+      i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.1752493080=" + nongibj + "&entry.972974993=0" + "&entry.663803477=0" + "&entry.445730425=0";
+                    return;
+            	}
+		//ถ้าตัวเลือก ท่อ BJ ไม่ถูกเลือก
+                if ( bj == false) {
+		    //เมื่อตัวเลือกเป็น ท่อเหล็กดำ BN ตัวแปรท่อเหล็กดำ BN จะเท่ากับจำนวนที่ใส่ในช่องจำนวน
+                    nongibn = nongibn+quantity;
+		    //แสดงข้อความข้อมูลที่ถูกบันทึก
+                    alert(size+" เหล็กดำ BN จำนวน "+ nongibn + " เส้น");
+		    //บันทึกข้อมูลลง Google Sheets ผ่าน API google forms
+                    var i = document.createElement("img");
+      i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.972974993=" + nongibn + "&entry.1752493080=0" + "&entry.663803477=0" + "&entry.445730425=0";
+            		return;
+                }
+            	return;
+            }
+	    //ถ้าตัวเลือก ท่อเหล็กดำ ไม่ถูกเลือก
+            if ( nongi == false) {
+		//ถ้าตัวเลือก ท่อ BJ ถูกเลือก
+            	if ( bj == true) {
+		    //เมื่อตัวเลือกเป็น ท่อเหล็กGI BJ ตัวแปรท่อเหล็กดำ BJ จะเท่ากับจำนวนที่ใส่ในช่องจำนวน
+            	    gibj = gibj+quantity;
+		    //แสดงข้อความข้อมูลที่ถูกบันทึก
+                    alert(size+" เหล็กGI BJ จำนวน "+ gibj + " เส้น");
+		    //บันทึกข้อมูลลง Google Sheets ผ่าน API google forms
+                    var i = document.createElement("img");
+      i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.663803477=" + gibj + "&entry.1752493080=0" + "&entry.972974993=0" + "&entry.445730425=0";
+                    return;
+            	}
+		//ถ้าตัวเลือก ท่อ BJ ไม่ถูกเลือก
+                if ( bj == false) {
+		    //เมื่อตัวเลือกเป็น ท่อเหล็กGI BN ตัวแปรท่อเหล็กดำ BN จะเท่ากับจำนวนที่ใส่ในช่องจำนวน
+                    gibn = gibn+quantity;
+		    //แสดงข้อความข้อมูลที่ถูกบันทึก
+                    alert(size+" เหล็กGI BN จำนวน "+ gibn + " เส้น");
+		    //บันทึกข้อมูลลง Google Sheets ผ่าน API google forms
+                    var i = document.createElement("img");
+      i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.445730425=" + gibn + "&entry.663803477=0" + "&entry.1752493080=0" + "&entry.972974993=0";
+            		return;
+                }
+            	return;
+            }
+            
+			}
+	    //สร้างฟังชั่นกดดูตารางข้อมูลที่บันทึก
+	    function goToReport() {
+		//เปิดหน้าเว็บไปที่ลิงค์ตารางข้อมูลที่บันทึก
+      		window.open("https://docs.google.com/spreadsheets/d/1ZQWOB0mQocpSe2kvMv1MLGFDC5cXy5ZBcn1mXoI-R1g/htmlview", "_blank");
+    	}
+    </script>
+
+</body></html>
