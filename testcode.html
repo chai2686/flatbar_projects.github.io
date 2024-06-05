@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
+    <title>บันทึกนับสต๊อกท่อเกรดบี</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #ffffff; /* White background color */
+            text-align: center; /* Center align text for simplicity */
+        }
+        .container {
+            width: 100%;
+            max-width: 768px;
+            height: 100%;
+            max-height: 1280px;
+            background-color: #f0f0f0; /* Light grey background color */
+            margin: auto;
+        }
+        .dropdown {
+            width: 90%;
+            height: 40px;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .radio-group {
+            display: block;
+            margin-bottom: 20px;
+        }
+        .radio-label {
+            margin-right: 10px;
+            display: inline-block;
+        }
+        .text-input {
+            width: 90%;
+            height: 40px;
+            font-size: 18px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .button-group {
+            width: 90%;
+            margin: 20px auto;
+        }
+        .button {
+            width: 60px;
+            height: 30px;
+            font-size: 12px;
+            margin: 10px 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <select class="dropdown" id="size">
+            <!-- Your options here -->
+        </select>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="option" value="ท่อเหล็กดำ" id="nongi"> ท่อเหล็กดำ
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="option" value="ท่อGI"> ท่อ GI
+            </label>
+        </div>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="option2" value="BJ" id="bj"> ท่อ BJ
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="option2" value="BN"> ท่อ BN
+            </label>
+        </div>
+        <input type="number" class="text-input" placeholder="จำนวนเส้นของท่อ" id="quantity">
+        <div class="button-group">
+            <button onclick="save()" class="button">บันทึก</button>
+            <button onclick="clearScreen()" class="button">ล้างจอ</button>
+            <button onclick="goToReport()" class="button">ตารางสรุป</button>
+        </div>
+    </div>
+    <script>
+        function clearScreen() {
+            document.getElementById('size').selectedIndex = -1;
+            var radios = document.querySelectorAll('input[type="radio"]');
+            for (var i = 0; i < radios.length; i++) {
+                radios[i].checked = false;
+            }
+            document.getElementById('quantity').value = '';
+            alert('ล้างหน้าจอสำเร็จ');
+        }
+
+        function save() {
+            var size = document.getElementById('size').value;
+            var nongi = document.getElementById('nongi').checked;
+            var bj = document.getElementById('bj').checked;
+            var quantity = document.getElementById('quantity').value;
+            var nongibj = "", nongibn = "", gibj = "", gibn = "";
+
+            if (nongi) {
+                if (bj) {
+                    nongibj = quantity;
+                    alert(size + " เหล็กดำ BJ จำนวน " + nongibj + " เส้น");
+                    var i = document.createElement("img");
+                    i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.1752493080=" + nongibj + "&entry.972974993=0" + "&entry.663803477=0" + "&entry.445730425=0";
+                } else {
+                    nongibn = quantity;
+                    alert(size + " เหล็กดำ BN จำนวน " + nongibn + " เส้น");
+                    var i = document.createElement("img");
+                    i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.972974993=" + nongibn + "&entry.1752493080=0" + "&entry.663803477=0" + "&entry.445730425=0";
+                }
+            } else {
+                if (bj) {
+                    gibj = quantity;
+                    alert(size + " เหล็กGI BJ จำนวน " + gibj + " เส้น");
+                    var i = document.createElement("img");
+                    i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.663803477=" + gibj + "&entry.1752493080=0" + "&entry.972974993=0" + "&entry.445730425=0";
+                } else {
+                    gibn = quantity;
+                    alert(size + " เหล็กGI BN จำนวน " + gibn + " เส้น");
+                    var i = document.createElement("img");
+                    i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.445730425=" + gibn + "&entry.663803477=0" + "&entry.1752493080=0" + "&entry.972974993=0";
+                }
+            }
+        }
+
+        function goToReport() {
+            window.open("https://docs.google.com/spreadsheets/d/1ZQWOB0mQocpSe2kvMv1MLGFDC5cXy5ZBcn1mXoI-R1g/htmlview", "_blank");
+        }
+    </script>
+</body>
+</html>
