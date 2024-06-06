@@ -2,6 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
+    <meta name="Version" content="0.01b BETA">
     <title>บันทึกนับสต๊อกท่อเกรดบี</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.png" type="image/png">
@@ -34,7 +35,7 @@
             margin-top: 20px;
             margin-bottom: 20px;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #706e6e;
             border-radius: 4px;
         }
         .radio-group {
@@ -57,7 +58,7 @@
             font-size: 16px;
             margin-left: 4px;
             margin-right: 4px;
-            border: solid #ddd;
+            border: solid #706e6e;
             border-width: 1px;
             border-radius: 4px;
             cursor: pointer;
@@ -133,7 +134,7 @@
 	    //สร้างฟังชั่นล้างหน้าจอ
             function clearScreen() {
             // รีเซ็ตค่าตัวเลือกไซส์
-            document.querySelector('.dropdown').selectedIndex = -1;
+            document.querySelector('.dropdown').selectedIndex = 0;
             
             // ล้างการเลือกค่าชนิดเหล็ก
             document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
