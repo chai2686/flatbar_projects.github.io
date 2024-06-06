@@ -3,8 +3,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
     <title>บันทึกนับสต๊อกท่อเกรดบี</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" >
-    <link rel="icon" href="favicon.png" type="image/png" >
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.png" type="image/png">
     <style>
         /* Set the height and width to match the desired resolution */
         body, html {
@@ -27,12 +27,15 @@
             flex-direction: column;
             align-items: center;
         }
-        .dropdown {
-            width: 300px;
+        .dropdown, .text-input {
+            width: 90%;
             height: 50px;
-            font-size: 24px;
+            font-size: 18px;
             margin-top: 20px;
             margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
         .radio-group {
             display: flex;
@@ -42,13 +45,6 @@
         .radio-label {
             margin-right: 20px;
         }
-        .text-input {
-            width: 300px;
-            height: 50px;
-            font-size: 24px;
-            padding: 10px;
-            box-sizing: border-box;
-        }
         .button-group {
             display: flex;
             flex-direction: row;
@@ -56,29 +52,35 @@
             width: 300px;
         }
         .button {
-            width: 200px;
-            height: 40px;
-            font-size: 14px;
-            margin: 10px;
+            width: 90%;
+            height: 50px;
+            font-size: 16px;
+            margin-left: 4px;
+            margin-right: 4px;
+            border: solid #ddd;
+            border-width: 1px;
+            border-radius: 4px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <select class="dropdown" id="size">
-	    <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4&quot;</option>
-	    <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2&quot;</option>
-	    <option value="ท่อดำ 1&quot;">ท่อดำ 1&quot;</option>
-	    <option value="ท่อดำ 1 1/4&quot;">ท่อดำ 1 1/4&quot;</option>
-	    <option value="ท่อดำ 1 1/2&quot;">ท่อดำ 1 1/2&quot;</option>
-	    <option value="ท่อดำ 2&quot;">ท่อดำ 2&quot;</option>
-	    <option value="ท่อดำ 2 1/2&quot;">ท่อดำ 2 1/2&quot;</option>
-	    <option value="ท่อดำ 3&quot;">ท่อดำ 3&quot;</option>
-	    <option value="ท่อดำ 3 1/2&quot;">ท่อดำ 3 1/2&quot;</option>
-	    <option value="ท่อดำ 4&quot;">ท่อดำ 4&quot;</option>
-	    <option value="ท่อดำ 5&quot;">ท่อดำ 5&quot;</option>
-	    <option value="ท่อดำ 6&quot;">ท่อดำ 6&quot;</option>
-	    <option value="ท่อดำ 7&quot;">ท่อดำ 7&quot;</option>
+        <select class="dropdown" id="size" aria-label="จำนวนเส้นของท่อ">
+		<option value="" disabled="" selected="">เลือกขนาดของท่อ</option>
+	    <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4"</option>
+	    <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2"</option>
+	    <option value="ท่อดำ 1&quot;">ท่อดำ 1"</option>
+	    <option value="ท่อดำ 1 1/4&quot;">ท่อดำ 1 1/4"</option>
+	    <option value="ท่อดำ 1 1/2&quot;">ท่อดำ 1 1/2"</option>
+	    <option value="ท่อดำ 2&quot;">ท่อดำ 2"</option>
+	    <option value="ท่อดำ 2 1/2&quot;">ท่อดำ 2 1/2"</option>
+	    <option value="ท่อดำ 3&quot;">ท่อดำ 3"</option>
+	    <option value="ท่อดำ 3 1/2&quot;">ท่อดำ 3 1/2"</option>
+	    <option value="ท่อดำ 4&quot;">ท่อดำ 4"</option>
+	    <option value="ท่อดำ 5&quot;">ท่อดำ 5"</option>
+	    <option value="ท่อดำ 6&quot;">ท่อดำ 6"</option>
+	    <option value="ท่อดำ 7&quot;">ท่อดำ 7"</option>
 	    
 	    <option value="ท่อเหลี่ยม 19x19">ท่อเหลี่ยม 19x19</option>
 	    <option value="ท่อเหลี่ยม 25x25">ท่อเหลี่ยม 25x25</option>
@@ -97,7 +99,7 @@
 	    <option value="แป๊บแบน 125x75">แป๊บแบน 125x75</option>
         </select>
         <div class="radio-group">
-            <label class="radio-label" >
+            <label class="radio-label">
                 <input type="radio" name="option" value="ท่อเหล็กดำ" id="nongi">
                 ท่อเหล็กดำ
             </label>
@@ -119,6 +121,10 @@
         <input type="number" class="text-input" placeholder="จำนวนเส้นของท่อ" id="quantity">
         <div class="button-group">
             <button onclick="save()" class="button">บันทึก</button>
+					  
+					   
+	
+							 
             <button onclick="clearScreen()" class="button">ล้างจอ</button>
             <button onclick="goToReport()" class="button">ตารางสรุป</button>
         </div>
@@ -214,5 +220,5 @@
       		window.open("https://docs.google.com/spreadsheets/d/1ZQWOB0mQocpSe2kvMv1MLGFDC5cXy5ZBcn1mXoI-R1g/htmlview", "_blank");
     	}
     </script>
-
-</body></html>
+</body>
+</html>
