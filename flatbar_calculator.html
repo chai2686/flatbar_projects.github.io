@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คำนวณเหล็กแบน</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin: 20px auto;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+	  padding-right: 45px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      width: calc(50% - 10px);
+      padding: 10px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .flex-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .flex-container label {
+      flex: 1;
+    }
+
+    .flex-container input {
+      flex: 2;
+    }
+
+    .btn-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-container button {
+      flex: 1 1 45%;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📝 คำนวณเหล็กแบน</h2>
+    <div class="flex-container">
+      <label for="boldness">ความหนา:</label>
+      <input type="number" id="boldness" placeholder="ป้อนค่าความหนา">
+      <label for="boldness">MM</label>
+    </div>
+    <div class="flex-container">
+      <label for="width">หน้ากว้าง:</label>
+      <input type="number" id="width" placeholder="ป้อนค่าหน้ากว้าง">
+      <label for="width">MM</label>
+    </div>
+    <div class="flex-container">
+      <label for="length">ความยาว:</label>
+      <input type="number" id="length" placeholder="ป้อนค่าความยาว" value="6000">
+      <label for="length">MM</label>
+    </div>
+    <div class="flex-container">
+      <label for="quantity">จำนวน:</label>
+      <input type="number" id="quantity" placeholder="ป้อนค่าจำนวน">
+      <label for="quantity">เส้น</label>
+    </div>
+    <div class="flex-container">
+      <label for="weight1">น้ำหนัก:</label>
+      <input type="number" id="weight1" placeholder="ตาชั่ง 1">
+      <label for="weight1">KG</label>
+	  <label for="weight2">น้ำหนัก:</label>
+      <input type="number" id="weight2" placeholder="ตาชั่ง 2">
+      <label for="weight2">KG</label>
+    </div>
+    <div class="flex-container">
+      <label for="lastweight">น้ำหนักก่อนหน้า:</label>
+      <input type="number" id="lastweight" placeholder="น้ำหนักก่อนหน้า" value="0">
+      <label for="lastweight">KG</label>
+      <button onclick="clearlastweight()">🔄 ล้างน้ำหนัก</button>
+    </div>
+    <div class="btn-container">
+      <button onclick="calculate()">📠 คำนวณ</button>
+      <button onclick="reset()">🖥️ ล้างหน้าจอ</button>
+      <button onclick="goToHistory()">📋 ตารางบันทึกจดน้ำหนัก</button>
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      var boldness = document.getElementById('boldness').value;
+      var width = document.getElementById('width').value;
+      var length = document.getElementById('length').value || 6000;
+      var quantity = document.getElementById('quantity').value;
+      var weight1 = document.getElementById('weight1').value || 0;
+      var weight2 = document.getElementById('weight2').value || 0;
+      var lastweight = document.getElementById('lastweight').value || 0;
+      
+      var totalweight = parseFloat(weight1) + parseFloat(weight2) - parseFloat(lastweight);
+
+      if (boldness === "" || width === "" || length === "" || quantity === "") {
+        alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+        return;
+      }
+      
+      var avg_thick = totalweight / width / length / 0.00000785 / quantity;
+      avg_thick = avg_thick.toFixed(4);
+      
+      lastweight = parseFloat(lastweight) + totalweight;
+      document.getElementById('lastweight').value = lastweight;
+      
+      var sizename = "เหล็กแบน " + boldness + "MM x " + width + "MM x " + length + "MM";
+      
+      var i = document.createElement("img");
+      i.src = "https://docs.google.com/forms/d/e/1FAIpQLSfKof3d_MUx1hjElID4s3VE1qPSMqaqP4r2Wm2QpV1-h1zO-Q/formResponse?entry.324556811=" + sizename + "&entry.1667848866=" + quantity + " เส้น&entry.517893373=" + totalweight + "&entry.778757753=" + avg_thick + "MM";
+      
+      alert("เหล็กแบน " + boldness + "MM x " + width + "MM x " + length + "MM จำนวน " + quantity + " เส้น น้ำหนัก " + totalweight + " กิโลกรัม ความหนาเฉลี่ย " + avg_thick + " MM");
+    }
+
+    function reset() {
+      document.getElementById('boldness').value = '';
+      document.getElementById('width').value = '';
+      document.getElementById('length').value = '6000';
+      document.getElementById('quantity').value = '';
+      document.getElementById('weight1').value = '';
+      document.getElementById('weight2').value = '';
+      document.getElementById('lastweight').value = '0';
+    }
+
+    function goToHistory() {
+      window.open("https://docs.google.com/spreadsheets/d/1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w/htmlview", "_blank");
+    }
+
+    function clearlastweight() {
+      document.getElementById('lastweight').value = '0';
+    }
+  </script>
+</body>
+</html>
