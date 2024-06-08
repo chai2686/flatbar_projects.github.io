@@ -2,7 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="0.01b BETA">
+    <meta name="Version" content="0.2b BETA">
     <title>บันทึกนับสต๊อกท่อเกรดบี</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.png" type="image/png">
@@ -35,8 +35,9 @@
             margin-top: 20px;
             margin-bottom: 20px;
             padding: 10px;
-            border: 1px solid #706e6e;
-            border-radius: 4px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
         }
         .radio-group {
             display: flex;
@@ -46,6 +47,11 @@
         .radio-label {
             margin-right: 20px;
         }
+		.radio-check {
+			height:20px;
+			width:20px;
+			vertical-align: middle;
+		}
         .button-group {
             display: flex;
             flex-direction: row;
@@ -55,20 +61,30 @@
         .button {
             width: 90%;
             height: 50px;
-            font-size: 16px;
             margin-left: 4px;
             margin-right: 4px;
-            border: solid #706e6e;
-            border-width: 1px;
-            border-radius: 4px;
-            cursor: pointer;
+			box-shadow:inset 0px 1px 0px 0px #97c4fe;
+			background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
+			background-color:#3d94f6;
+			border-radius:6px;
+			border:1px solid #337fed;
+			display:inline-block;
+			cursor:pointer;
+			color:#ffffff;
+			font-family:Arial;
+			font-size:14px;
+			font-weight:bold;
+			padding:6px 24px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #1570cd;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <select class="dropdown" id="size" aria-label="จำนวนเส้นของท่อ">
-		<option value="" disabled="" selected="">เลือกขนาดของท่อ</option>
+		<h2 style="text-align:left; margin-bottom: 5px;	padding-right: 55px">📥 บันทึกรับเข้าท่อเกรดบี</h2>
+        <select class="dropdown" id="size" aria-label="เลือกขนาดของท่อ">
+		<option value="" disabled="" selected="">🗜️ เลือกขนาดของท่อ</option>
 	    <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4"</option>
 	    <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2"</option>
 	    <option value="ท่อดำ 1&quot;">ท่อดำ 1"</option>
@@ -101,44 +117,39 @@
         </select>
         <div class="radio-group">
             <label class="radio-label">
-                <input type="radio" name="option" value="ท่อเหล็กดำ" id="nongi">
-                ท่อเหล็กดำ
+                <input type="radio" class="radio-check" name="option" value="ท่อเหล็กดำ" id="nongi">
+                ท่อเหล็กดำ  🔲
             </label>
             <label class="radio-label">
-                <input type="radio" name="option" value="ท่อGI">
-                ท่อ GI
+                <input type="radio" class="radio-check" name="option" value="ท่อGI">
+                ท่อ GI 🔳
             </label>
         </div>
         <div class="radio-group">
             <label class="radio-label">
-                <input type="radio" name="option2" value="BJ" id="bj">
-                ท่อ BJ
+                <input type="radio" class="radio-check" name="option2" value="BJ" id="bj">
+                ท่อ BJ 🟡
             </label>
             <label class="radio-label">
-                <input type="radio" name="option2" value="BN">
-                ท่อ BN
+                <input type="radio" class="radio-check" name="option2" value="BN">
+                ท่อ BN 🔴
             </label>
         </div>
-        <input type="number" class="text-input" placeholder="จำนวนเส้นของท่อ" id="quantity">
+		<input type="number" class="text-input" placeholder="📝 จำนวนเส้นของท่อ" id="quantity">
         <div class="button-group">
-            <button onclick="save()" class="button">บันทึก</button>
-					  
-					   
-	
-							 
+            <button onclick="save()" class="button">บันทึก</button>			 
             <button onclick="clearScreen()" class="button">ล้างจอ</button>
             <button onclick="goToReport()" class="button">ตารางสรุป</button>
         </div>
+		<p style="font-size: 12px; text-align:right;padding-left: 60%;padding-top: 50px;">Version 0.2b BETA</p>
     </div>
     <script>
 	    //สร้างฟังชั่นล้างหน้าจอ
             function clearScreen() {
             // รีเซ็ตค่าตัวเลือกไซส์
             document.querySelector('.dropdown').selectedIndex = 0;
-            
             // ล้างการเลือกค่าชนิดเหล็ก
             document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
-            
             // ล้างค่าตัวเลขจำนวน
             document.querySelector('.text-input').value = '';
 	    //แสดงข้อความล้างหน้าจอสำเร็จ
@@ -146,7 +157,6 @@
         }
 	function save() {
             //ประกาศตัวแปรในการคำนวณ
-
 	    //เก็บค่าตัวแปร ไซส์ จากตัวเลือกไซส์
 	    var size = document.getElementById('size').value;
 	    //เก็บค่าตัวแปร nongi จากตัวเลือก ท่อเหล็กดำ
@@ -160,7 +170,6 @@
             var nongibn = "";
             var gibj = "";
             var gibn = "";
-
 	    //ถ้าตัวเลือก ท่อเหล็กดำ ถูกเลือก
             if ( nongi == true) {
 		//ถ้าตัวเลือก ท่อ BJ ถูกเลือก
@@ -213,7 +222,6 @@
                 }
             	return;
             }
-            
 			}
 	    //สร้างฟังชั่นกดดูตารางข้อมูลที่บันทึก
 	    function goToReport() {
