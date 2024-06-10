@@ -2,7 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="0.2b BETA">
+    <meta name="Version" content="0.3b BETA">
     <title>บันทึกนับสต๊อกท่อเกรดบี</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.png" type="image/png">
@@ -150,7 +150,7 @@
             <button onclick="clearScreen()" class="button">ล้างจอ</button>
             <button onclick="goToReport()" class="button">ตารางสรุป</button>
         </div>
-	    <p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 0.2b BETA</p>
+	    <p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 0.3b BETA</p>
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
@@ -191,6 +191,10 @@
 		    //บันทึกข้อมูลลง Google Sheets ผ่าน API google forms
                     var i = document.createElement("img");
       i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.1752493080=" + nongibj + "&entry.972974993=0" + "&entry.663803477=0" + "&entry.445730425=0";
+					// ล้างการเลือกค่าชนิดเหล็ก
+					document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+					// ล้างค่าตัวเลขจำนวน
+					document.querySelector('.text-input').value = '';
                     return;
             	}
 		//ถ้าตัวเลือก ท่อ BJ ไม่ถูกเลือก
@@ -202,6 +206,10 @@
 		    //บันทึกข้อมูลลง Google Sheets ผ่าน API google forms
                     var i = document.createElement("img");
       i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.972974993=" + nongibn + "&entry.1752493080=0" + "&entry.663803477=0" + "&entry.445730425=0";
+					// ล้างการเลือกค่าชนิดเหล็ก
+					document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+					// ล้างค่าตัวเลขจำนวน
+					document.querySelector('.text-input').value = '';
             		return;
                 }
             	return;
@@ -217,6 +225,10 @@
 		    //บันทึกข้อมูลลง Google Sheets ผ่าน API google forms
                     var i = document.createElement("img");
       i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.663803477=" + gibj + "&entry.1752493080=0" + "&entry.972974993=0" + "&entry.445730425=0";
+					// ล้างการเลือกค่าชนิดเหล็ก
+					document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+					// ล้างค่าตัวเลขจำนวน
+					document.querySelector('.text-input').value = '';
                     return;
             	}
 		//ถ้าตัวเลือก ท่อ BJ ไม่ถูกเลือก
@@ -228,6 +240,10 @@
 		    //บันทึกข้อมูลลง Google Sheets ผ่าน API google forms
                     var i = document.createElement("img");
       i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdhefiFH2nr7zNpTu-jJiIEcloBJK3ZA5PwMqFg972kFapMiw/formResponse?entry.1828759197=" + size + "&entry.445730425=" + gibn + "&entry.663803477=0" + "&entry.1752493080=0" + "&entry.972974993=0";
+					// ล้างการเลือกค่าชนิดเหล็ก
+					document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+					// ล้างค่าตัวเลขจำนวน
+					document.querySelector('.text-input').value = '';
             		return;
                 }
             	return;
