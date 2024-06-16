@@ -1,0 +1,442 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
+    <meta name="Version" content="0.5b BETA">
+    <title>จดน้ำหนักท่อเกรดบี</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        /* Set the height and width to match the desired resolution */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff; /* White background color */
+        }
+        .container {
+            width: 100%;
+            max-width: 768px;
+            height: 100%;
+            max-height: 1280px;
+            background-color: #f0f0f0; /* Light grey background color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dropdown {
+            width: 90%;
+            height: 50px;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 20px;
+        }
+        .radio-label {
+            margin-right: 20px;
+        }
+		.radio-check {
+			height:20px;
+			width:20px;
+			vertical-align: middle;
+		}
+        .text-input {
+            width: 40%;
+            height: 50px;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .button {
+            width: 100%;
+            height: 50px;
+            margin-left: 4px;
+            margin-right: 4px;
+			box-shadow:inset 0px 1px 0px 0px #97c4fe;
+			background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
+			background-color:#3d94f6;
+			border-radius:6px;
+			border:1px solid #337fed;
+			display:inline-block;
+			cursor:pointer;
+			color:#ffffff;
+			font-family:Arial;
+			font-size:14px;
+			font-weight:bold;
+			
+			text-decoration:none;
+			text-shadow:0px 1px 0px #1570cd;
+        }
+		.hidden {
+            display: none;
+			width: 40%;
+            height: 50px;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+        }
+		.weight-input {
+			display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 300px;
+		}
+		.weight {
+			width: 100%;
+            height: 50px;
+            font-size: 15px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+		}
+    </style>
+</head>
+<body>
+    <div class="container">
+		<h2 style="font-size: 20;text-align:left;margin-bottom: 5px;padding-right: 55px;margin-right: 60px;">📥 จดน้ำหนักท่อเกรดบี</h2><select class="dropdown" id="truck" aria-label="คันที่" style="
+    position: fixed;
+    width: 30%;
+    right: 20px;
+    margin-top: 10px;
+">
+     <option value="" disabled="" selected="">🚛คันที่</option>
+	 <option value="คันที่ 1">คันที่ 1</option>
+	 <option value="คันที่ 2">คันที่ 2</option>
+	 <option value="คันที่ 3">คันที่ 3</option>
+	 <option value="คันที่ 4">คันที่ 4</option>
+        </select>
+        
+        <select class="dropdown" id="size" aria-label="เลือกขนาดของท่อ" style="">
+	    <option value="" disabled="" selected="">🗜️ เลือกขนาดของท่อ</option>
+	    <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4"</option>
+	    <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2"</option>
+	    <option value="ท่อดำ 1&quot;">ท่อดำ 1"</option>
+	    <option value="ท่อดำ 1 1/4&quot;">ท่อดำ 1 1/4"</option>
+	    <option value="ท่อดำ 1 1/2&quot;">ท่อดำ 1 1/2"</option>
+	    <option value="ท่อดำ 2&quot;">ท่อดำ 2"</option>
+	    <option value="ท่อดำ 2 1/2&quot;">ท่อดำ 2 1/2"</option>
+	    <option value="ท่อดำ 3&quot;">ท่อดำ 3"</option>
+	    <option value="ท่อดำ 3 1/2&quot;">ท่อดำ 3 1/2"</option>
+	    <option value="ท่อดำ 4&quot;">ท่อดำ 4"</option>
+	    <option value="ท่อดำ 5&quot;">ท่อดำ 5"</option>
+	    <option value="ท่อดำ 6&quot;">ท่อดำ 6"</option>
+	    <option value="ท่อดำ 7&quot;">ท่อดำ 7"</option>
+	    
+	    <option value="ท่อเหลี่ยม 19x19">ท่อเหลี่ยม 19x19</option>
+	    <option value="ท่อเหลี่ยม 25x25">ท่อเหลี่ยม 25x25</option>
+	    <option value="ท่อเหลี่ยม 32x32">ท่อเหลี่ยม 32x32</option>
+	    <option value="ท่อเหลี่ยม 38x38">ท่อเหลี่ยม 38x38</option>
+	    <option value="ท่อเหลี่ยม 50x50">ท่อเหลี่ยม 50x50</option>
+	    <option value="ท่อเหลี่ยม 70x65">ท่อเหลี่ยม 70x65</option>
+	    <option value="ท่อเหลี่ยม 75x75">ท่อเหลี่ยม 75x75</option>
+	    <option value="ท่อเหลี่ยม 100x100">ท่อเหลี่ยม 100x100</option>
+	    <option value="ท่อเหลี่ยม 125x125">ท่อเหลี่ยม 125x125</option>
+	    <option value="ท่อเหลี่ยม 150x150">ท่อเหลี่ยม 150x150</option>
+		
+	    <option value="แป๊บแบน 50x25">แป๊บแบน 50x25</option>
+	    <option value="แป๊บแบน 70x45">แป๊บแบน 70x45</option>
+	    <option value="แป๊บแบน 75x38">แป๊บแบน 75x38</option>
+	    <option value="แป๊บแบน 75x50">แป๊บแบน 75x50</option>
+	    <option value="แป๊บแบน 100x50">แป๊บแบน 100x50</option>
+	    <option value="แป๊บแบน 100x75">แป๊บแบน 100x75</option>
+	    <option value="แป๊บแบน 125x50">แป๊บแบน 125x50</option>
+	    <option value="แป๊บแบน 125x75">แป๊บแบน 125x75</option>
+	    <option value="แป๊บแบน 125x100">แป๊บแบน 125x100</option>
+	    <option value="แป๊บแบน 150x50">แป๊บแบน 150x50</option>
+	    <option value="แป๊บแบน 150x75">แป๊บแบน 150x75</option>
+	    <option value="แป๊บแบน 150x100">แป๊บแบน 150x100</option>
+	    <option value="แป๊บแบน 200x100">แป๊บแบน 200x100</option>
+        </select>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" class="radio-check" name="option" value="ท่อเหล็กดำ" id="nongi">
+                ท่อเหล็กดำ  🔲
+            </label>
+            <label class="radio-label">
+                <input type="radio" class="radio-check" name="option" value="ท่อGI">
+                ท่อ GI 🔳
+            </label>
+        </div>
+        <div class="radio-group">
+            <label class="radio-label" style="
+    margin-left: 0px;
+    margin-right: 60px;
+">
+                <input type="checkbox" class="radio-check" name="option2" value="BJ" id="bj-checkbox">
+                ท่อ BJ 🟡
+            </label>
+            <label class="radio-label">
+                <input type="checkbox" class="radio-check" name="option2" value="BN" id="bn-checkbox">
+                ท่อ BN 🔴
+            </label>
+        </div>
+		<div id="bj-content" class="hidden">
+    Content related to ท่อ BJ 🟡
+</div>
+<div id="bn-content" class="hidden">
+    Content related to ท่อ BN 🔴
+</div>
+        <div class="quantity-input" style="display: flex; align-items: center; justify-content: center;">
+    <div>
+        <input type="number" class="hidden" placeholder="📝 จำนวน BJ" id="bjamount" style="position: fixed; display: none; top: 210px; left: 30px;">
+    </div>
+    <div>
+        <input type="number" class="hidden" placeholder="📝 จำนวน BN" id="bnamount" style="position: fixed; display: none; top: 210px;">
+    </div>
+</div>
+
+	<div class="weight-input" style="display: flex;align-items: center;justify-content: center;margin-top: 50px;">
+    <div style="
+    margin-right: 10px;
+">
+        <input type="number" class="weight" placeholder="🏗️ น้ำหนักหัวหนึ่ง" id="weight1" style="/* position: fixed; */top: 210px;left: 30px;margin-right: 0px;margin-left: 0px;">
+    </div>
+    <div style="
+    margin-left: 0px;
+    margin-right: 10‒;
+    margin-right: 10px;
+">
+        <input type="number" class="weight" placeholder="🏗️ น้ำหนักหัวสอง" id="weight2" style="align-content: center;align-items: center;/* position: fixed; */top: 210px;">
+    </div>
+</div>
+
+<div class="weight-input" style="display: flex;align-items: center;justify-content: center;">
+    <div style="
+    margin-right: 10px;
+">
+        <input type="number" class="weight" placeholder="🔁 น้ำหนักก่อนหน้า" id="lastweight" style="/* position: fixed; */top: 210px;left: 30px;margin-right: 0px;margin-left: 0px;">
+    </div>
+    <div style="
+    margin-left: 0px;
+    margin-right: 10‒;
+    margin-right: 10px;
+">
+        <input type="number" class="weight" disabled placeholder="☑️ น้ำหนักจริง" id="finalweight" style="align-content: center;align-items: center;/* position: fixed; */top: 210px;">
+    </div>
+</div>
+
+
+        <div class="button-group" style="
+    margin-top: 20px;
+">
+            <button onclick="save()" class="button">บันทึก</button>		
+			<button onclick="clearWeight()" class="button">ล้างน้ำหนัก</button>
+            <button onclick="clearScreen()" class="button">ล้างจอ</button>
+            <button onclick="goToReport()" class="button">ตารางสรุป</button>
+        </div>
+	    <p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 0.5b BETA</p>
+            <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+    </div>
+    <script>
+        document.getElementById('bj-checkbox').addEventListener('change', function() {
+        document.getElementById('bjamount').style.display = this.checked ? 'block' : 'none';
+    });
+
+    document.getElementById('bn-checkbox').addEventListener('change', function() {
+        document.getElementById('bnamount').style.display = this.checked ? 'block' : 'none';
+    });
+	
+		document.getElementById('weight1').addEventListener('change', function() {
+    // Retrieve the values of weight1, weight2, and lastweight from their respective elements
+    var weight1 = document.getElementById('weight1').value;
+    var weight2 = document.getElementById('weight2').value;
+    var lastweight = document.getElementById('lastweight').value;
+
+    // Parse the values to integers and handle any NaN cases
+    var parsedWeight1 = parseInt(weight1) || 0;
+    var parsedWeight2 = parseInt(weight2) || 0;
+    var parsedLastWeight = parseInt(lastweight) || 0;
+
+    // Compute the final weight
+    var finalWeight = (parsedWeight1 + parsedWeight2) - parsedLastWeight;
+
+    // Update the finalweight element with the computed value
+    document.getElementById('finalweight').value = finalWeight;
+});
+
+		document.getElementById('weight2').addEventListener('change', function() {
+    // Retrieve the values of weight1, weight2, and lastweight from their respective elements
+    var weight1 = document.getElementById('weight1').value;
+    var weight2 = document.getElementById('weight2').value;
+    var lastweight = document.getElementById('lastweight').value;
+
+    // Parse the values to integers and handle any NaN cases
+    var parsedWeight1 = parseInt(weight1) || 0;
+    var parsedWeight2 = parseInt(weight2) || 0;
+    var parsedLastWeight = parseInt(lastweight) || 0;
+
+    // Compute the final weight
+    var finalWeight = (parsedWeight1 + parsedWeight2) - parsedLastWeight;
+
+    // Update the finalweight element with the computed value
+    document.getElementById('finalweight').value = finalWeight;
+});
+
+	document.getElementById('lastweight').addEventListener('change', function() {
+    // Retrieve the values of weight1, weight2, and lastweight from their respective elements
+    var weight1 = document.getElementById('weight1').value;
+    var weight2 = document.getElementById('weight2').value;
+    var lastweight = document.getElementById('lastweight').value;
+
+    // Parse the values to integers and handle any NaN cases
+    var parsedWeight1 = parseInt(weight1) || 0;
+    var parsedWeight2 = parseInt(weight2) || 0;
+    var parsedLastWeight = parseInt(lastweight) || 0;
+
+    // Compute the final weight
+    var finalWeight = (parsedWeight1 + parsedWeight2) - parsedLastWeight;
+
+    // Update the finalweight element with the computed value
+    document.getElementById('finalweight').value = finalWeight;
+});
+
+	function clearScreen(){
+		document.getElementById('size').selectedIndex = 0;
+		document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+		document.querySelectorAll('input[type="checkbox"]').forEach(radio => radio.checked = false);
+		document.getElementById('bjamount').value = "";
+		document.getElementById('bnamount').value = "";
+		document.getElementById('bjamount').style.display = 'none';
+		document.getElementById('bnamount').style.display = 'none';
+		document.getElementById('weight1').value = "";
+		document.getElementById('weight2').value = "";
+		document.getElementById('lastweight').value = "";
+		document.getElementById('finalweight').value = "";
+	}
+	
+	function clearWeight(){
+		document.getElementById('bjamount').value = "";
+		document.getElementById('bnamount').value = "";
+		document.getElementById('weight1').value = "";
+		document.getElementById('weight2').value = "";
+		document.getElementById('lastweight').value = "";
+		document.getElementById('finalweight').value = "";
+	}
+	
+	function save() {
+    // Get values from the form
+	let lastweight = document.getElementById('lastweight').value;
+	var lastweight2 = parseInt(lastweight);
+	
+	var truckno = document.getElementById('truck').value;
+    var sizeElement = document.getElementById('size');
+    var size = sizeElement.value;
+    var sizeid = sizeElement.selectedIndex;
+    var nongi = document.getElementById('nongi').checked;
+    var bj = document.getElementById('bj-checkbox').checked;
+	var bn = document.getElementById('bn-checkbox').checked;
+	var bjamount = document.getElementById('bjamount').value;
+	var bnamount = document.getElementById('bnamount').value;
+	var parsebjamount = parseInt(bjamount);
+	var parsebnamount = parseInt(bnamount);
+    var quantity = parsebjamount + parsebnamount;
+	var finalweight = document.getElementById('finalweight').value;
+	var parsefinalweight = parseInt(finalweight);
+	var entrynongibj = "&entry.2081504275=";
+	var entrynongibjweight = "&entry.736981537=";
+	var entrynongibn = "&entry.810565472=";
+	var entrynongibnweight = "&entry.792958482=";
+	var entrygibj = "&entry.1737657460=";
+	var entrygibjweight = "&entry.274697969=";
+	var entrygibn = "&entry.539062029=";
+	var entrygibnweight = "&entry.535584269=";
+
+    // Check if size are selected
+    if (sizeid === 0) {
+        alert("กรุณาเลือกไซส์ของท่อ");
+        return;
+    }
+
+    // Parse quantity to integer
+    var parsedQuantity = parseInt(quantity);
+    var url = "https://docs.google.com/forms/d/e/1FAIpQLSfsou3rgh11i71ZbGp0VlX5-6HZtXnpPO876CYYea5AhuwzMA/formResponse?entry.929040135=" + truckno + "&entry.566404027=" + size;
+    var alertMessage = size;
+
+    if (nongi) {
+        if (bj && bn) {
+			var weightperunit = 0;
+			var bjweight = 0;
+			var bnweight = 0;
+			weightperunit = finalweight/quantity;
+			bjweight = parsebjamount*weightperunit;
+			bnweight = parsebnamount*weightperunit;
+			bjweight2 = bjweight.toFixed(2);
+			bnweight2 = bnweight.toFixed(2);
+			
+            alertMessage += " เหล็กดำ BJ จำนวน " + parsebjamount + " เส้น น้ำหนัก " + bjweight2 + "กิโลกรัม" + "\n" + size + " เหล็กดำ BN จำนวน " + parsebnamount + " เส้น น้ำหนัก " + bnweight2 + "กิโลกรัม";
+            url += entrynongibj + parsebjamount + entrynongibjweight + bjweight2 + entrynongibn + parsebnamount + entrynongibnweight + bnweight2 + "&entry.539062029=0&entry.535584269=0&entry.1737657460=0&entry.274697969=0";
+        } else if (bj){
+            alertMessage += " เหล็กดำ BJ จำนวน " + parsebjamount + " เส้น น้ำหนัก " + finalweight + " กิโลกรัม";
+            url += entrynongibj + parsebjamount + entrynongibjweight + finalweight + entrynongibn + "0" + entrynongibnweight + "0" + "&entry.539062029=0&entry.535584269=0&entry.1737657460=0&entry.274697969=0";
+		} else if (bn) {
+			alertMessage += " เหล็กดำ BN จำนวน " + parsebnamount+ " เส้น น้ำหนัก " + finalweight + " กิโลกรัม";
+            url += entrynongibj + "0" + entrynongibjweight + "0" + entrynongibn + parsebnamount + entrynongibnweight + finalweight + "&entry.539062029=0&entry.535584269=0&entry.1737657460=0&entry.274697969=0";
+        } else {
+			alert("กรุณาเลือกประเภทของท่อ");
+		}
+    } else {
+        if (bj && bn) {
+			var weightperunit = 0;
+			var bjweight = 0;
+			var bnweight = 0;
+			weightperunit = finalweight/quantity;
+			bjweight = parsebjamount*weightperunit;
+			bnweight = parsebnamount*weightperunit;
+			bjweight2 = bjweight.toFixed(2);
+			bnweight2 = bnweight.toFixed(2);
+			
+            alertMessage += " เหล็ก GI BJ จำนวน " + parsebjamount + " เส้น น้ำหนัก " + bjweight2 + "กิโลกรัม" + "\n" + size + " เหล็ก GI BN จำนวน " + parsebnamount + " เส้น น้ำหนัก " + bnweight2 + "กิโลกรัม";
+            url += entrygibj + parsebjamount + entrygibjweight + bjweight2 + entrygibn + parsebnamount + entrygibnweight + bnweight2 + "&entry.810565472=0&entry.792958482=0&entry.2081504275=0&entry.736981537=0";
+        } else if (bj){
+            alertMessage += " เหล็กดำ BJ จำนวน " + parsebjamount + " เส้น น้ำหนัก " + finalweight + " กิโลกรัม";
+            url += entrygibj + parsebjamount + entrygibjweight + finalweight + entrygibn + "0" + entrygibnweight + "0" + "&entry.810565472=0&entry.792958482=0&entry.2081504275=0&entry.736981537=0";
+		} else if (bn) {
+			alertMessage += " เหล็กดำ BN จำนวน " + parsebnamount+ " เส้น น้ำหนัก " + finalweight + " กิโลกรัม";
+            url += entrygibj + "0" + entrygibjweight + "0" + entrygibn + parsebnamount + entrygibnweight + finalweight + "&entry.810565472=0&entry.792958482=0&entry.2081504275=0&entry.736981537=0";
+        } else {
+			alert("กรุณาเลือกประเภทของท่อ");
+		}
+    }
+
+    // Send data to Google Sheets
+    var img = document.createElement("img");
+    img.src = url;
+    
+    // Display alert
+    alert(alertMessage);
+
+    // Clear the form
+    //document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+}
+
+    </script>
+
+</body></html>
