@@ -2,7 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="0.7b BETA">
+    <meta name="Version" content="0.9b BETA">
     <title>บันทึกรับเข้าท่อเกรดบี</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.png" type="image/png">
@@ -74,7 +74,6 @@
 			font-family:Arial;
 			font-size:14px;
 			font-weight:bold;
-			padding:6px 24px;
 			text-decoration:none;
 			text-shadow:0px 1px 0px #1570cd;
         }
@@ -146,11 +145,11 @@
         </div>
 		<input type="number" class="text-input" placeholder="📝 จำนวนเส้นของท่อ" id="quantity">
         <div class="button-group">
-            <button onclick="save()" class="button">บันทึก</button>			 
-            <button onclick="clearScreen()" class="button">ล้างจอ</button>
-            <button onclick="goToReport()" class="button">ตารางสรุป</button>
+            <button onclick="save()" class="button">💾บันทึก</button>			 
+            <button onclick="clearScreen()" class="button">🖥️ล้างจอ</button>
+            <button onclick="goToReport()" class="button">📊ตารางสรุป</button>
         </div>
-	    <p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 0.7b BETA</p>
+	    <p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 0.9b BETA</p>
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
@@ -284,6 +283,10 @@
 	    function goToReport() {
 		//เปิดหน้าเว็บไปที่ลิงค์ตารางข้อมูลที่บันทึก
       		window.open("https://docs.google.com/spreadsheets/d/1ZQWOB0mQocpSe2kvMv1MLGFDC5cXy5ZBcn1mXoI-R1g/htmlview", "_blank");
+    	}
+	    function about() {
+		//เปิดหน้าเว็บไปที่ลิงค์เกี่ยวกับโปรแกรม
+      		window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
     	}
     </script>
 </body>
