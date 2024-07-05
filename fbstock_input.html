@@ -1,0 +1,211 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานเหล็กแบน">
+    <meta name="Version" content="1.0 BETA">
+    <title>นับสต็อกเหล็กแบน</title>
+    <link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
+    <link rel="icon" href="flatbar_fav.png" type="image/png">
+    <style>
+        /* Set the height and width to match the desired resolution */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff; /* White background color */
+        }
+        .container {
+            width: 100%;
+            max-width: 768px;
+            height: 100%;
+            max-height: 1280px;
+            background-color: #f0f0f0; /* Light grey background color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dropdown, .text-input {
+            width: 90%;
+            height: 50px;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 20px;
+        }
+        .radio-label {
+            margin-right: 20px;
+        }
+		.radio-check {
+			height:20px;
+			width:20px;
+			vertical-align: middle;
+		}
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 300px;
+        }
+        .button {
+            width: 90%;
+            height: 50px;
+            margin-left: 4px;
+            margin-right: 4px;
+			box-shadow:inset 0px 1px 0px 0px #97c4fe;
+			background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
+			background-color:#3d94f6;
+			border-radius:6px;
+			border:1px solid #337fed;
+			display:inline-block;
+			cursor:pointer;
+			color:#ffffff;
+			font-family:Arial;
+			font-size:14px;
+			font-weight:bold;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #1570cd;
+        }
+		.usersection {
+			margin-left: 10%;
+			margin-right: 10%;
+			width: 100%;
+			max-width: 768px;
+			display: flex;
+            flex-direction: row;
+            align-items: center;
+			justify-content: space-around;
+		}
+    </style>
+</head>
+<body>
+    <div class="container">
+		<h2 style="text-align:left; margin-bottom: 5px;	padding-right: 55px">📥 นับสต็อกเหล็กแบน</h2>
+        
+		<div class="usersection">
+			<select class="dropdown" id="user" aria-label="ชื่อผู้นับ" style="width: 45%;">
+			<option value="ไม่ระบุ" disabled="" selected="">ชื่อผู้นับ</option>
+			<option value="แสบ">แสบ</option>
+			<option value="โป้ง">โป้ง</option>
+			<option value="โอ๊ต">โอ๊ต</option>
+			<option value="เบนซ์">เบนซ์</option>
+			<option value="โรจน์">โรจน์</option>
+			<option value="เต้ย">เต้ย</option>
+			</select>
+			<select class="dropdown" id="zone" aria-label="โซน" style="width: 45%;">
+			<option value="" disabled="" selected="">โซน</option>
+			<option value="k2">K-2</option>
+			<option value="k4">K-4</option>
+			<option value="k6">K-6</option>
+			<option value="k8">K-8</option>
+			<option value="all">ALL</option>
+			</select>
+        </div>
+		
+		<select class="dropdown" id="size" aria-label="เลือกไซส์ของเหล็ก">
+	    <option value="" disabled="" selected="">🗜️ เลือกไซส์ของเหล็ก</option>
+		<script>
+            const items = [
+				"2FB025-0250-003", "2FB025-0320-004", "2FB025-0380-005", "2FB025-0500-006",
+				"2FB025-0750-009", "2FB025-1000-012", "2FB027-0250-003", "2FB027-0320-004",
+				"2FB027-0380-005", "2FB027-0500-006", "2FB027-0750-010", "2FB027-1000-013",
+				"2FB028-0250-003", "2FB028-0320-004", "2FB028-0380-005", "2FB028-0500-007",
+				"2FB028-0750-010", "2FB028-1000-013", "2FB030-0190-003", "2FB030-0250-004",
+				"2FB030-0320-005", "2FB030-0380-006", "2FB030-0500-007", "2FB030-0750-011",
+				"2FB030-1000-014", "2FB030-1250-018", "2FB030-1500-021", "2FB032-0250-004",
+				"2FB032-0320-005", "2FB032-0380-006", "2FB032-0500-008", "2FB032-0750-011",
+				"2FB032-1000-015", "2FB040-0250-005", "2FB040-0320-006", "2FB040-0380-007",
+				"2FB040-0500-009", "2FB040-0750-015",
+                "2FB040-1000-019", "2FB045-0250-005", "2FB045-0320-007", "2FB045-0380-008",
+                "2FB045-0500-011", "2FB045-0750-016", "2FB045-1000-021", "2FB050-0250-006",
+                "2FB050-0320-008", "2FB050-0380-009", "2FB050-0500-012", "2FB050-0750-018",
+                "2FB050-1000-024", "2FB060-0250-007", "2FB060-0320-009", "2FB060-0380-011",
+                "2FB060-0500-014", "2FB060-0650-018", "2FB060-0750-021", "2FB060-1000-028",
+                "2FB060-1250-035", "2FB060-1500-042", "2FB080-0250-009", "2FB080-0320-012",
+                "2FB080-0380-014", "2FB080-0500-019", "2FB080-0650-024", "2FB080-0750-028",
+                "2FB080-0800-030", "2FB080-1000-038", "2FB080-1250-047", "2FB090-0250-011",
+                "2FB090-0320-014", "2FB090-0380-016", "2FB090-0500-021", "2FB090-0650-028",
+                "2FB090-0750-032", "2FB090-1000-042", "2FB090-1250-053", "2FB090-1500-064",
+                "2FB100-0250-012", "2FB100-0320-015", "2FB100-0380-018", "2FB100-0500-024",
+                "2FB100-0750-035", "2FB100-1000-047", "2FB120-0250-014", "2FB120-0320-018",
+                "2FB120-0380-021", "2FB120-0500-028", "2FB120-0650-037", "2FB120-0750-042",
+                "2FB120-1000-057", "2FB120-1250-071", "2FB120-1500-085", "2FB150-0500-035",
+                "2FB150-0750-053", "2FB150-1000-071", "2FB160-0500-038", "2FB160-0750-057",
+                "2FB160-0750-VCS", "2FB160-1000-075", "2FB190-0500-045", "2FB190-0750-067",
+                "2FB190-1000-090", "2FB200-0500-047", "2FB200-0750-071", "2FB200-1000-094",
+                "2FB250-0500-059", "2FB250-0750-088", "2FB250-1000-118"
+            ];
+
+            const dropdown = document.getElementById('size');
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                dropdown.appendChild(option);
+            });
+        </script>
+        </select>
+        
+		<input type="number" class="text-input" placeholder="📝 จำนวนนับจริง" id="count">
+        <div class="button-group">
+            <button onclick="save()" class="button">💾บันทึก</button>			 
+            <button onclick="clearScreen()" class="button">🖥️ล้างจอ</button>
+            <button onclick="goToReport()" class="button">📊ตารางสรุป</button>
+        </div>
+	    <p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.0 BETA</p>
+            <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+    </div>
+    <script>
+	    function save() {
+			var url = "https://docs.google.com/forms/d/e/1FAIpQLSfx6TAiEkfNj0R-085_YWRU5UgET4hqsUy6sHjcLefSbrYBWQ/formResponse?entry.160759339=";
+			var	entrysize = "&entry.1946323810=";
+			var entrycount = "&entry.1710746410=";
+			
+			var user = document.getElementById('user').value;
+			var size = document.getElementById('size').value;
+			var sizeid = document.getElementById('size').selectedIndex;
+			var count = document.getElementById('count').value || 0;
+			var alertmsg = "";
+			
+			if (sizeid === 0) {
+				alert("กรุณาเลือกไซส์");
+				return;
+			}
+			
+			alertmsg += "เหล็กแบน " + size + " จำนวน " + count + " เส้น";
+			
+			url += user + entrysize + size + entrycount + count;
+			
+			var img = document.createElement("img");
+			img.src = url;
+			
+			alert(alertmsg);
+			
+			document.getElementById('count').value = "";
+		}
+		
+		function clearScreen() {
+			document.getElementById('user').selectedIndex = 0;
+			document.getElementById('zone').selectedIndex = 0;
+			document.getElementById('size').selectedIndex = 0;
+			document.getElementById('count').value = "";
+		}
+		
+		function goToReport() {
+		//เปิดหน้าเว็บไปที่ลิงค์ตารางข้อมูลที่บันทึก
+      		window.open("https://docs.google.com/spreadsheets/d/1sVl3k9jBvtDFlzkOUDjIEMjWHi9YEi3c_H7ynZ-jVi4/htmlview?gid=1764166932#gid=1764166932&range=A1", "_blank");
+    	}
+    </script>
+</body>
+</html>
