@@ -2,7 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานเหล็กแบน">
-    <meta name="Version" content="1.0 BETA">
+    <meta name="Version" content="1.1 BETA">
     <title>นับสต็อกเหล็กแบน</title>
     <link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
     <link rel="icon" href="flatbar_fav.png" type="image/png">
@@ -56,7 +56,7 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            width: 300px;
+            width: 90%;
         }
         .button {
             width: 90%;
@@ -104,16 +104,15 @@
 			<option value="เต้ย">เต้ย</option>
 			</select>
 			<select class="dropdown" id="zone" aria-label="โซน" style="width: 45%;">
-			<option value="" disabled="" selected="">โซน</option>
 			<option value="k2">K-2</option>
 			<option value="k4">K-4</option>
 			<option value="k6">K-6</option>
 			<option value="k8">K-8</option>
-			<option value="all">ALL</option>
+			<option value="all" selected="">ALL</option>
 			</select>
         </div>
 		
-		<select class="dropdown" id="size" aria-label="เลือกไซส์ของเหล็ก">
+		<select class="dropdown" id="size" style="display: block;" aria-label="เลือกไซส์ของเหล็ก">
 	    <option value="" disabled="" selected="">🗜️ เลือกไซส์ของเหล็ก</option>
 		<script>
             const items = [
@@ -147,41 +146,266 @@
                 "2FB250-0500-059", "2FB250-0750-088", "2FB250-1000-118"
             ];
 
+			const itemsname = [
+				"เหล็กแบน 2.5x25x6000", "เหล็กแบน 2.5x32x6000", "เหล็กแบน 2.5x38x6000", "เหล็กแบน 2.5x50x6000",
+				"เหล็กแบน 2.5x75x6000", "เหล็กแบน 2.5x100x6000", "เหล็กแบน 2.7x25x6000", "เหล็กแบน 2.7x32x6000",
+				"เหล็กแบน 2.7x38x6000", "เหล็กแบน 2.7x50x6000", "เหล็กแบน 2.7x75x6000", "เหล็กแบน 2.7x100x6000",
+				"เหล็กแบน 2.8x25x6000", "เหล็กแบน 2.8x32x6000", "เหล็กแบน 2.8x38x6000", "เหล็กแบน 2.8x50x6000",
+				"เหล็กแบน 2.8x75x6000", "เหล็กแบน 2.8x100x6000", "เหล็กแบน 3x19x6000", "เหล็กแบน 3x25x6000",
+				"เหล็กแบน 3x32x6000", "เหล็กแบน 3x38x6000", "เหล็กแบน 3x50x6000", "เหล็กแบน 3x75x6000",
+				"เหล็กแบน 3x100x6000", "เหล็กแบน 3x125x6000", "เหล็กแบน 3x150x6000", "เหล็กแบน 3.2x25x6000",
+				"เหล็กแบน 3.2x32x6000", "เหล็กแบน 3.2x38x6000", "เหล็กแบน 3.2x50x6000", "เหล็กแบน 3.2x75x6000",
+				"เหล็กแบน 3.2x100x6000", "เหล็กแบน 4x25x6000", "เหล็กแบน 4x32x6000", "เหล็กแบน 4x38x6000",
+				"เหล็กแบน 4x50x6000", "เหล็กแบน 4x75x6000",
+                "เหล็กแบน 4x100x6000", "เหล็กแบน 4.5x25x6000", "เหล็กแบน 4.5x32x6000", "เหล็กแบน 4.5x38x6000",
+                "เหล็กแบน 4.5x50x6000", "เหล็กแบน 4.5x75x6000", "เหล็กแบน 4.5x100x6000", "เหล็กแบน 5x25x6000",
+                "เหล็กแบน 5x32x6000", "เหล็กแบน 5x38x6000", "เหล็กแบน 5x50x6000", "เหล็กแบน 5x75x6000",
+                "เหล็กแบน 5x100x6000", "เหล็กแบน 6x25x6000", "เหล็กแบน 6x32x6000", "เหล็กแบน 6x38x6000",
+                "เหล็กแบน 6x50x6000", "เหล็กแบน 6x65x6000", "เหล็กแบน 6x75x6000", "เหล็กแบน 6x100x6000",
+                "เหล็กแบน 6x125x6000", "เหล็กแบน 6x150x6000", "เหล็กแบน 8x25x6000", "เหล็กแบน 8x32x6000",
+                "เหล็กแบน 8x38x6000", "เหล็กแบน 8x50x6000", "เหล็กแบน 8x65x6000", "เหล็กแบน 8x75x6000",
+                "เหล็กแบน 8x80x6000", "เหล็กแบน 8x100x6000", "เหล็กแบน 8x125x6000", "เหล็กแบน 9x25x6000",
+                "เหล็กแบน 9x32x6000", "เหล็กแบน 9x38x6000", "เหล็กแบน 9x50x6000", "เหล็กแบน 9x65x6000",
+                "เหล็กแบน 9x75x6000", "เหล็กแบน 9x100x6000", "เหล็กแบน 9x125x6000", "เหล็กแบน 9x150x6000",
+                "เหล็กแบน 10x25x6000", "เหล็กแบน 10x32x6000", "เหล็กแบน 10x38x6000", "เหล็กแบน 10x50x6000",
+                "เหล็กแบน 10x75x6000", "เหล็กแบน 10x100x6000", "เหล็กแบน 12x25x6000", "เหล็กแบน 12x32x6000",
+                "เหล็กแบน 12x38x6000", "เหล็กแบน 12x50x6000", "เหล็กแบน 12x65x6000", "เหล็กแบน 12x75x6000",
+                "เหล็กแบน 12x100x6000", "เหล็กแบน 12x125x6000", "เหล็กแบน 12x150x6000", "เหล็กแบน 15x50x6000",
+                "เหล็กแบน 15x75x6000", "เหล็กแบน 15x100x6000", "เหล็กแบน 16x50x6000", "เหล็กแบน 16x75x6000",
+                "เหล็กแบน 16x75x6000(VCS)", "เหล็กแบน 16x100x6000", "เหล็กแบน 19x50x6000", "เหล็กแบน 19x75x6000",
+                "เหล็กแบน 19x100x6000", "เหล็กแบน 20x50x6000", "เหล็กแบน 20x75x6000", "เหล็กแบน 20x100x6000",
+                "เหล็กแบน 25x50x6000", "เหล็กแบน 25x75x6000", "เหล็กแบน 25x100x6000"
+            ];
+			
             const dropdown = document.getElementById('size');
-            items.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                dropdown.appendChild(option);
-            });
+            items.forEach((item, index) => {
+			const option = document.createElement('option');
+			option.value = item;
+			option.textContent = itemsname[index];
+			dropdown.appendChild(option);
+			});
         </script>
         </select>
+		
+		<select class="dropdown" id="k2size" style="display: none;" aria-label="เลือกไซส์ของเหล็ก">
+	    <option value="" disabled="" selected="">🗜️ เลือกไซส์ของเหล็ก</option>
+		<script>
+			const k2items = [
+				"2CTFB040-150-150","2CTFB040-200-200","2CTFB060-100-100","2CTFB060-150-100","2CTFB060-150-150","2CTFB060-200-200",
+				"2CTFB060-250-250","2CTFB060-300-300","2CTFB090-100-100","2CTFB090-150-100","2CTFB090-150-150","2CTFB090-200-200",
+				"2CTFB090-250-250","2CTFB090-300-300","2CTFB120-150-150","2CTFB120-200-200","2CTFB120-250-250","2CTFB120-300-300"
+            ];
+			const k2itemsname = [
+				"เหล็กแผ่น 4x150x150","เหล็กแผ่น 4x200x200","เหล็กแผ่น 6x100x100","เหล็กแผ่น 6x150x100","เหล็กแผ่น 6x150x150","เหล็กแผ่น 6x200x200",
+				"เหล็กแผ่น 6x250x250","เหล็กแผ่น 6x300x300","เหล็กแผ่น 9x100x100","เหล็กแผ่น 9x150x100","เหล็กแผ่น 9x150x150","เหล็กแผ่น 9x200x200",
+				"เหล็กแผ่น 9x250x250","เหล็กแผ่น 9x300x300","เหล็กแผ่น 12x150x150","เหล็กแผ่น 12x200x200","เหล็กแผ่น 12x250x250","เหล็กแผ่น 12x300x300"
+            ];
+			
+			const k2dropdown = document.getElementById('k2size');
+            k2items.forEach((item, index) => {
+			const option = document.createElement('option');
+			option.value = item;
+			option.textContent = k2itemsname[index];
+			k2dropdown.appendChild(option);
+			});
+		</script>
+        </select>
         
+		<select class="dropdown" id="k4size" style="display: none;" aria-label="เลือกไซส์ของเหล็ก">
+	    <option value="" disabled="" selected="">🗜️ เลือกไซส์ของเหล็ก</option>
+		<script>
+			const k4items = [
+				"2FB027-0250-003", "2FB027-0320-004", "2FB027-0380-005", "2FB027-0500-006", "2FB027-0750-010", "2FB027-1000-013",
+				"2FB028-0250-003", "2FB028-0320-004", "2FB028-0380-005", "2FB028-0500-007",	"2FB028-0750-010", "2FB028-1000-013",
+				"2FB032-0250-004", "2FB032-0320-005", "2FB032-0380-006", "2FB032-0500-008",	"2FB032-0750-011", "2FB032-1000-015",
+				"2FB050-0250-006", "2FB050-0320-008", "2FB050-0380-009", "2FB050-0500-012", "2FB050-0750-018", "2FB050-1000-024",
+				"2FB090-0250-011", "2FB090-0320-014", "2FB090-0380-016", "2FB090-0500-021", "2FB090-0650-028", "2FB090-0750-032",
+				"2FB090-1000-042", "2FB090-1250-053", "2FB090-1500-064"
+            ];
+
+			const k4itemsname = [
+				"เหล็กแบน 2.7x25x6000", "เหล็กแบน 2.7x32x6000", "เหล็กแบน 2.7x38x6000", "เหล็กแบน 2.7x50x6000", "เหล็กแบน 2.7x75x6000", "เหล็กแบน 2.7x100x6000",
+				"เหล็กแบน 2.8x25x6000", "เหล็กแบน 2.8x32x6000", "เหล็กแบน 2.8x38x6000", "เหล็กแบน 2.8x50x6000", "เหล็กแบน 2.8x75x6000", "เหล็กแบน 2.8x100x6000",
+				"เหล็กแบน 3.2x25x6000", "เหล็กแบน 3.2x32x6000", "เหล็กแบน 3.2x38x6000", "เหล็กแบน 3.2x50x6000", "เหล็กแบน 3.2x75x6000", "เหล็กแบน 3.2x100x6000",
+				"เหล็กแบน 5x25x6000", "เหล็กแบน 5x32x6000", "เหล็กแบน 5x38x6000", "เหล็กแบน 5x50x6000", "เหล็กแบน 5x75x6000", "เหล็กแบน 5x100x6000",
+				"เหล็กแบน 9x25x6000", "เหล็กแบน 9x32x6000", "เหล็กแบน 9x38x6000", "เหล็กแบน 9x50x6000", "เหล็กแบน 9x65x6000", "เหล็กแบน 9x75x6000",
+				"เหล็กแบน 9x100x6000", "เหล็กแบน 9x125x6000", "เหล็กแบน 9x150x6000",
+            ];
+						
+			const k4dropdown = document.getElementById('k4size');
+            k4items.forEach((item, index) => {
+			const option = document.createElement('option');
+			option.value = item;
+			option.textContent = k4itemsname[index];
+			k4dropdown.appendChild(option);
+			});
+		</script>
+        </select>
+		
+		<select class="dropdown" id="k6size" style="display: none;" aria-label="เลือกไซส์ของเหล็ก">
+	    <option value="" disabled="" selected="">🗜️ เลือกไซส์ของเหล็ก</option>
+		<script>
+			const k6items = [
+				"2FB030-0190-003", "2FB030-0250-004", "2FB030-0320-005", "2FB030-0380-006", "2FB030-0500-007", "2FB030-0750-011",
+				"2FB030-1000-014", "2FB030-1250-018", "2FB030-1500-021", "2FB040-0250-005", "2FB040-0320-006", "2FB040-0380-007",
+				"2FB040-0500-009", "2FB040-0750-015", "2FB040-1000-019", "2FB050-0250-006", "2FB050-0320-008", "2FB050-0380-009",
+				"2FB050-0500-012", "2FB050-0750-018", "2FB050-1000-024", "2FB060-0250-007", "2FB060-0320-009", "2FB060-0380-011",
+                "2FB060-0500-014", "2FB060-0650-018", "2FB060-0750-021", "2FB060-1000-028", "2FB060-1250-035", "2FB060-1500-042",
+				"2FB100-0250-012", "2FB100-0320-015", "2FB100-0380-018", "2FB100-0500-024", "2FB100-0750-035", "2FB100-1000-047"
+            ];
+
+			const k6itemsname = [
+				"เหล็กแบน 3x19x6000", "เหล็กแบน 3x25x6000", "เหล็กแบน 3x32x6000", "เหล็กแบน 3x38x6000", "เหล็กแบน 3x50x6000", "เหล็กแบน 3x75x6000",
+				"เหล็กแบน 3x100x6000", "เหล็กแบน 3x125x6000", "เหล็กแบน 3x150x6000", "เหล็กแบน 4x25x6000", "เหล็กแบน 4x32x6000", "เหล็กแบน 4x38x6000",
+				"เหล็กแบน 4x50x6000", "เหล็กแบน 4x75x6000", "เหล็กแบน 4x100x6000", "เหล็กแบน 5x25x6000", "เหล็กแบน 5x32x6000", "เหล็กแบน 5x38x6000",
+				"เหล็กแบน 5x50x6000", "เหล็กแบน 5x75x6000", "เหล็กแบน 5x100x6000", "เหล็กแบน 6x25x6000", "เหล็กแบน 6x32x6000", "เหล็กแบน 6x38x6000",
+				"เหล็กแบน 6x50x6000", "เหล็กแบน 6x65x6000", "เหล็กแบน 6x75x6000", "เหล็กแบน 6x100x6000", "เหล็กแบน 6x125x6000", "เหล็กแบน 6x150x6000",
+				"เหล็กแบน 10x25x6000", "เหล็กแบน 10x32x6000", "เหล็กแบน 10x38x6000", "เหล็กแบน 10x50x6000", "เหล็กแบน 10x75x6000", "เหล็กแบน 10x100x6000"
+            ];
+			
+						
+			const k6dropdown = document.getElementById('k6size');
+            k6items.forEach((item, index) => {
+			const option = document.createElement('option');
+			option.value = item;
+			option.textContent = k6itemsname[index];
+			k6dropdown.appendChild(option);
+			});
+		</script>
+        </select>
+		
+		<select class="dropdown" id="k8size" style="display: none;" aria-label="เลือกไซส์ของเหล็ก">
+	    <option value="" disabled="" selected="">🗜️ เลือกไซส์ของเหล็ก</option>
+		<script>
+			const k8items = [
+				"2FB025-0250-003", "2FB025-0320-004", "2FB025-0380-005", "2FB025-0500-006",	"2FB025-0750-009", "2FB025-1000-012",
+				"2FB045-0250-005", "2FB045-0320-007", "2FB045-0380-008", "2FB045-0500-011", "2FB045-0750-016", "2FB045-1000-021",
+				"2FB080-0250-009", "2FB080-0320-012", "2FB080-0380-014", "2FB080-0500-019", "2FB080-0650-024", "2FB080-0750-028",
+                "2FB080-0800-030", "2FB080-1000-038", "2FB080-1250-047", "2FB120-0250-014", "2FB120-0320-018", "2FB120-0380-021",
+				"2FB120-0500-028", "2FB120-0650-037", "2FB120-0750-042", "2FB120-1000-057", "2FB120-1250-071", "2FB120-1500-085",
+				"2FB150-0500-035", "2FB150-0750-053", "2FB150-1000-071", "2FB160-0500-038", "2FB160-0750-057", "2FB160-0750-VCS",
+				"2FB160-1000-075", "2FB190-0500-045", "2FB190-0750-067", "2FB190-1000-090", "2FB200-0500-047", "2FB200-0750-071",
+				"2FB200-1000-094", "2FB250-0500-059", "2FB250-0750-088", "2FB250-1000-118"
+            ];
+
+			const k8itemsname = [
+				"เหล็กแบน 2.5x25x6000", "เหล็กแบน 2.5x32x6000", "เหล็กแบน 2.5x38x6000", "เหล็กแบน 2.5x50x6000", "เหล็กแบน 2.5x75x6000", "เหล็กแบน 2.5x100x6000",
+				"เหล็กแบน 4.5x25x6000", "เหล็กแบน 4.5x32x6000", "เหล็กแบน 4.5x38x6000", "เหล็กแบน 4.5x50x6000", "เหล็กแบน 4.5x75x6000", "เหล็กแบน 4.5x100x6000",
+				"เหล็กแบน 8x25x6000", "เหล็กแบน 8x32x6000", "เหล็กแบน 8x38x6000", "เหล็กแบน 8x50x6000", "เหล็กแบน 8x65x6000", "เหล็กแบน 8x75x6000",
+				"เหล็กแบน 8x80x6000", "เหล็กแบน 8x100x6000", "เหล็กแบน 8x125x6000", "เหล็กแบน 12x25x6000", "เหล็กแบน 12x32x6000", "เหล็กแบน 12x38x6000",
+				"เหล็กแบน 12x50x6000", "เหล็กแบน 12x65x6000", "เหล็กแบน 12x75x6000", "เหล็กแบน 12x100x6000", "เหล็กแบน 12x125x6000", "เหล็กแบน 12x150x6000",
+				"เหล็กแบน 15x50x6000", "เหล็กแบน 15x75x6000", "เหล็กแบน 15x100x6000", "เหล็กแบน 16x50x6000", "เหล็กแบน 16x75x6000", "เหล็กแบน 16x75x6000(VCS)",
+				"เหล็กแบน 16x100x6000", "เหล็กแบน 19x50x6000", "เหล็กแบน 19x75x6000", "เหล็กแบน 19x100x6000", "เหล็กแบน 20x50x6000", "เหล็กแบน 20x75x6000",
+				"เหล็กแบน 20x100x6000", "เหล็กแบน 25x50x6000", "เหล็กแบน 25x75x6000", "เหล็กแบน 25x100x6000"
+            ];
+			
+						
+			const k8dropdown = document.getElementById('k8size');
+            k8items.forEach((item, index) => {
+			const option = document.createElement('option');
+			option.value = item;
+			option.textContent = k8itemsname[index];
+			k8dropdown.appendChild(option);
+			});
+		</script>
+        </select>
+		
 		<input type="number" class="text-input" placeholder="📝 จำนวนนับจริง" id="count">
         <div class="button-group">
             <button onclick="save()" class="button">💾บันทึก</button>			 
             <button onclick="clearScreen()" class="button">🖥️ล้างจอ</button>
             <button onclick="goToReport()" class="button">📊ตารางสรุป</button>
         </div>
-	    <p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.0 BETA</p>
+	    <p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.1 BETA</p>
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
+		let size = "";
+		
+		document.getElementById('zone').addEventListener('change', function() {
+		var zone = document.getElementById('zone').value;
+		
+		if (zone === "all") {
+				document.getElementById('size').style.display = 'block';
+				document.getElementById('k2size').style.display = 'none';
+				document.getElementById('k4size').style.display = 'none';
+				document.getElementById('k6size').style.display = 'none';
+				document.getElementById('k8size').style.display = 'none';
+			} else if (zone === "k2") {
+				document.getElementById('size').style.display = 'none';
+				document.getElementById('k2size').style.display = 'block';
+				document.getElementById('k4size').style.display = 'none';
+				document.getElementById('k6size').style.display = 'none';
+				document.getElementById('k8size').style.display = 'none';
+			} else if (zone === "k4") {
+				document.getElementById('size').style.display = 'none';
+				document.getElementById('k2size').style.display = 'none';
+				document.getElementById('k4size').style.display = 'block';
+				document.getElementById('k6size').style.display = 'none';
+				document.getElementById('k8size').style.display = 'none';
+			} else if (zone === "k6") {
+				document.getElementById('size').style.display = 'none';
+				document.getElementById('k2size').style.display = 'none';
+				document.getElementById('k4size').style.display = 'none';
+				document.getElementById('k6size').style.display = 'block';
+				document.getElementById('k8size').style.display = 'none';
+			} else if (zone === "k8") {
+				document.getElementById('size').style.display = 'none';
+				document.getElementById('k2size').style.display = 'none';
+				document.getElementById('k4size').style.display = 'none';
+				document.getElementById('k6size').style.display = 'none';
+				document.getElementById('k8size').style.display = 'block';
+			}
+    });
+		
 	    function save() {
 			var url = "https://docs.google.com/forms/d/e/1FAIpQLSfx6TAiEkfNj0R-085_YWRU5UgET4hqsUy6sHjcLefSbrYBWQ/formResponse?entry.160759339=";
 			var	entrysize = "&entry.1946323810=";
 			var entrycount = "&entry.1710746410=";
 			
 			var user = document.getElementById('user').value;
-			var size = document.getElementById('size').value;
-			var sizeid = document.getElementById('size').selectedIndex;
-			var count = document.getElementById('count').value || 0;
-			var alertmsg = "";
+			var zone = document.getElementById('zone').value;
 			
-			if (sizeid === 0) {
+			var sizeid = document.getElementById('size').selectedIndex;
+			var k2sizeid = document.getElementById('k2size').selectedIndex;
+			var k4sizeid = document.getElementById('k4size').selectedIndex;
+			var k6sizeid = document.getElementById('k6size').selectedIndex;
+			var k8sizeid = document.getElementById('k8size').selectedIndex;
+			
+			if (zone === "all") {
+				size = document.getElementById('size').value;
+				if (sizeid === 0) {
 				alert("กรุณาเลือกไซส์");
 				return;
 			}
+			} else if (zone === "k2") {
+				size = document.getElementById('k2size').value;
+				if (k2sizeid === 0) {
+				alert("กรุณาเลือกไซส์");
+				return;
+			}
+			} else if (zone === "k4") {
+				size = document.getElementById('k4size').value;
+				if (k4sizeid === 0) {
+				alert("กรุณาเลือกไซส์");
+				return;
+			}
+			} else if (zone === "k6") {
+				size = document.getElementById('k6size').value;
+				if (k6sizeid === 0) {
+				alert("กรุณาเลือกไซส์");
+				return;
+			}
+			} else if (zone === "k8") {
+				size = document.getElementById('k8size').value;
+				if (k8sizeid === 0) {
+				alert("กรุณาเลือกไซส์");
+				return;
+			}
+			}
+			
+			var count = document.getElementById('count').value || 0;
+			var alertmsg = "";
 			
 			alertmsg += "เหล็กแบน " + size + " จำนวน " + count + " เส้น";
 			
@@ -189,7 +413,6 @@
 			
 			var img = document.createElement("img");
 			img.src = url;
-			
 			alert(alertmsg);
 			
 			document.getElementById('count').value = "";
@@ -197,8 +420,12 @@
 		
 		function clearScreen() {
 			document.getElementById('user').selectedIndex = 0;
-			document.getElementById('zone').selectedIndex = 0;
+			document.getElementById('zone').selectedIndex = 4;
 			document.getElementById('size').selectedIndex = 0;
+			document.getElementById('k2size').selectedIndex = 0;
+			document.getElementById('k4size').selectedIndex = 0;
+			document.getElementById('k6size').selectedIndex = 0;
+			document.getElementById('k8size').selectedIndex = 0;
 			document.getElementById('count').value = "";
 		}
 		
