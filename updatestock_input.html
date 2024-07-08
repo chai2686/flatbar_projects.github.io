@@ -91,7 +91,8 @@
         }
 		.hidden {
             display: none;
-			width: 40%;
+		width: 40%;
+		max-width: 360px;
             height: 50px;
             font-size: 18px;
             margin-top: 20px;
@@ -196,7 +197,7 @@
 </div>
         <div class="quantity-input" style="display: flex; align-items: center; justify-content: center;">
     <div>
-        <input type="number" class="hidden" placeholder="📝 จำนวน BJ" id="bjamount" style="position: fixed; display: none; top: 210px; left: 30px;">
+        <input type="number" class="hidden" placeholder="📝 จำนวน BJ" id="bjamount" style="position: fixed; display: none; top: 210px; right: 51%;">
     </div>
     <div>
         <input type="number" class="hidden" placeholder="📝 จำนวน BN" id="bnamount" style="position: fixed; display: none; top: 210px;">
@@ -213,7 +214,7 @@
 			<button onclick="clearScreen()" class="button">🔄 ล้างจอ</button>
             <button style="font-size:12px;" onclick="goToReport()" class="button">📊 รายงานสต็อก</button>
         </div>
-			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.0 BETA</p>
+			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.1 BETA</p>
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
