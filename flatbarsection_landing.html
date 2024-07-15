@@ -2,7 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="1.0 BETA">
+    <meta name="Version" content="1.2 BETA">
     <title>ส่วนงานเหล็กแบน</title>
     <link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
     <link rel="icon" href="flatbar_fav.png" type="image/png">
@@ -132,7 +132,8 @@
     border-bottom-width: 1px;
     padding-bottom: 1px;
     
-">📝 จดน้ำหนัก</button>		
+">📝 จดน้ำหนัก</button>
+			<button onclick="goToHistory()" class="button">📋 ตารางบันทึกจดน้ำหนัก</button>
 			<button onclick="goToStockCheck()" class="button">📦 เช็คสต็อกประจำวัน</button>
             <button onclick="goToWoodReport()" class="button">🪓 บันทึกการใช้ไม้</button>
 			<button onclick="goBack()" class="button" style="
@@ -141,7 +142,7 @@
     margin-top: 15px;
 ">⏮️ กลับหน้าหลัก</button>
         </div>
-			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.0 BETA</p>
+			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.2 BETA</p>
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
@@ -150,6 +151,9 @@
 		}
 		function goToCalc() {
 			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_calculator.html";
+		}
+		function goToHistory() {
+			window.open("https://docs.google.com/spreadsheets/d/1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w/htmlview", "_blank");
 		}
 		function goToStockCheck() {
 			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/fbstock_input.html";
