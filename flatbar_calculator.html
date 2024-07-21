@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
-<head>
+<html lang="th"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>คำนวณเหล็กแบน</title>
@@ -120,16 +119,22 @@
     </div>
     <div class="flex-container">
       <label for="lastweight">น้ำหนักก่อนหน้า:</label>
-      <input type="number" id="lastweight" placeholder="น้ำหนักก่อนหน้า" value="0">
+      <input type="number" id="lastweight" placeholder="น้ำหนักก่อนหน้า" value="0" style="
+    padding-right: 0px;
+">
       <label for="lastweight">KG</label>
-      <button onclick="clearlastweight()">🔄 ล้างน้ำหนัก</button>
+      <label for="truckno">ทะเบียน/ลูกค้า:</label>
+      <input type="text" id="truckno" placeholder="ทะเบียนรถ" value="" style="
+    padding-right: 0px;
+">
     </div>
     <div class="btn-container">
       <button onclick="calculate()">📠 คำนวณ</button>
+      <button onclick="clearlastweight()">🔄 ล้างน้ำหนัก</button>
       <button onclick="reset()">🖥️ ล้างหน้าจอ</button>
-      <button onclick="goToHistory()">📋 ตารางบันทึกจดน้ำหนัก</button>
+      <button onclick="goToHistory()">📋 ตารางจดน้ำหนัก</button>
     </div>
-	<p style="font-size: 12px;text-align:right;padding-left: 60%;margin-bottom: 5px;">Version 1.0 BETA</p>
+	<p style="font-size: 12px;text-align:right;padding-left: 60%;margin-bottom: 5px;">Version 1.3 BETA</p>
     <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
   </div>
 
@@ -142,6 +147,7 @@
       var weight1 = document.getElementById('weight1').value || 0;
       var weight2 = document.getElementById('weight2').value || 0;
       var lastweight = document.getElementById('lastweight').value || 0;
+	  var truckno = document.getElementById('truckno').value || "ไม่ระบุ";
       
       var totalweight = parseFloat(weight1) + parseFloat(weight2) - parseFloat(lastweight);
 
@@ -156,12 +162,16 @@
       lastweight = parseFloat(lastweight) + totalweight;
       document.getElementById('lastweight').value = lastweight;
       
-      var sizename = "เหล็กแบน " + boldness + "MM x " + width + "MM x " + length + "MM";
+      var sizename = "เหล็กแบน " + boldness + " x " + width + " x " + length + " mm";
       
       var i = document.createElement("img");
-      i.src = "https://docs.google.com/forms/d/e/1FAIpQLSfKof3d_MUx1hjElID4s3VE1qPSMqaqP4r2Wm2QpV1-h1zO-Q/formResponse?entry.324556811=" + sizename + "&entry.1667848866=" + quantity + " เส้น&entry.517893373=" + totalweight + "&entry.778757753=" + avg_thick + "MM";
+      i.src = "https://docs.google.com/forms/d/e/1FAIpQLSfSubnUJUW0vnyV5Ohp5iqouvDbbXjOjyyRDR0TpmG1yM3Alw/formResponse?entry.906081497=" + sizename + "&entry.60271403=" + quantity + "&entry.1464877610=" + totalweight + "&entry.1922380272=" + avg_thick + "&entry.35484225=" + truckno;
       
-      alert("เหล็กแบน " + boldness + "MM x " + width + "MM x " + length + "MM จำนวน " + quantity + " เส้น น้ำหนัก " + totalweight + " กิโลกรัม ความหนาเฉลี่ย " + avg_thick + " MM");
+      alert("เหล็กแบน " + boldness + " x " + width + " x " + length + " mm จำนวน " + quantity + " เส้น น้ำหนัก " + totalweight + " กิโลกรัม ความหนาเฉลี่ย " + avg_thick + " mm");
+	  
+	  document.getElementById('quantity').value = '';
+      document.getElementById('weight1').value = '';
+      document.getElementById('weight2').value = '';
     }
 
     function reset() {
@@ -172,6 +182,7 @@
       document.getElementById('weight1').value = '';
       document.getElementById('weight2').value = '';
       document.getElementById('lastweight').value = '0';
+	  document.getElementById('truckno').value = '';
     }
 
     function goToHistory() {
@@ -182,5 +193,6 @@
       document.getElementById('lastweight').value = '0';
     }
   </script>
-</body>
-</html>
+
+
+</body></html>
