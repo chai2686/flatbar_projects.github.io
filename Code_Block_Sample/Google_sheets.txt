@@ -8,10 +8,10 @@
 
 javascript
 Copy code
-function updateTableData() {
-  var sourceSpreadsheetId = "ID_ไฟล์ฐานข้อมูล"; // ใส่ ID ของไฟล์ฐานข้อมูล
-  var sourceSheetName = "ชื่อชีตฐานข้อมูล"; // ชื่อชีตในฐานข้อมูล
-  var targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("ชื่อชีตปลายทาง"); // ชื่อชีตปลายทางใน Google Sheets
+function updatePoolingDataset() {
+  var sourceSpreadsheetId = "1Ia10xULe8AHMKDQGfidlf9eBdi0RUtZe4OQlFeF_ELY"; // ใส่ ID ของไฟล์ฐานข้อมูล
+  var sourceSheetName = "Shipment"; // ชื่อชีตในฐานข้อมูล
+  var targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Pooling Dataset"); // ชื่อชีตปลายทางใน Google Sheets
 
   // เปิดไฟล์ฐานข้อมูล
   var sourceSpreadsheet = SpreadsheetApp.openById(sourceSpreadsheetId);
@@ -23,9 +23,9 @@ function updateTableData() {
   // ดึงข้อมูลปัจจุบันจากชีตปลายทาง
   var targetData = targetSheet.getDataRange().getValues();
 
-  // เตรียมข้อมูลใหม่ที่ต้องอัปเดต (เฉพาะคอลัมน์ 1-5)
+  // เตรียมข้อมูลใหม่ที่ต้องอัปเดต (เฉพาะคอลัมน์ 1-14)
   for (var i = 0; i < sourceData.length; i++) {
-    for (var j = 0; j < 5; j++) { // คอลัมน์ 1 ถึง 5
+    for (var j = 0; j < 14; j++) { // คอลัมน์ 1 ถึง 5
       if (targetData[i]) {
         targetData[i][j] = sourceData[i][j];
       } else {
@@ -35,6 +35,13 @@ function updateTableData() {
       }
     }
   }
+
+  // อัปเดตเฉพาะคอลัมน์ 1-5
+  targetSheet.getRange(1, 1, targetData.length, 14).setValues(
+    targetData.map(row => row.slice(0, 14))
+  );
+}
+
 
   // อัปเดตเฉพาะคอลัมน์ 1-5
   targetSheet.getRange(1, 1, targetData.length, 5).setValues(
