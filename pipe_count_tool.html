@@ -18,7 +18,7 @@
       <button id="undoButton" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600" style="
     margin-right: 50%;
 ">ย้อนกลับ</button>
-	  <button id="backButton" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600">กลับหน้าหลัก</button>
+	  <button onclick="goBack()" id="backButton" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600">กลับหน้าหลัก</button>
 	</div>
   </div>
 
@@ -83,6 +83,10 @@
         ctx.fill();
       });
       markerCountEl.textContent = markers.length;
+    }
+
+    function goBack() {
+      window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/typebsection_landing.html";
     }
   </script>
 
