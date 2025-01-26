@@ -135,13 +135,14 @@
 ">📥 บันทึกรับเข้า</button>		
 			<button onclick="goToOutbound()" class="button">📤 บันทึกจ่ายออก</button>
             <button onclick="goToReport()" class="button">📊 รายงานสต็อก</button>
+			<button onclick="goToCountTool()" class="button">🖍️ เครื่องมือช่วยนับ</button>
 			<button onclick="goBack()" class="button" style="
     align-self: center;
     width: 50%;
     margin-top: 15px;
 ">⏮️ กลับหน้าหลัก</button>
         </div>
-			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.0 BETA</p>
+			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.3 BETA</p>
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
@@ -159,6 +160,10 @@
 		function goToOutbound() {
 			// เปิดหน้าเว็บไปที่ลิงค์ตารางข้อมูลที่บันทึก
 			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/updatestock_input.html";
+		}
+		function goToCountTool() {
+			// เปิดหน้าเครื่องมือช่วยนับท่อ
+			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/pipe_count_tool.html";
 		}
 		function about() {
 		//เปิดหน้าเว็บไปที่ลิงค์เกี่ยวกับโปรแกรม
