@@ -79,7 +79,7 @@
       markers.forEach(marker => {
         ctx.fillStyle = 'red';
         ctx.beginPath();
-        ctx.arc(marker.x, marker.y, 5, 0, Math.PI * 2);
+        ctx.arc(marker.x, marker.y, 25, 0, Math.PI * 2);
         ctx.fill();
       });
       markerCountEl.textContent = markers.length;
