@@ -1,8 +1,8 @@
 <html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="1.0 BETA">
+    <meta name="description" content="เว็บแอพสำหรับส่วนงานท่อเกรดบี และส่วนงานเหล็กแบน">
+    <meta name="Version" content="1.3 TR">
     <title>🚚 หน้าหลัก 🚚</title>
     <link rel="icon" href="warehouse_fav.ico" type="image/x-icon">
     <link rel="icon" href="warehouse_fav.png" type="image/png">
@@ -128,15 +128,19 @@
         <div class="button-group" style="
     margin-top: 20px;
 ">
-            		
+            
+			<button onclick="goToSchedule()" class="button">🗓️ ตารางเวรประจำวัน</button>
 			<button onclick="goToFlatbar()" class="button">🧱 ส่วนงานเหล็กแบน</button>
             <button onclick="goToTypeB()" class="button">🆖 ส่วนงานท่อเกรดบี</button>
 			
         </div>
-			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.0 BETA</p>
+			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.3 TR</p>
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
+		function goToSchedule() {
+      		window.open("https://docs.google.com/spreadsheets/d/1WvFV-N8EFlyJylCIvR1LGKYyQeeYczLmjnwGd2YcIQo/htmlview?gid=521278580", "_blank");
+    	}
 		function goToFlatbar() {
       		window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbarsection_landing.html";
     	}
