@@ -2,7 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="1.2 BETA">
+    <meta name="Version" content="1.4 BETA">
     <title>ส่วนงานเหล็กแบน</title>
     <link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
     <link rel="icon" href="flatbar_fav.png" type="image/png">
@@ -128,7 +128,8 @@
         <div class="button-group" style="
     margin-top: 20px;
 ">
-            <button onclick="goToCalc()" class="button" style="
+            <button onclick="goToShipment()" class="button">🚛 รายการรถ</button>
+		<button onclick="goToCalc()" class="button" style="
     border-bottom-width: 1px;
     padding-bottom: 1px;
     
@@ -142,12 +143,15 @@
     margin-top: 15px;
 ">⏮️ กลับหน้าหลัก</button>
         </div>
-			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.2 BETA</p>
+			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.4 BETA</p>
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
         function goBack() {
 			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/main_landing.html";
+		}
+	    	function goToShipment() {
+			window.open("https://www.appsheet.com/start/25d3a556-a423-4ccd-9915-b679358b7a80", "_blank");
 		}
 		function goToCalc() {
 			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_calculator.html";
