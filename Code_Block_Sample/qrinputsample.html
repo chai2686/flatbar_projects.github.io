@@ -9,16 +9,108 @@
       font-family: Arial, sans-serif;
       padding: 40px;
     }
-    #qr-input {
+    #qr-input01 {
       font-size: 1.2rem;
       width: 300px;
       padding: 10px;
     }
-    #open-scanner {
+	#qr-input02 {
+      font-size: 1.2rem;
+      width: 300px;
+      padding: 10px;
+    }
+	#qr-input03 {
+      font-size: 1.2rem;
+      width: 300px;
+      padding: 10px;
+    }
+	#qr-input04 {
+      font-size: 1.2rem;
+      width: 300px;
+      padding: 10px;
+    }
+	#qr-input05 {
+      font-size: 1.2rem;
+      width: 300px;
+      padding: 10px;
+    }
+	#qr-input06 {
+      font-size: 1.2rem;
+      width: 300px;
+      padding: 10px;
+    }
+	#qr-input07 {
+      font-size: 1.2rem;
+      width: 300px;
+      padding: 10px;
+    }
+	#qr-input08 {
+      font-size: 1.2rem;
+      width: 300px;
+      padding: 10px;
+    }
+	#qr-input09 {
+      font-size: 1.2rem;
+      width: 300px;
+      padding: 10px;
+    }
+	#qr-input10 {
+      font-size: 1.2rem;
+      width: 300px;
+      padding: 10px;
+    }
+	
+    #open-scanner01 {
       padding: 10px 15px;
       font-size: 1rem;
       margin-left: 10px;
     }
+	#open-scanner02 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#open-scanner03 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#open-scanner04 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#open-scanner05 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#open-scanner06 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#open-scanner07 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#open-scanner08 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#open-scanner09 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#open-scanner10 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	
     #qr-popup {
       display: none;
       position: fixed;
@@ -39,9 +131,37 @@
   </style>
 </head>
 <body>
+	<!-- ส่วนรับข้อมูล -->
   <h2>QR Code Input</h2>
-  <input type="text" id="qr-input" placeholder="QR code result here..." readonly>
-  <button id="open-scanner">Scan QR</button>
+  <input type="text" id="qr-input01" placeholder="QR code result here..." readonly>
+  <button id="open-scanner01">Scan QR</button><br>
+  
+  <input type="text" id="qr-input02" placeholder="QR code result here..." readonly>
+  <button id="open-scanner02">Scan QR</button><br>
+  
+  <input type="text" id="qr-input03" placeholder="QR code result here..." readonly>
+  <button id="open-scanner03">Scan QR</button><br>
+  
+  <input type="text" id="qr-input04" placeholder="QR code result here..." readonly>
+  <button id="open-scanner04">Scan QR</button><br>
+  
+  <input type="text" id="qr-input05" placeholder="QR code result here..." readonly>
+  <button id="open-scanner05">Scan QR</button><br>
+  
+  <input type="text" id="qr-input06" placeholder="QR code result here..." readonly>
+  <button id="open-scanner06">Scan QR</button><br>
+  
+  <input type="text" id="qr-input07" placeholder="QR code result here..." readonly>
+  <button id="open-scanner07">Scan QR</button><br>
+  
+  <input type="text" id="qr-input08" placeholder="QR code result here..." readonly>
+  <button id="open-scanner08">Scan QR</button><br>
+  
+  <input type="text" id="qr-input09" placeholder="QR code result here..." readonly>
+  <button id="open-scanner09">Scan QR</button><br>
+  
+  <input type="text" id="qr-input10" placeholder="QR code result here..." readonly>
+  <button id="open-scanner10">Scan QR</button><br>
 
   <!-- Overlay and Popup -->
   <div id="overlay"></div>
@@ -56,7 +176,7 @@
     const popup = document.getElementById('qr-popup');
     let html5QrCode;
 
-    document.getElementById('open-scanner').addEventListener('click', () => {
+    document.getElementById('open-scanner01').addEventListener('click', () => {
       overlay.style.display = 'block';
       popup.style.display = 'block';
 
@@ -71,7 +191,7 @@
               qrbox: 250
             },
             qrCodeMessage => {
-              inputField.value = qrCodeMessage;
+              document.getElementById('qr-input01').value = qrCodeMessage;
               closeScanner();
             },
             errorMessage => {
@@ -84,6 +204,269 @@
         closeScanner();
       });
     });
+	
+	document.getElementById('open-scanner02').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input02').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+	document.getElementById('open-scanner03').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input03').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+	document.getElementById('open-scanner04').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input04').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+	document.getElementById('open-scanner05').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input05').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+	document.getElementById('open-scanner06').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input06').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+	document.getElementById('open-scanner07').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input07').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+	document.getElementById('open-scanner08').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input08').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+	document.getElementById('open-scanner09').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input09').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+	document.getElementById('open-scanner10').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input10').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+	
 
     function closeScanner() {
       overlay.style.display = 'none';
