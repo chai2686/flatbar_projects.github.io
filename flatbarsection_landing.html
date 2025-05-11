@@ -136,6 +136,7 @@
 ">📝 จดน้ำหนัก</button>
 			<button onclick="goToHistory()" class="button">📋 ตารางบันทึกจดน้ำหนัก</button>
 			<button onclick="goToStockCheck()" class="button">📦 เช็คสต็อกประจำวัน</button>
+			<button onclick="goToBundleCheck()" class="button">📟 เช็คบันเดิ้ลเหล็กแบน</button>
             <button onclick="goToWoodReport()" class="button">🪓 บันทึกการใช้ไม้</button>
 			<button onclick="goBack()" class="button" style="
     align-self: center;
@@ -143,7 +144,7 @@
     margin-top: 15px;
 ">⏮️ กลับหน้าหลัก</button>
         </div>
-			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.4 BETA</p>
+			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 1.6 Technical Review</p>
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
@@ -161,6 +162,9 @@
 		}
 		function goToStockCheck() {
 			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/fbstock_input.html";
+		}
+	    	function goToBundleCheck() {
+			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_bundle_check.html";
 		}
 		function goToWoodReport() {
 			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/wood_memo.html";
