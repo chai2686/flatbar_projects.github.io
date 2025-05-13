@@ -65,7 +65,7 @@
   </div>
   
   <div id="footnote">
-        <p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.61 Technical Review</p>
+        <p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.62 Technical Review</p>
         <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
   </div>
 
@@ -120,7 +120,7 @@
 		let starCount = qrinput.length - 1; //นับจำนวนเครื่องหมายดอกจันทร์
 		
 		if	(starCount == 5){
-			//ถ้าเครื่องหมายดอกจันทร์ = 4 แสดงว่าข้อมูลแสกนถูกต้องให้กำเนินงานต่อ
+			//ถ้าเครื่องหมายดอกจันทร์ = 5 แสดงว่าข้อมูลแสกนถูกต้องให้กำเนินงานต่อ
 			var url = "https://docs.google.com/forms/d/e/1FAIpQLSce2rhphN2bMz6WG-qgraHxjbVPsMm7XNNWrKMmR2yLLh84qw/formResponse?usp=pp_url";
 			var entrybundle = "&entry.97850149=";
 			var entrysize = "&entry.812203754=";
@@ -137,6 +137,28 @@
 			var date = qrinput[5];
 			
 			url += entrybundle + bundle + entrysize + size + entrybatch + batch + entryquantity + quantity + entryweight + weight + entrydate + date;
+			var img = document.createElement("img");
+			img.src = url;
+			
+			document.getElementById('qr-input01').value = "";
+			//console.log(bundle+size+quantity+batch+date);
+		}
+		else if	(starCount == 4){
+			//ถ้าเครื่องหมายดอกจันทร์ = 4 แสดงว่าข้อมูลแสกนถูกต้องให้กำเนินงานต่อ
+			var url = "https://docs.google.com/forms/d/e/1FAIpQLSce2rhphN2bMz6WG-qgraHxjbVPsMm7XNNWrKMmR2yLLh84qw/formResponse?usp=pp_url";
+			var entrybundle = "&entry.97850149=";
+			var entrysize = "&entry.812203754=";
+			var entrybatch = "&entry.1756656766=";
+			var entryquantity = "&entry.2112134701=";
+			var entryweight = "&entry.1706620145=";
+			
+			var bundle = qrinput[0];
+			var size = qrinput[1];
+			var batch = qrinput[2];
+			var quantity = qrinput[3];
+			var weight = qrinput[4];
+			
+			url += entrybundle + bundle + entrysize + size + entrybatch + batch + entryquantity + quantity + entryweight + weight;
 			var img = document.createElement("img");
 			img.src = url;
 			
