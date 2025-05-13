@@ -29,6 +29,11 @@
       font-size: 1rem;
       margin-left: 10px;
     }
+	#reportbutton {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
     #qr-popup {
       display: none;
       position: fixed;
@@ -55,7 +60,8 @@
   <h2>แสกน QR code</h2>
   <input type="text" id="qr-input01" placeholder="หากแสกนไม่ติดให้พิมพ์เลขบันเดิ้ลที่นี่..." >
   <button id="open-scanner01">แสกน QR</button>
-  <button id="savebutton" onclick="save()">💾บันทึก</button><br>
+  <button id="savebutton" onclick="save()">💾บันทึก</button>
+  <button id="reportbutton" onclick="goToReport()">📋รายงาน</button><br>
 
   <!-- Overlay and Popup -->
   <div id="overlay"></div>
@@ -65,7 +71,7 @@
   </div>
   
   <div id="footnote">
-        <p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.62 Technical Review</p>
+        <p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.63 Technical Review</p>
         <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
   </div>
 
@@ -197,6 +203,10 @@
 		}
 		
     }
+	
+	function goToReport() {
+			window.open("https://docs.google.com/spreadsheets/d/1Pt-i1x8uGM3Czue4mdV9yh0wdOVrit7a63ln1AEps_Y/htmlview?gid=1117717488#gid=1117717488", "_blank");
+		}
   </script>
 </body>
 </html>
