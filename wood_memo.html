@@ -122,6 +122,25 @@
             <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
     </div>
     <script>
+	    window.onload = function() {
+        const paramstruckno = new URLSearchParams(window.location.search);
+	const paramscustomer = new URLSearchParams(window.location.search);
+	const paramsfleettype = new URLSearchParams(window.location.search);
+        const inputtruckno = paramstruckno.get("truckno");
+	const inputcustomer = paramscustomer.get("customer");
+	const inputfleettype = paramscustomer.get("fleettype");
+            if (inputtruckno) {
+                document.getElementById("truckno").value = inputtruckno;
+            }
+			if (inputcustomer) {
+                document.getElementById("customer").value = inputcustomer;
+            }
+			if (inputfleettype) {
+                document.getElementById("fleettype").value = inputfleettype;
+				console.log(inputfleettype);
+            }
+		};
+	    
 		function save() {
 			var url = "https://docs.google.com/forms/d/e/1FAIpQLSfRIk4d3QxWchVrmBwDBzd_N9Aw9nyynW7iNXTQpOGrf0TmfA/formResponse?entry.1884278026=";
 			var	entryfleettype = "&entry.773222215=";
