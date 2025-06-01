@@ -1,0 +1,548 @@
+function updateShipment() {
+  importCSVFromURL();
+  removeDuplicatesByColumns();
+  updatePoolingDataset()
+}
+
+
+function importCSVFromURL() {
+  var url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQHoSLDpJ-zrcIrWSkODMnPHVzbed6cWwK7scm9NL8VSxlO0bEMVBUnzOxELDorub2R9buVjwIHRYhc/pub?gid=1841842460&single=true&output=csv';
+  var response = UrlFetchApp.fetch(url);
+  var csvContent = response.getContentText();
+  var data = Utilities.parseCsv(csvContent);
+
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('shipment');
+  if (!sheet) {
+    sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('shipment');
+  }
+
+  // Clear existing content
+  sheet.clear();
+
+  // Write CSV data to sheet
+  for (var i = 0; i < data.length; i++) {
+    sheet.getRange(i + 1, 1, 1, data[i].length).setValues([data[i]]);
+  }
+
+  Logger.log('CSV imported successfully');
+}
+
+function removeDuplicatesByColumns() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("shipment"); // Change "Sheet1" to your sheet name
+  var range = sheet.getDataRange();
+  var values = range.getValues();
+  
+  var seen = {};
+  var uniqueRows = [];
+
+  for (var i = 0; i < values.length; i++) {
+    var key = values[i][2] + "-" + values[i][3] + "-" + values[i][4] + "-" + values[i][5]; // Column B (index 1) and Column C (index 2)
+    
+    if (!seen[key]) {
+      seen[key] = true; // Mark combination as seen
+      uniqueRows.push(values[i]); // Add unique row to result
+    }
+  }
+
+  // Clear the sheet
+  sheet.clearContents();
+
+  // Write back unique rows
+  sheet.getRange(1, 1, uniqueRows.length, uniqueRows[0].length).setValues(uniqueRows);
+  
+  SpreadsheetApp.flush();
+  Logger.log("Duplicates removed based on Column B C D and E");
+}
+
+function updatePoolingDataset() {
+  var sourceSpreadsheetId = "1lhbyWM9zBxYOfwnAvjXaDamY2vMJenRBo6fWh43TRik"; // ใส่ ID ของไฟล์ฐานข้อมูล
+  var sourceSheetName = "Shipment"; // ชื่อชีตต้นทาง
+  var targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Pooling Dataset"); // ชื่อชีตปลายทาง
+
+  // เปิดไฟล์ต้นทางและดึงข้อมูล
+  var sourceSpreadsheet = SpreadsheetApp.openById(sourceSpreadsheetId);
+  var sourceSheet = sourceSpreadsheet.getSheetByName(sourceSheetName);
+  var sourceData = sourceSheet.getDataRange().getValues();
+
+  // ดึงข้อมูลจากชีตปลายทาง
+  var targetData = targetSheet.getDataRange().getValues();
+  var targetMap = {}; // เก็บข้อมูลปลายทางในรูปแบบ Object เพื่อค้นหาได้ง่าย
+
+  // สร้าง Mapping ข้อมูลปลายทางตามคีย์เฉพาะ เช่น คอลัมน์ที่ 1
+  targetData.forEach((row, index) => {
+    var key = row[2] + "-" + row[3] + "-" + row[4] + "-" + row[5]; // ใช้คอลัมน์ 2 - 5 รวมกันเป็นคีย์
+    if (key) {
+      targetMap[key] = {
+        data: row,
+        index: index + 1, // เก็บ index ของแถวในชีต (เริ่มจาก 1)
+      };
+    }
+  });
+
+  // เตรียมข้อมูลใหม่
+  sourceData.forEach((row) => {
+    var key = row[2] + "-" + row[3] + "-" + row[4] + "-" + row[5]; // ใช้คอลัมน์ 2 - 5 รวมกันเป็นคีย์
+    if (key && targetMap[key]) {
+      // ถ้ามีแถวเดิมอยู่แล้ว ให้แก้ไขเฉพาะคอลัมน์ 1-5
+      var targetRowIndex = targetMap[key].index;
+      targetSheet.getRange(targetRowIndex, 1, 1, 32).setValues([row.slice(0, 32)]);
+    } else {
+      var material = row[6];
+      var gate = "";
+      var batch = row[8];
+      if (batch == "SL" || batch == "GM") {
+      switch (material) {
+        case "2CTFB040-150-150":
+            gate = "K2";
+            break;
+        case "2CTFB040-200-200":
+            gate = "K2";
+            break;
+        case "2CTFB060-100-100":
+            gate = "K2";
+            break;
+        case "2CTFB060-150-100":
+            gate = "K2";
+            break;
+        case "2CTFB060-150-150":
+            gate = "K2";
+            break;
+        case "2CTFB060-200-200":
+            gate = "K2";
+            break;
+        case "2CTFB060-250-250":
+            gate = "K2";
+            break;
+        case "2CTFB060-300-300":
+            gate = "K2";
+            break;
+        case "2CTFB090-100-100":
+            gate = "K2";
+            break;
+        case "2CTFB090-150-100":
+            gate = "K2";
+            break;
+        case "2CTFB090-150-150":
+            gate = "K2";
+            break;
+        case "2CTFB090-200-150":
+            gate = "K2";
+            break;
+        case "2CTFB090-200-200":
+            gate = "K2";
+            break;
+        case "2CTFB090-250-250":
+            gate = "K2";
+            break;
+        case "2CTFB090-300-300":
+            gate = "K2";
+            break;
+        case "2CTFB120-150-150":
+            gate = "K2";
+            break;
+        case "2CTFB120-200-200":
+            gate = "K2";
+            break;
+        case "2CTFB120-250-250":
+            gate = "K2";
+            break;
+        case "2CTFB120-300-300":
+            gate = "K2";
+            break;
+			
+		    case "2FB027-0250-003":
+			gate = "K8";
+            break;
+        case "2FB027-0320-004":
+			gate = "K8";
+            break;
+        case "2FB027-0350-004":
+			gate = "K8";
+            break;
+        case "2FB027-0380-005":
+			gate = "K8";
+            break;
+        case "2FB027-0500-006":
+			gate = "K8";
+            break;
+        case "2FB027-0750-010":
+			gate = "K8";
+            break;
+        case "2FB027-1000-013":
+			gate = "K8";
+            break;
+        case "2FB028-0250-003":
+			gate = "K8";
+            break;
+        case "2FB028-0320-004":
+			gate = "K8";
+            break;
+        case "2FB028-0380-005":
+			gate = "K8";
+            break;
+        case "2FB028-0500-007":
+			gate = "K8";
+            break;
+        case "2FB028-0750-010":
+			gate = "K8";
+            break;
+        case "2FB028-1000-013":
+			gate = "K8";
+            break;
+        case "2FB032-0250-004":
+			gate = "K8";
+            break;
+        case "2FB032-0320-005":
+			gate = "K8";
+            break;
+        case "2FB032-0380-006":
+			gate = "K8";
+            break;
+        case "2FB032-0500-008":
+			gate = "K8";
+            break;
+        case "2FB032-0750-011":
+			gate = "K8";
+            break;
+        case "2FB032-1000-015":
+			gate = "K8";
+            break;
+        case "2FB050-0250-006":
+			gate = "K4";
+            break;
+        case "2FB050-0320-008":
+			gate = "K4";
+            break;
+        case "2FB050-0380-009":
+			gate = "K4";
+            break;
+        case "2FB050-0500-012":
+			gate = "K4";
+            break;
+        case "2FB050-0750-018":
+			gate = "K4";
+            break;
+        case "2FB050-1000-024":
+			gate = "K4";
+            break;
+        case "2FB090-0250-011":
+			gate = "K4";
+            break;
+        case "2FB090-0320-014":
+			gate = "K4";
+            break;
+        case "2FB090-0380-016":
+			gate = "K4";
+            break;
+        case "2FB090-0500-021":
+			gate = "K4";
+            break;
+        case "2FB090-0650-028":
+			gate = "K4";
+            break;
+        case "2FB090-0750-032":
+			gate = "K4";
+            break;
+        case "2FB090-1000-042":
+			gate = "K4";
+            break;
+        case "2FB090-1250-053":
+			gate = "K2";
+            break;
+        case "2FB090-1500-064":
+			gate = "K2";
+            break;
+			
+		    case "2FB030-0190-003":
+            gate = "K6";
+            break;
+        case "2FB030-0250-004":
+            gate = "K4";
+            break;
+        case "2FB030-0320-005":
+            gate = "K6";
+            break;
+        case "2FB030-0380-006":
+            gate = "K4";
+            break;
+        case "2FB030-0500-007":
+            gate = "K6";
+            break;
+        case "2FB030-0750-011":
+            gate = "K6";
+            break;
+        case "2FB030-1000-014":
+            gate = "K6";
+            break;
+        case "2FB030-1250-018":
+            gate = "K6";
+            break;
+        case "2FB030-1500-021":
+            gate = "K6";
+            break;
+        case "2FB040-0250-005":
+            gate = "K4";
+            break;
+        case "2FB040-0320-006":
+            gate = "K6";
+            break;
+        case "2FB040-0380-007":
+            gate = "K4";
+            break;
+        case "2FB040-0500-009":
+            gate = "K4";
+            break;
+        case "2FB040-0750-015":
+            gate = "K6";
+            break;
+        case "2FB040-1000-019":
+            gate = "K4";
+            break;
+        case "2FB050-0250-006":
+            gate = "K4";
+            break;
+        case "2FB050-0320-008":
+            gate = "K4";
+            break;
+        case "2FB050-0380-009":
+            gate = "K4";
+            break;
+        case "2FB050-0500-012":
+            gate = "K4";
+            break;
+        case "2FB050-0750-018":
+            gate = "K4";
+            break;
+        case "2FB050-1000-024":
+            gate = "K4";
+            break;
+        case "2FB060-0250-007":
+            gate = "K6";
+            break;
+        case "2FB060-0320-009":
+            gate = "K6";
+            break;
+        case "2FB060-0380-011":
+            gate = "K4";
+            break;
+        case "2FB060-0500-014":
+            gate = "K6";
+            break;
+        case "2FB060-0650-018":
+            gate = "K6";
+            break;
+        case "2FB060-0750-021":
+            gate = "K6";
+            break;
+        case "2FB060-1000-028":
+            gate = "K4";
+            break;
+        case "2FB060-1250-035":
+            gate = "K6";
+            break;
+        case "2FB060-1500-042":
+            gate = "K4";
+            break;
+        case "2FB100-0250-012":
+            gate = "K6";
+            break;
+        case "2FB100-0320-015":
+            gate = "K6";
+            break;
+        case "2FB100-0380-018":
+            gate = "K6";
+            break;
+        case "2FB100-0500-024":
+            gate = "K6";
+            break;
+        case "2FB100-0750-035":
+            gate = "K6";
+            break;
+        case "2FB100-1000-047":
+            gate = "K6";
+            break;
+			
+		    case "2FB025-0250-003":
+			gate = "K8";
+            break;
+        case "2FB025-0320-004":
+			gate = "K8";
+            break;
+        case "2FB025-0380-005":
+			gate = "K8";
+            break;
+        case "2FB025-0500-006":
+			gate = "K8";
+            break;
+        case "2FB025-0750-009":
+			gate = "K8";
+            break;
+        case "2FB025-1000-012":
+			gate = "K8";
+            break;
+        case "2FB045-0250-005":
+			gate = "K8";
+            break;
+        case "2FB045-0320-007":
+			gate = "K8";
+            break;
+        case "2FB045-0380-008":
+			gate = "K8";
+            break;
+        case "2FB045-0500-011":
+			gate = "K8";
+            break;
+        case "2FB045-0750-016":
+			gate = "K8";
+            break;
+        case "2FB045-1000-021":
+			gate = "K8";
+            break;
+        case "2FB080-0250-009":
+			gate = "K6";
+            break;
+        case "2FB080-0320-012":
+			gate = "K6";
+            break;
+        case "2FB080-0380-014":
+			gate = "K6";
+            break;
+        case "2FB080-0500-019":
+			gate = "K6";
+            break;
+        case "2FB080-0650-024":
+			gate = "K6";
+            break;
+        case "2FB080-0750-028":
+			gate = "K6";
+            break;
+        case "2FB080-0800-030":
+			gate = "K6";
+            break;
+        case "2FB080-1000-038":
+			gate = "K6";
+            break;
+        case "2FB080-1250-047":
+			gate = "K6";
+            break;
+        case "2FB120-0250-014":
+			gate = "K6";
+            break;
+        case "2FB120-0320-018":
+			gate = "K8";
+            break;
+        case "2FB120-0380-021":
+			gate = "K8";
+            break;
+        case "2FB120-0500-028":
+			gate = "K8";
+            break;
+        case "2FB120-0650-037":
+			gate = "K8";
+            break;
+        case "2FB120-0750-042":
+			gate = "K6";
+            break;
+        case "2FB120-1000-057":
+			gate = "K8";
+            break;
+        case "2FB120-1250-071":
+			gate = "K8";
+            break;
+        case "2FB120-1500-085":
+			gate = "K6";
+            break;
+        case "2FB150-0500-035":
+			gate = "K8";
+            break;
+        case "2FB150-0750-053":
+			gate = "K8";
+            break;
+        case "2FB150-1000-071":
+			gate = "K8";
+            break;
+        case "2FB160-0500-038":
+			gate = "K8";
+            break;
+        case "2FB160-0750-057":
+			gate = "K8";
+            break;
+        case "2FB160-0750-VCS":
+			gate = "K8";
+            break;
+        case "2FB160-1000-075":
+			gate = "K8";
+            break;
+        case "2FB190-0500-045":
+			gate = "K8";
+            break;
+        case "2FB190-0750-067":
+			gate = "K8";
+            break;
+        case "2FB190-1000-090":
+			gate = "K8";
+            break;
+        case "2FB200-0500-047":
+			gate = "K8";
+            break;
+        case "2FB200-0750-071":
+			gate = "K8";
+            break;
+        case "2FB200-1000-094":
+			gate = "K8";
+            break;
+        case "2FB250-0500-059":
+			gate = "K8";
+            break;
+        case "2FB250-0750-088":
+			gate = "K8";
+            break;
+        case "2FB250-1000-118":
+			gate = "K8";
+            break;
+
+        case "2CTFB":
+			gate = "K2";
+            break;
+        case "2CTFB06":
+			gate = "K4";
+            break;
+			  case "2CTFB-CL":
+			gate = "K2";
+            break;
+			  case "2AK0000":
+			gate = "K2";
+            break;
+			  case "2UC0000":
+			gate = "K2";
+            break;
+			  case "2CH0000":
+			gate = "K2";
+            break;
+        case "2LS-120":
+			gate = "K2";
+            break;
+			  
+		  default:
+			gate = "";
+            break;
+      }
+
+    }else if (batch == ""){
+      gate = "รอย้าย!";
+    }else {
+      gate = "K2";
+    }
+      // ถ้าเป็นแถวใหม่ ให้เพิ่มเข้าไป
+      targetSheet.appendRow([...row.slice(0, 32), "ปกติ", gate, "0"]); // เพิ่มแถวใหม่พร้อมเว้นคอลัมน์ 33
+    
+    }
+  });
+  Logger.log('Pooling Dataset Updated');
+}
+
+function clearPoolingDataset() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Pooling Dataset");
+  sheet.clear();
+  Logger.log("Pooling Dataset cleared!");
+}
