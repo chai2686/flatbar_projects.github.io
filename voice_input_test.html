@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voice Input with Wake Lock</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 15px;
+      font-size: 1.2rem;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Speak to Enter Text</h2>
+  <input type="text" id="textInput" placeholder="Speak something..." />
+  <button id="micButton">🎤 Start Voice Input</button>
+
+  <script>
+  const micButton = document.getElementById('micButton');
+  const textInput = document.getElementById('textInput');
+
+  let recognition;
+  let isListening = false;
+
+  if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
+	grammarlist = new webkitSpeechGrammarList();
+	
+	//const grammar1 = '#JSGF V1.0; grammar colors; public <color> = red | green | blue ;';
+	
+    //recognition.lang = 'en-US';
+	recognition.lang = 'th-TH';
+    recognition.continuous = true; // <-- long dictation
+    recognition.interimResults = false;
+
+    recognition.onresult = function(event) {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        transcript += event.results[i][0].transcript;
+      }
+      textInput.value += transcript + ' ';
+    };
+
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error:', event.error);
+      if (event.error === 'no-speech' || event.error === 'audio-capture') {
+        stopListening();
+      }
+    };
+
+    recognition.onend = function() {
+      if (isListening) {
+        recognition.start(); // restart if still active
+      }
+    };
+  } else {
+    alert("Your browser doesn't support Speech Recognition.");
+  }
+
+  function startListening() {
+    isListening = true;
+    recognition.start();
+    micButton.textContent = '🛑 Stop Voice Input';
+  }
+
+  function stopListening() {
+    isListening = false;
+    recognition.stop();
+    micButton.textContent = '🎤 Start Voice Input';
+  }
+
+  micButton.addEventListener('click', () => {
+    if (!isListening) {
+      startListening();
+    } else {
+      stopListening();
+    }
+  });
+
+  // Wake Lock API
+  let wakeLock = null;
+
+  async function requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+        console.log('Wake Lock is active');
+
+        wakeLock.addEventListener('release', () => {
+          console.log('Wake Lock released');
+        });
+      } else {
+        console.warn('Wake Lock API not supported.');
+      }
+    } catch (err) {
+      console.error(`${err.name}, ${err.message}`);
+    }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (wakeLock !== null && document.visibilityState === 'visible') {
+      requestWakeLock();
+    }
+  });
+
+  requestWakeLock();
+</script>
+
+</body>
+</html>
