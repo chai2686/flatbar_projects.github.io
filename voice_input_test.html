@@ -11,7 +11,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      //height: 100vh;
       padding: 20px;
       background-color: #f0f0f0;
     }
@@ -32,6 +32,9 @@
   <h2>Speak to Enter Text</h2>
   <input type="text" id="textInput" placeholder="Speak something..." />
   <button id="micButton">🎤 Start Voice Input</button>
+  <input style="margin-top: 15px;" type="text" id="thicktext" placeholder="thick..." />
+  <input style="margin-top: 15px;" type="text" id="widthtext" placeholder="width..." />
+  <input style="margin-top: 15px;" type="text" id="lengthtext" placeholder="length..." />
 
   <script>
   const micButton = document.getElementById('micButton');
@@ -87,6 +90,7 @@
     isListening = false;
     recognition.stop();
     micButton.textContent = '🎤 Start Voice Input';
+	splitText();
   }
 
   micButton.addEventListener('click', () => {
@@ -104,10 +108,10 @@
     try {
       if ('wakeLock' in navigator) {
         wakeLock = await navigator.wakeLock.request('screen');
-        console.log('Wake Lock is active');
+        //console.log('Wake Lock is active');
 
         wakeLock.addEventListener('release', () => {
-          console.log('Wake Lock released');
+          //console.log('Wake Lock released');
         });
       } else {
         console.warn('Wake Lock API not supported.');
@@ -124,6 +128,65 @@
   });
 
   requestWakeLock();
+  
+  function splitText() {
+    const input = document.getElementById('textInput').value.trim();
+    const words = input.split(/\s+/); // split by one or more spaces
+    const thicktext = document.getElementById('thicktext');
+	const widthtext = document.getElementById('widthtext');
+	const lengthtext = document.getElementById('lengthtext');
+
+    const thicknessKeywords = ["min", "มิล", "มิลหน้า", "มม", "มมหน้า"];
+    let hasThickness = false;
+    for (const keyword of thicknessKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            thicktext.value = words[index - 1]; // Get the word before the keyword
+            hasThickness = true;
+            console.log("พบความหนา:", keyword, "=>", words[index - 1]);
+            break;
+        }
+    }
+
+    if (!hasThickness) {
+        console.log("ไม่พบความหนา");
+    }
+	
+	const widthKeywords = ["มิลหน้า", "หน้า", "มมหน้า"];
+    let haswidth = false;
+    for (const keyword of widthKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            widthtext.value = words[index + 1]; // Get the word before the keyword
+            haswidth = true;
+            console.log("พบหน้ากว้าง:", keyword, "=>", words[index + 1]);
+            break;
+        }
+    }
+
+    if (!haswidth) {
+        console.log("ไม่พบหน้ากว้าง");
+    }
+	
+	const lengthKeywords = ["ยาว", "ความยาว"];
+    let haslength = false;
+    for (const keyword of lengthKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            lengthtext.value = words[index + 1]; // Get the word before the keyword
+            haslength = true;
+            console.log("พบความยาว:", keyword, "=>", words[index + 1]);
+            break;
+        }
+    }
+
+    if (!haslength) {
+		lengthtext.value = 6000;
+        console.log("ไม่พบความยาว");
+    }
+	
+}
+	
 </script>
 
 </body>
