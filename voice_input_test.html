@@ -44,7 +44,9 @@
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	//const grammar1 = '#JSGF V1.0; grammar colors; public <color> = red | green | blue ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม ;';
+	grammarlist.addFromString(grammarsize, 1.0);
+	recognition.grammars = grammarlist;
 	
     //recognition.lang = 'en-US';
 	recognition.lang = 'th-TH';
