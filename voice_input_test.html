@@ -35,6 +35,8 @@
   <input style="margin-top: 15px;" type="text" id="thicktext" placeholder="thick..." />
   <input style="margin-top: 15px;" type="text" id="widthtext" placeholder="width..." />
   <input style="margin-top: 15px;" type="text" id="lengthtext" placeholder="length..." />
+  <input style="margin-top: 15px;" type="text" id="quantitytext" placeholder="quantity..." />
+  <input style="margin-top: 15px;" type="text" id="weighttext" placeholder="weight..." />
 
   <script>
   const micButton = document.getElementById('micButton');
@@ -184,6 +186,61 @@
 		lengthtext.value = 6000;
         console.log("ไม่พบความยาว");
     }
+	
+	const quantityKeywords = ["จำนวน"];
+    let hasquantity = false;
+    for (const keyword of quantityKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            quantitytext.value = words[index + 1]; // Get the word before the keyword
+            hasquantity = true;
+            console.log("พบจำนวน:", keyword, "=>", words[index + 1]);
+            break;
+        }
+    }
+	
+	const needKeywords = ["เอา"];
+    for (const keyword of needKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            quantitytext.value = words[index + 1]; // Get the word before the keyword
+            hasquantity = true;
+            console.log("พบจำนวน:", keyword, "=>", words[index + 1]);
+            break;
+        }
+    }
+
+    if (!hasquantity) {
+        console.log("ไม่พบจำนวน");
+    }
+	
+	const hasWeight = words.includes("น้ำหนัก");
+	const hasKG = words.includes("กิโล");
+	if (hasWeight && hasKG) {
+    console.log("พบน้ำหนัก");
+
+    const input = document.getElementById('textInput').value;
+
+    // Step 1: Extract text from "น้ำหนัก" to "กิโล"
+    const match = input.match(/น้ำหนัก(.*?)กิโล/);
+
+		if (match && match[1]) {
+			const mathText = match[1].trim(); // e.g., "352 + 675 - 300"
+
+			// Step 2: Clean the math expression to keep only digits and math symbols
+			const cleanExpr = mathText.replace(/[^0-9+\-*/.]/g, '');
+
+			try {
+				const sum = eval(cleanExpr); // e.g., eval("352+675-300")
+				weighttext.value = sum;
+				console.log("รวม:", sum);
+			} catch (err) {
+				console.error("ไม่สามารถคำนวณได้:", err);
+			}
+		} else {
+			console.log("ไม่พบรูปแบบน้ำหนักที่ถูกต้อง");
+		}
+	}
 	
 }
 	
