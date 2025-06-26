@@ -49,7 +49,7 @@
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล ;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
