@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Voice Input 1.60</title>
+  <title>Voice Input 1.61</title>
   <style>
     body {
       font-family: sans-serif;
@@ -49,7 +49,7 @@
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | แฟลตบาร์ ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | เหล็กแบน ;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
