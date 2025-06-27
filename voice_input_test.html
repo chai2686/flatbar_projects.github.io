@@ -49,7 +49,7 @@
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | แฟลตบาร์ ;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
@@ -214,8 +214,8 @@
         console.log("ไม่พบจำนวน");
     }
 	
-	const hasWeight = words.includes("น้ำหนัก");
-	const hasKG = words.includes("กิโล");
+	const hasWeight = input.includes("น้ำหนัก");
+	const hasKG = input.includes("กิโล");
 	if (hasWeight && hasKG) {
     console.log("พบน้ำหนัก");
 
