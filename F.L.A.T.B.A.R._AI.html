@@ -31,7 +31,7 @@
         .container {
             width: 100%;
             max-width: 480px;
-            height: 100%;
+            height: 90%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -141,7 +141,8 @@
 speechSynthesis.onvoiceschanged = () => {
     const voices = speechSynthesis.getVoices();
     selectedVoice = voices.find(voice =>
-        voice.lang === "th-TH" && voice.name.toLowerCase().includes("female")
+        //voice.lang === "th-TH" && voice.name.toLowerCase().includes("female")
+	voice.lang === "th-TH" && voice.name.toLowerCase().includes("male")
     );
 
     // Fallback: just pick any Thai voice if a female one is not found
