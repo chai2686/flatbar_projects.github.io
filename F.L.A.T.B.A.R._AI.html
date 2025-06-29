@@ -167,7 +167,7 @@ const cardContent = document.getElementById('card-content');
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | เหล็กแบน ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | เหล็กแบน | คือใคร | เป็นใคร ;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
@@ -266,8 +266,13 @@ function clearCard() {
 }
 
 function getCommand() {
+	//สำหรับคำสั่งหาข้อมูลรายการสินค้า
     const hasTruckNo = textInput.includes("ทะเบียน");
 	const hasNeedList = textInput.includes("เอาอะไร");
+	
+	const hasIntroduce0 = textInput.includes("คือใคร");
+	const hasIntroduce1 = textInput.includes("เป็นใคร");
+	
 	//สำหรับคำสั่งหาข้อมูลรายการสินค้า
 	if (hasTruckNo && hasNeedList) {
 		console.log("คำสั่งหารายการ");
@@ -275,10 +280,36 @@ function getCommand() {
 		console.log(truckNo);
 		if (truckNo && truckNo[1]) {
 			needListProcess(truckNo[1]);
+			return;
 		}
-	}else{
-		const sentence = "ต้องการให้ช่วยอะไรครับ";
-        displayCard("F.L.A.T.B.A.R AI", "ต้องการให้ช่วยอะไรครับ");
+	}
+	if (hasIntroduce0 || hasIntroduce1) {
+		console.log("Introduce start");
+		sentence = "ผมคือโปรแกรมผู้ช่วยของส่วนงานเหล็กแบนชื่อว่า 'แฟลตบาร์'  มีหน้าที่ช่วยงานของคุณให้ง่ายขึ้นด้วยคำสั่งเสียง แต่ในตอนนี้ยังขาดความแม่นยำซึ่งผมจะพยายามปรับปรุงอยู่ครับ";
+		displayCard("F.L.A.T.B.A.R AI", sentence);
+		interactiveSpeech(sentence);
+		textInput = "";
+		return;
+	}
+	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1){
+		let sentence = "";
+		const randomSentence = Math.floor(Math.random() * 3);
+		console.log(randomSentence);
+		switch (randomSentence) {
+			case 0:
+				sentence = "ต้องการให้ช่วยอะไรครับ";
+				console.log(sentence);
+			break;
+			case 1:
+				sentence = "มีอะไรให้รับใช้ครับเจ้านาย";
+				console.log(sentence);
+			break;
+			default:
+				sentence = "แฟลตบาร์ยินดีรับใช้ครับเจ้านาย";
+				console.log(sentence);
+		}
+		
+        displayCard("F.L.A.T.B.A.R AI", sentence);
         interactiveSpeech(sentence);
         return;
 	}
