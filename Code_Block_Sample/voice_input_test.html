@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voice Input 1.62</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      //height: 100vh;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 15px;
+      font-size: 1.2rem;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Speak to Enter Text</h2>
+  <input type="text" id="textInput" placeholder="Speak something..." />
+  <button id="micButton">🎤 Start Voice Input</button>
+  <input style="margin-top: 15px;" type="text" id="thicktext" placeholder="thick..." />
+  <input style="margin-top: 15px;" type="text" id="widthtext" placeholder="width..." />
+  <input style="margin-top: 15px;" type="text" id="lengthtext" placeholder="length..." />
+  <input style="margin-top: 15px;" type="text" id="quantitytext" placeholder="quantity..." />
+  <input style="margin-top: 15px;" type="text" id="weighttext" placeholder="weight..." />
+  <input style="margin-top: 15px;" type="text" id="sizetext" placeholder="sizetext..." />
+
+  <script>
+  const micButton = document.getElementById('micButton');
+  const textInput = document.getElementById('textInput');
+
+  let recognition;
+  let isListening = false;
+
+  if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
+	grammarlist = new webkitSpeechGrammarList();
+	
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | เหล็กแบน ;';
+	grammarlist.addFromString(grammarsize, 1.0);
+	recognition.grammars = grammarlist;
+	
+    //recognition.lang = 'en-US';
+	recognition.lang = 'th-TH';
+    recognition.continuous = true; // <-- long dictation
+    recognition.interimResults = false;
+
+    recognition.onresult = function(event) {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        transcript += event.results[i][0].transcript;
+      }
+      textInput.value += transcript + ' ';
+	  const hasRenew = textInput.value.includes("เอาใหม่"); //ค้นหาคำว่าเอาใหม่ในรายการคำพูด
+		if (hasRenew) {
+			textInput.value = ""; //เมื่อพบคำว่าเอาใหม่ ให้ล้างข้อความในอินพุททั้งหมดเพื่อรับคำสั่งใหม่
+		}
+    };
+
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error:', event.error);
+      if (event.error === 'no-speech' || event.error === 'audio-capture') {
+        stopListening();
+      }
+    };
+
+    recognition.onend = function() {
+      if (isListening) {
+        recognition.start(); // restart if still active
+      }
+    };
+  } else {
+    alert("Your browser doesn't support Speech Recognition.");
+  }
+
+  function startListening() {
+    isListening = true;
+    recognition.start();
+    micButton.textContent = '🛑 Stop Voice Input';
+  }
+
+  function stopListening() {
+    isListening = false;
+    recognition.stop();
+    micButton.textContent = '🎤 Start Voice Input';
+	splitText();
+	getSizeName()
+  }
+
+  micButton.addEventListener('click', () => {
+    if (!isListening) {
+      startListening();
+    } else {
+      stopListening();
+    }
+  });
+
+  // Wake Lock API
+  let wakeLock = null;
+
+  async function requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+        //console.log('Wake Lock is active');
+
+        wakeLock.addEventListener('release', () => {
+          //console.log('Wake Lock released');
+        });
+      } else {
+        console.warn('Wake Lock API not supported.');
+      }
+    } catch (err) {
+      console.error(`${err.name}, ${err.message}`);
+    }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (wakeLock !== null && document.visibilityState === 'visible') {
+      requestWakeLock();
+    }
+  });
+
+  requestWakeLock();
+  
+  var hasThickness = false;
+  var haswidth = false;
+  var haslength = false;
+  var hasquantity = false;
+  var hastotalweight = false;
+  
+  function splitText() {
+  
+    const input = document.getElementById('textInput').value.trim();
+    const words = input.split(/\s+/); // split by one or more spaces
+    const thicktext = document.getElementById('thicktext');
+	const widthtext = document.getElementById('widthtext');
+	const lengthtext = document.getElementById('lengthtext');
+
+    const thicknessKeywords = ["min", "มิล", "มิลหน้า", "มม", "มมหน้า"];
+    
+    for (const keyword of thicknessKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            thicktext.value = words[index - 1]; // Get the word before the keyword
+            hasThickness = true;
+            console.log("พบความหนา:", keyword, "=>", words[index - 1]);
+            break;
+        }
+    }
+
+    if (!hasThickness) {
+        console.log("ไม่พบความหนา");
+    }
+	
+	const widthKeywords = ["มิลหน้า", "หน้า", "มมหน้า"];
+    
+    for (const keyword of widthKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            widthtext.value = words[index + 1]; // Get the word before the keyword
+            haswidth = true;
+            console.log("พบหน้ากว้าง:", keyword, "=>", words[index + 1]);
+            break;
+        }
+    }
+
+    if (!haswidth) {
+        console.log("ไม่พบหน้ากว้าง");
+    }
+	
+	const lengthKeywords = ["ยาว", "ความยาว"];
+    
+    for (const keyword of lengthKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            lengthtext.value = words[index + 1]; // Get the word before the keyword
+            haslength = true;
+            console.log("พบความยาว:", keyword, "=>", words[index + 1]);
+            break;
+        }
+    }
+
+    if (!haslength) {
+		lengthtext.value = 6000;
+		haslength = true;
+        console.log("ไม่พบความยาว");
+    }
+	
+	const quantityKeywords = ["จำนวน"];
+    
+    for (const keyword of quantityKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            quantitytext.value = words[index + 1]; // Get the word before the keyword
+            hasquantity = true;
+            console.log("พบจำนวน:", keyword, "=>", words[index + 1]);
+            break;
+        }
+    }
+	
+	const needKeywords = ["เอา"];
+    for (const keyword of needKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            quantitytext.value = words[index + 1]; // Get the word before the keyword
+            hasquantity = true;
+            console.log("พบจำนวน:", keyword, "=>", words[index + 1]);
+            break;
+        }
+    }
+
+    if (!hasquantity) {
+        console.log("ไม่พบจำนวน");
+    }
+	
+	const hasWeight = input.includes("น้ำหนัก");
+	const hasKG = input.includes("กิโล");
+	if (hasWeight && hasKG) {
+		console.log("พบน้ำหนัก");
+
+		const input = document.getElementById('textInput').value;
+
+    // Step 1: Extract text from "น้ำหนัก" to "กิโล"
+    const match = input.match(/น้ำหนัก(.*?)กิโล/);
+
+		if (match && match[1]) {
+			const mathText = match[1].trim(); // e.g., "352 + 675 - 300"
+
+			// Step 2: Clean the math expression to keep only digits and math symbols
+			const cleanExpr = mathText.replace(/[^0-9+\-*/.]/g, '');
+
+			try {
+				const sum = eval(cleanExpr); // e.g., eval("352+675-300")
+				weighttext.value = sum;
+				hastotalweight = true;
+				console.log("รวม:", sum);
+			} catch (err) {
+				console.error("ไม่สามารถคำนวณได้:", err);
+			}
+		} else {
+			console.log("ไม่พบรูปแบบน้ำหนักที่ถูกต้อง");
+		}
+	}
+	
+}
+
+function getSizeName() {
+	if (hasThickness && haswidth && haslength){
+		thickness = document.getElementById('thicktext').value;
+		width = document.getElementById('widthtext').value;
+		length = document.getElementById('lengthtext').value;
+		
+		document.getElementById('sizetext').value = "เหล็กแบน "+thickness+" มม. หน้า "+width+" มม. ความยาว "+length+" มม.";
+	}
+}
+	
+</script>
+
+</body>
+</html>

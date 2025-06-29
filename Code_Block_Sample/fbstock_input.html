@@ -1,0 +1,166 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานเหล็กแบน">
+    <meta name="Version" content="1.2 BETA">
+    <title>บันทึกการใช้ไม้</title>
+    <link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
+    <link rel="icon" href="flatbar_fav.png" type="image/png">
+    <style>
+        /* Set the height and width to match the desired resolution */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff; /* White background color */
+        }
+        .container {
+            width: 100%;
+            max-width: 768px;
+            height: 100%;
+            max-height: 1280px;
+            background-color: #f0f0f0; /* Light grey background color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dropdown, .text-input {
+            width: 90%;
+            height: 50px;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 20px;
+        }
+        .radio-label {
+            margin-right: 20px;
+        }
+		.radio-check {
+			height:20px;
+			width:20px;
+			vertical-align: middle;
+		}
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 90%;
+        }
+        .button {
+            width: 90%;
+            height: 50px;
+            margin-left: 4px;
+            margin-right: 4px;
+			box-shadow:inset 0px 1px 0px 0px #97c4fe;
+			background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
+			background-color:#3d94f6;
+			border-radius:6px;
+			border:1px solid #337fed;
+			display:inline-block;
+			cursor:pointer;
+			color:#ffffff;
+			font-family:Arial;
+			font-size:14px;
+			font-weight:bold;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #1570cd;
+        }
+		.usersection {
+			margin-left: 10%;
+			margin-right: 10%;
+			width: 100%;
+			max-width: 768px;
+			display: flex;
+            flex-direction: row;
+            align-items: center;
+			justify-content: space-around;
+		}
+    </style>
+</head>
+<body>
+    <div class="container">
+		<h2 style="text-align:left; margin-bottom: 5px;	padding-right: 55px">🪓 บันทึกการใช้ไม้</h2>
+        <div class="fleetsection" style="
+    display: flex;
+    justify-content: space-around;
+">
+            <input type="text" class="text-input" placeholder="🚛 ทะเบียนรถ" id="truckno" style="width: 45%;">
+            <select class="dropdown" id="fleettype" aria-label="ประเภทรถ" style="width: 45%;">
+			<option value="ไม่ระบุ" disabled="" selected="">ประเภทรถ</option>
+            <option value="รถ TMT">รถ TMT</option>
+            <option value="รถร่วม">รถร่วม</option>
+            <option value="รถลูกค้า">รถลูกค้า</option>
+            </select>
+        </div>
+		
+		<div class="inputsection" style="
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    ">
+			<input type="text" class="text-input" placeholder="🚛 ชื่อลูกค้า" id="customer" style="width: 100%;">
+			<input type="number" class="text-input" placeholder="🪓 จำนวนไม้" id="quantity" style="width: 50%;">
+		</div>
+		<div class="button-group">
+            <button onclick="save()" class="button">💾บันทึก</button>			 
+            <button onclick="clearScreen()" class="button">🖥️ล้างจอ</button>
+            <button onclick="goToReport()" class="button">📊รายงานการใช้ไม้</button>
+        </div>
+	    <p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.2 BETA</p>
+            <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+    </div>
+    <script>
+		function save() {
+			var url = "https://docs.google.com/forms/d/e/1FAIpQLSdGX7qVvFUbMF18VCb8ZrgCK7nl0255ycNOrK6NPZOsURZVcw/formResponse?entry.1274722512=";
+			var	entryfleettype = "&entry.1113222122=";
+			var entrycustomer = "&entry.1060205353=";
+			var entrycuantity = "&entry.1605573789=";
+			
+			var fleettypeid = document.getElementById('fleettype').selectedIndex;
+			var fleettype = document.getElementById('fleettype').value;
+			var truckno = document.getElementById('truckno').value;
+			var customer = document.getElementById('customer').value;
+			var quantity = document.getElementById('quantity').value || 0;
+			
+			if (fleettypeid === 0 || !truckno || !customer ) {
+				alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+			return;
+			}
+			
+			var alertmsg = "";
+			
+			alertmsg += fleettype + "ทะเบียน " + truckno + " ลูกค้า " + customer + " ขึ้นไม้ไปจำนวน " + quantity + " ท่อน";
+			
+			url += truckno + entryfleettype + fleettype + entrycustomer + customer + entrycuantity + quantity;
+			
+			var img = document.createElement("img");
+			img.src = url;
+			alert(alertmsg);
+			
+		}
+		function clearScreen() {
+			document.getElementById('fleettype').selectedIndex = 0;
+			document.getElementById('truckno').value = "";
+			document.getElementById('customer').value = "";
+			document.getElementById('quantity').value = "";
+		}
+		
+		function goToReport() {
+		//เปิดหน้าเว็บไปที่ลิงค์ตารางข้อมูลที่บันทึก
+      		window.open("https://docs.google.com/spreadsheets/d/1sVl3k9jBvtDFlzkOUDjIEMjWHi9YEi3c_H7ynZ-jVi4/htmlview?gid=1764166932#gid=1764166932&range=A1", "_blank");
+    	}
+    </script>
+
+</body></html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Content</title>
+</head>
+<body>
+    <input type="text" id="myTextbox" placeholder="Content will appear here">
+    <button onclick="fetchContent()">Fetch Content</button>
+	<p id="testlabel" onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.0 BETA</p>
+    <script>
+		async function fetchContent() {
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log'); // Replace with your URL
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        const data = await response.text(); // Use .json() if the response is in JSON format
+        document.getElementById('testlabel').textContent = data;
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+}
+	</script>
+</body>
+</html>

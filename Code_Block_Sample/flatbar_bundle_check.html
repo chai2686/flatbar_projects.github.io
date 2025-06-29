@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานเหล็กแบน">
+  <meta name="Version" content="1.6 Technical Review">
+  <title>แสกนเช็คบันเดิ้ล</title>
+  <link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
+  <link rel="icon" href="flatbar_fav.png" type="image/png">
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #qr-input01 {
+      font-size: 1.2rem;
+      width: 60%;
+      padding: 10px;
+    }
+    #open-scanner01 {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#savebutton {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+	#reportbutton {
+      padding: 10px 15px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+    #qr-popup {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      border: 2px solid #333;
+      z-index: 1000;
+	  width: 400px;
+
+    }
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+	<!-- ส่วนรับข้อมูล -->
+  <h2>แสกน QR code</h2>
+  <input type="text" id="qr-input01" placeholder="หากแสกนไม่ติดให้พิมพ์เลขบันเดิ้ลที่นี่..." >
+  <button id="open-scanner01">แสกน QR</button>
+  <button id="savebutton" onclick="save()">💾บันทึก</button>
+  <button id="reportbutton" onclick="goToReport()">📋รายงาน</button><br>
+
+  <!-- Overlay and Popup -->
+  <div id="overlay"></div>
+  <div id="qr-popup">
+    <div id="qr-reader" style="width: 400px;"></div>
+    <button onclick="closeScanner()">ยกเลิก</button>
+  </div>
+  
+  <div id="footnote">
+        <p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.63 Technical Review</p>
+        <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+  </div>
+
+  <script>
+    const inputField = document.getElementById('qr-input');
+    const overlay = document.getElementById('overlay');
+    const popup = document.getElementById('qr-popup');
+    let html5QrCode;
+
+    document.getElementById('open-scanner01').addEventListener('click', () => {
+      overlay.style.display = 'block';
+      popup.style.display = 'block';
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 250
+            },
+            qrCodeMessage => {
+              document.getElementById('qr-input01').value = qrCodeMessage;
+              closeScanner();
+            },
+            errorMessage => {
+              // Optional: console.log(errorMessage);
+            }
+          );
+        }
+      }).catch(err => {
+        alert("Camera access error: " + err);
+        closeScanner();
+      });
+    });
+	
+    function closeScanner() {
+      overlay.style.display = 'none';
+      popup.style.display = 'none';
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          html5QrCode.clear();
+        });
+      }
+    }
+	
+	function save() {
+		let qrinputtext = document.getElementById('qr-input01').value; //รับค่าข้อความจากช่องแสกน QR
+		let qrinput = qrinputtext.split('*'); //แบ่งข้อความเป็นส่วนๆด้วยเครื่องหมายดอกจันทร์
+		let starCount = qrinput.length - 1; //นับจำนวนเครื่องหมายดอกจันทร์
+		
+		if	(starCount == 5){
+			//ถ้าเครื่องหมายดอกจันทร์ = 5 แสดงว่าข้อมูลแสกนถูกต้องให้กำเนินงานต่อ
+			var url = "https://docs.google.com/forms/d/e/1FAIpQLSce2rhphN2bMz6WG-qgraHxjbVPsMm7XNNWrKMmR2yLLh84qw/formResponse?usp=pp_url";
+			var entrybundle = "&entry.97850149=";
+			var entrysize = "&entry.812203754=";
+			var entrybatch = "&entry.1756656766=";
+			var entryquantity = "&entry.2112134701=";
+			var entryweight = "&entry.1706620145=";
+			var entrydate = "&entry.335921625=";
+			
+			var bundle = qrinput[0];
+			var size = qrinput[1];
+			var batch = qrinput[2];
+			var quantity = qrinput[3];
+			var weight = qrinput[4];
+			var date = qrinput[5];
+			
+			url += entrybundle + bundle + entrysize + size + entrybatch + batch + entryquantity + quantity + entryweight + weight + entrydate + date;
+			var img = document.createElement("img");
+			img.src = url;
+			
+			document.getElementById('qr-input01').value = "";
+			//console.log(bundle+size+quantity+batch+date);
+		}
+		else if	(starCount == 4){
+			//ถ้าเครื่องหมายดอกจันทร์ = 4 แสดงว่าข้อมูลแสกนถูกต้องให้กำเนินงานต่อ
+			var url = "https://docs.google.com/forms/d/e/1FAIpQLSce2rhphN2bMz6WG-qgraHxjbVPsMm7XNNWrKMmR2yLLh84qw/formResponse?usp=pp_url";
+			var entrybundle = "&entry.97850149=";
+			var entrysize = "&entry.812203754=";
+			var entrybatch = "&entry.1756656766=";
+			var entryquantity = "&entry.2112134701=";
+			var entryweight = "&entry.1706620145=";
+			
+			var bundle = qrinput[0];
+			var size = qrinput[1];
+			var batch = qrinput[2];
+			var quantity = qrinput[3];
+			var weight = qrinput[4];
+			
+			url += entrybundle + bundle + entrysize + size + entrybatch + batch + entryquantity + quantity + entryweight + weight;
+			var img = document.createElement("img");
+			img.src = url;
+			
+			document.getElementById('qr-input01').value = "";
+			//console.log(bundle+size+quantity+batch+date);
+		}
+		else {
+			
+				var filter = /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/;
+
+            if (filter.test(qrinputtext)) {
+              if(qrinputtext.length==10){
+                   var validate = true;
+              } else {
+                  alert('กรุณาใส่เลขบันเดิ้ล 10 หลัก');
+                  var validate = false;
+              }
+            }
+            else {
+              alert('เลขบันเดิ้ลไม่ถูกต้อง');
+              var validate = false;
+            }
+			
+			if(validate){
+				var url = "https://docs.google.com/forms/d/e/1FAIpQLSce2rhphN2bMz6WG-qgraHxjbVPsMm7XNNWrKMmR2yLLh84qw/formResponse?usp=pp_url";
+				var entrybundle = "&entry.97850149=";
+				
+				url += entrybundle + qrinputtext;
+				var img = document.createElement("img");
+				img.src = url;
+				
+				document.getElementById('qr-input01').value = "";
+			}
+				console.log(qrinputtext);
+
+		}
+		
+    }
+	
+	function goToReport() {
+			window.open("https://docs.google.com/spreadsheets/d/1Pt-i1x8uGM3Czue4mdV9yh0wdOVrit7a63ln1AEps_Y/htmlview?gid=1117717488#gid=1117717488", "_blank");
+		}
+  </script>
+</body>
+</html>

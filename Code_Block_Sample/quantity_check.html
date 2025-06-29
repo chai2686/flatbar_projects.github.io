@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warehouse Inventory Checker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    .search-container, .quantity-check-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input[type="text"], input[type="number"] {
+      width: 300px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #e9ecef;
+    }
+    .result-message {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Warehouse Inventory Checker</h1>
+  
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search by item name or ID..." onkeyup="filterInventory()">
+  </div>
+  
+  <div class="quantity-check-container">
+    <input type="text" id="itemIDInput" placeholder="Enter Item ID">
+    <input type="number" id="quantityInput" placeholder="Enter Quantity to Verify">
+    <button onclick="verifyQuantity()">Check Quantity</button>
+  </div>
+
+  <div id="resultMessage" class="result-message"></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Item ID</th>
+        <th>Item Name</th>
+        <th>Quantity</th>
+        <th>Location</th>
+      </tr>
+    </thead>
+    <tbody id="inventoryTable">
+      <tr>
+        <td>101</td>
+        <td>Widget A</td>
+        <td>50</td>
+        <td>Aisle 1</td>
+      </tr>
+      <tr>
+        <td>102</td>
+        <td>Widget B</td>
+        <td>30</td>
+        <td>Aisle 2</td>
+      </tr>
+      <tr>
+        <td>103</td>
+        <td>Gadget C</td>
+        <td>20</td>
+        <td>Aisle 3</td>
+      </tr>
+      <tr>
+        <td>104</td>
+        <td>Tool D</td>
+        <td>15</td>
+        <td>Aisle 4</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    function filterInventory() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const table = document.getElementById("inventoryTable");
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j].innerText.toLowerCase().includes(input)) {
+            match = true;
+            break;
+          }
+        }
+
+        rows[i].style.display = match ? "" : "none";
+      }
+    }
+
+    function verifyQuantity() {
+      const itemID = document.getElementById("itemIDInput").value.trim();
+      const requestedQuantity = parseInt(document.getElementById("quantityInput").value);
+      const resultMessage = document.getElementById("resultMessage");
+
+      if (!itemID || isNaN(requestedQuantity) || requestedQuantity <= 0) {
+        resultMessage.textContent = "Please enter a valid Item ID and quantity.";
+        resultMessage.className = "result-message error";
+        return;
+      }
+
+      const table = document.getElementById("inventoryTable");
+      const rows = table.getElementsByTagName("tr");
+      let itemFound = false;
+
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+
+        if (cells[0].innerText === itemID) {
+          itemFound = true;
+          const availableQuantity = parseInt(cells[2].innerText);
+
+          if (requestedQuantity <= availableQuantity) {
+            resultMessage.textContent = `Success! ${requestedQuantity} units of Item ID ${itemID} are available.`;
+            resultMessage.className = "result-message success";
+          } else {
+            resultMessage.textContent = `Error! Only ${availableQuantity} units of Item ID ${itemID} are available.`;
+            resultMessage.className = "result-message error";
+          }
+
+          break;
+        }
+      }
+
+      if (!itemFound) {
+        resultMessage.textContent = `Error! Item ID ${itemID} not found in inventory.`;
+        resultMessage.className = "result-message error";
+      }
+    }
+  </script>
+</body>
+</html>
