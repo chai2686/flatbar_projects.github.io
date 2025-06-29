@@ -102,7 +102,14 @@
         }
 		
 		td {
-			font-size: 14px
+			font-size: 14px;
+		}
+		
+		
+	.version {
+		    font-size: 12px;
+			display: flex;
+			flex-direction: row-reverse;
 		}
     </style>
 </head>
@@ -131,6 +138,9 @@
 
         <footer class="footer">
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
+        </footer>
+		<footer>
+            <p class="version">Version 1.63</p>
         </footer>
     </div>
 
@@ -167,7 +177,7 @@ const cardContent = document.getElementById('card-content');
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | เหล็กแบน | คือใคร | เป็นใคร ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
@@ -198,7 +208,7 @@ const cardContent = document.getElementById('card-content');
     recognition.onerror = function(event) {
       console.error('Speech recognition error:', event.error);
       if (event.error === 'no-speech' || event.error === 'audio-capture') {
-        stopListening();
+        //stopListening();
       }
     };
 
@@ -273,6 +283,18 @@ function getCommand() {
 	const hasIntroduce0 = textInput.includes("คือใคร");
 	const hasIntroduce1 = textInput.includes("เป็นใคร");
 	
+	let hasFleet = false;
+	const hasCustomerFleet = textInput.includes("รถลูกค้า");
+	const hasVenderFleet = textInput.includes("รถร่วม");
+	const hasTMTFleet = textInput.includes("รถบริษัท");
+	if (hasCustomerFleet || hasVenderFleet || hasTMTFleet) {
+		hasFleet = true;
+		console.log(hasFleet);
+	}
+	
+	const hasWood = textInput.includes("ท่อน");
+	const hasCustomerName = textInput.includes("ชื่อลูกค้า");
+	
 	//สำหรับคำสั่งหาข้อมูลรายการสินค้า
 	if (hasTruckNo && hasNeedList) {
 		console.log("คำสั่งหารายการ");
@@ -283,6 +305,64 @@ function getCommand() {
 			return;
 		}
 	}
+	
+	if (hasTruckNo && hasFleet && hasWood) {
+		let fleettype = "";
+		if (hasCustomerFleet) {
+			fleettype = "รถลูกค้า";
+		}else if (hasVenderFleet) {
+			fleettype = "รถร่วม";
+		}else if (hasTMTFleet) {
+			fleettype = "รถบริษัท";
+		}
+		
+		let wood = 0;
+		let truckno = "";
+		
+		const words = textInput.split(/\s+/);
+		
+		const woodKeywords = ["ท่อน"];
+		for (const keyword of woodKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            wood = words[index - 1]; // Get the word before the keyword
+            console.log(fleettype, " จำนวนไม้: ", words[index - 1]," ท่อน");
+			break;
+			}	
+		}
+		
+		const trucknoKeywords = ["ทะเบียน", "รถบริษัททะเบียน", "รถร่วมทะเบียน", "รถลูกค้าทะเบียน"];
+		for (const keyword of trucknoKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index >= 0) {
+            truckno = words[index + 1]; // Get the word before the keyword
+            console.log("ทะเบียน : ",truckno);
+			break;
+			}	
+		}
+		
+		if (!hasCustomerName) {
+			const hasConfirm = textInput.includes("บันทึก");
+			if(hasConfirm) {
+				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน";
+				displayCard("F.L.A.T.B.A.R AI", sentence);
+				interactiveSpeech("ทำการบันทึกแล้วครับเจ้านาย.");
+				textInput = "";
+			}else{
+				sentence = "ต้องการบันทึกโดยไม่ระบุชื่อลูกค้าหรือไม่? ถ้ามีชื่อลูกค้ากรุณาบอกด้วยครับ.";
+				displayCard("F.L.A.T.B.A.R AI", sentence);
+				interactiveSpeech(sentence);
+			}
+		}else{
+			const customername = textInput.match(/ชื่อลูกค้า(.*?) /);
+			sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ชื่อลูกค้า "+customername;
+			displayCard("F.L.A.T.B.A.R AI", sentence);
+			interactiveSpeech("ทำการบันทึกแล้วครับเจ้านาย.");
+			textInput = "";
+		}
+	}
+	
+	//สำหรับคำสั่งแนะนำตัวเอง
 	if (hasIntroduce0 || hasIntroduce1) {
 		console.log("Introduce start");
 		sentence = "ผมคือโปรแกรมผู้ช่วยของส่วนงานเหล็กแบนชื่อว่า 'แฟลตบาร์'  มีหน้าที่ช่วยงานของคุณให้ง่ายขึ้นด้วยคำสั่งเสียง แต่ในตอนนี้ยังขาดความแม่นยำซึ่งผมจะพยายามปรับปรุงอยู่ครับ";
@@ -291,7 +371,8 @@ function getCommand() {
 		textInput = "";
 		return;
 	}
-	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1){
+	//สำหรับข้อความต้อนรับเมื่อไม่ได้คำสั่งใดๆ
+	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName){
 		let sentence = "";
 		const randomSentence = Math.floor(Math.random() * 3);
 		console.log(randomSentence);
@@ -364,6 +445,7 @@ function needListProcess(keyword) {
       });
 
 }
+
 //ฟังชั่นที่ใช้ในการพูด
 function interactiveSpeech(sentence) {
 	let utterance = new SpeechSynthesisUtterance(sentence);
