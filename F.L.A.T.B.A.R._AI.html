@@ -140,7 +140,7 @@
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.63</p>
+            <p class="version">Version 1.64</p>
         </footer>
     </div>
 
@@ -200,7 +200,7 @@ const cardContent = document.getElementById('card-content');
 			setTimeout(() => {
 				clearCard();
 				status.textContent = 'กำลังฟังอยู่...';
-				interactiveSpeech('ว่ามาเลยครับเจ้านาย.');
+				interactiveSpeech('ว่ามาเลยครับเจ้านาย');
 			}, 1000);
 		}
     };
@@ -229,6 +229,10 @@ const cardContent = document.getElementById('card-content');
   }
 
   function stopListening() {
+	//Debug
+	//textInput = "น้ำหนัก 525 กิโล";
+	//console.log("Debug : ",textInput);
+  
     isListening = false;
     recognition.stop();
     status.textContent = 'กดที่ลูกบอลเพื่อพูด';
@@ -278,7 +282,13 @@ function clearCard() {
 function getCommand() {
 	//สำหรับคำสั่งหาข้อมูลรายการสินค้า
     const hasTruckNo = textInput.includes("ทะเบียน");
-	const hasNeedList = textInput.includes("เอาอะไร");
+	
+	let hasNeedList = false;
+	const hasNeedList1 = textInput.includes("เอาอะไร");
+	const hasNeedList2 = textInput.includes("ขึ้นอะไร");
+	if (hasNeedList1 || hasNeedList2) {
+		hasNeedList = true;
+	}
 	
 	const hasIntroduce0 = textInput.includes("คือใคร");
 	const hasIntroduce1 = textInput.includes("เป็นใคร");
@@ -295,10 +305,37 @@ function getCommand() {
 	const hasWood = textInput.includes("ท่อน");
 	const hasCustomerName = textInput.includes("ชื่อลูกค้า");
 	
+	const hasWeight = textInput.includes("น้ำหนัก");
+	const hasKG = textInput.includes("กิโล");
+	
+	//สำหรับตอบกลับเมื่อมีแค่ข้อมูลทะเบียนอย่างเดียว
+	if (hasTruckNo && !hasNeedList && !hasFleet) {
+		console.log("Start TruckNo");
+		const words = textInput.split(/\s+/);
+		const TruckNoKeywords = ["ทะเบียน"];
+		let truckno = "";
+		for (const keyword of TruckNoKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index >= 0) {
+            truckno = words[index + 1];
+			sentence = "ทะเบียน "+truckno+" ต้องการข้อมูลอะไรครับเจ้านาย";
+			displayCard("F.L.A.T.B.A.R AI", sentence);
+			interactiveSpeech(sentence);
+            console.log(truckno);
+			break;
+			}	
+		}
+	}
+	
 	//สำหรับคำสั่งหาข้อมูลรายการสินค้า
 	if (hasTruckNo && hasNeedList) {
 		console.log("คำสั่งหารายการ");
-		const truckNo = textInput.match(/ทะเบียน(.*?)เอาอะไร/);
+		let truckNo = "";
+		if (hasNeedList1) {
+			truckNo = textInput.match(/ทะเบียน(.*?)เอาอะไร/);
+		}else if (hasNeedList2) {
+			truckNo = textInput.match(/ทะเบียน(.*?)ขึ้นอะไร/);
+		}
 		console.log(truckNo);
 		if (truckNo && truckNo[1]) {
 			needListProcess(truckNo[1]);
@@ -306,6 +343,7 @@ function getCommand() {
 		}
 	}
 	
+	//สำหรับคำสั่งบันทึกการใช้ไม้
 	if (hasTruckNo && hasFleet && hasWood) {
 		let fleettype = "";
 		if (hasCustomerFleet) {
@@ -372,7 +410,7 @@ function getCommand() {
 		return;
 	}
 	//สำหรับข้อความต้อนรับเมื่อไม่ได้คำสั่งใดๆ
-	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName){
+	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName && !hasWeight && !hasKG){
 		let sentence = "";
 		const randomSentence = Math.floor(Math.random() * 3);
 		console.log(randomSentence);
@@ -393,6 +431,13 @@ function getCommand() {
         displayCard("F.L.A.T.B.A.R AI", sentence);
         interactiveSpeech(sentence);
         return;
+	}
+	
+	//สำหรับคำนวณน้ำหนัก
+	if (hasWeight && hasKG) {
+		console.log("พบข้อมูลน้ำหนัก");
+		
+		weightProcess();
 	}
 }
 
@@ -446,11 +491,32 @@ function needListProcess(keyword) {
 
 }
 
+//ฟังชั่นที่ใช้คำนวณน้ำหนัก
+function weightProcess () {
+	const match = textInput.match(/น้ำหนัก(.*?)กิโล/);
+
+	if (match && match[1]) {
+		const mathText = match[1].trim();
+		const cleanExpr = mathText.replace(/[^0-9+\-*/.]/g, '');
+		try {
+			const sum = eval(cleanExpr); // e.g., eval("352+675-300")
+			console.log("รวม:", sum);
+			sentence = "น้ำหนักเท่ากับ = "+sum+" กิโล";
+			displayCard("("+cleanExpr+") ", sentence+"กรัม");
+			interactiveSpeech(sentence+".");
+		} catch (err) {
+			console.error("ไม่สามารถคำนวณได้:", err);
+		}
+	} else {
+		console.log("ไม่พบรูปแบบน้ำหนักที่ถูกต้อง");
+	}
+}
+
 //ฟังชั่นที่ใช้ในการพูด
 function interactiveSpeech(sentence) {
 	let utterance = new SpeechSynthesisUtterance(sentence);
 	utterance.lang = "th-TH";
-	utterance.rate = 0.9;
+	utterance.rate = 0.8;
 	speechSynthesis.speak(utterance);
 }
 
