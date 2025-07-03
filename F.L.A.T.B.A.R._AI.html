@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="เว็บแอพผู้ช่วยงานคำสั่งเสียง">
+    <meta name="Version" content="1.65 Beta">
+	<link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
+    <link rel="icon" href="flatbar_fav.png" type="image/png">
     <title>F.L.A.T.B.A.R. AI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
@@ -140,7 +144,7 @@
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.64</p>
+            <p class="version">Version 1.65 Beta</p>
         </footer>
     </div>
 
@@ -177,7 +181,7 @@ const cardContent = document.getElementById('card-content');
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย ;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
@@ -230,7 +234,7 @@ const cardContent = document.getElementById('card-content');
 
   function stopListening() {
 	//Debug
-	//textInput = "น้ำหนัก 525 กิโล";
+	textInput = "วันนี้ใครเวรลากยาว";
 	//console.log("Debug : ",textInput);
   
     isListening = false;
@@ -266,19 +270,6 @@ const cardContent = document.getElementById('card-content');
 //
 //});
 
-function displayCard(title, content) {
-    cardTitle.textContent = title;
-    cardContent.textContent = content;
-    infoCard.style.display = 'block';
-}
-
-function clearCard() {
-    cardTitle.textContent = "";
-    cardContent.textContent = "";
-    infoCard.style.display = 'none';
-	document.getElementById('dataTable').style.display = 'none';
-}
-
 function getCommand() {
 	//สำหรับคำสั่งหาข้อมูลรายการสินค้า
     const hasTruckNo = textInput.includes("ทะเบียน");
@@ -290,6 +281,7 @@ function getCommand() {
 		hasNeedList = true;
 	}
 	
+	//สำหรับคำสั่งแนะนำตัวเอง
 	const hasIntroduce0 = textInput.includes("คือใคร");
 	const hasIntroduce1 = textInput.includes("เป็นใคร");
 	
@@ -302,11 +294,25 @@ function getCommand() {
 		console.log(hasFleet);
 	}
 	
+	//สำหรับคำสั่งบันทึกการใช้ไม้
 	const hasWood = textInput.includes("ท่อน");
 	const hasCustomerName = textInput.includes("ชื่อลูกค้า");
 	
+	//สำหรับคำนวณน้ำหนัก
 	const hasWeight = textInput.includes("น้ำหนัก");
 	const hasKG = textInput.includes("กิโล");
+	
+	//สำหรับคำสั่งดูเวรเช็คเครน
+	const hasCraneCheck = textInput.includes("เช็คเครน");
+	
+	//สำหรับคำสั่งดูเวรลากยาว
+	let hasSecondShift = false;
+	const hasSecondShift1 = textInput.includes("ลากยาว");
+	const hasSecondShift2 = textInput.includes("เบรคบ่าย");
+	if (hasSecondShift1 || hasSecondShift2) {
+		hasSecondShift = true;
+		console.log("คำสั่งหาเวรลากยาว");
+	}
 	
 	//สำหรับตอบกลับเมื่อมีแค่ข้อมูลทะเบียนอย่างเดียว
 	if (hasTruckNo && !hasNeedList && !hasFleet) {
@@ -409,8 +415,18 @@ function getCommand() {
 		textInput = "";
 		return;
 	}
+	
+	//สำหรับคำสั่งดูเวรเช็คเครน
+	if (hasCraneCheck) {
+		craneCheckList();
+	}
+	//สำหรับคำสั่งดูเวรลากยาว
+	if (hasSecondShift) {
+		secondShiftList();
+	}
+	
 	//สำหรับข้อความต้อนรับเมื่อไม่ได้คำสั่งใดๆ
-	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName && !hasWeight && !hasKG){
+	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName && !hasWeight && !hasKG && !hasCraneCheck && !hasSecondShift){
 		let sentence = "";
 		const randomSentence = Math.floor(Math.random() * 3);
 		console.log(randomSentence);
@@ -441,11 +457,12 @@ function getCommand() {
 	}
 }
 
+//สำหรับคำสั่งหาข้อมูลรายการสินค้า
 function needListProcess(keyword) {
 	console.log("start process"+keyword);
 	const apiKey = "AIzaSyAFnyXSAki4LiczKNhyEzbhHsvTC-abfAo";
-  const spreadsheetId = "1Ia10xULe8AHMKDQGfidlf9eBdi0RUtZe4OQlFeF_ELY";
-  const range = "Shipment for AI!A:E";
+	const spreadsheetId = "1Ia10xULe8AHMKDQGfidlf9eBdi0RUtZe4OQlFeF_ELY";
+	const range = "Shipment for AI!A:E";
 
 	let allRows = [];
 
@@ -470,7 +487,8 @@ function needListProcess(keyword) {
       tableBody.appendChild(tr);
     });
 	document.getElementById('dataTable').style.display = 'block';
-	displayCard();
+	const cardHeader = "รายการสินค้าสำหรับทะเบียน "+keyword;
+	displayCard(cardHeader);
 	
 	if (filteredRows.length === 0) {
         const sentence = `ไม่พบรายการสินค้าสำหรับทะเบียน ${keyword}`;
@@ -512,6 +530,53 @@ function weightProcess () {
 	}
 }
 
+//สำหรับคำสั่งดูเวรเช็คเครน
+function craneCheckList() {
+	console.log("start craneCheckList");
+	const apiKey = "AIzaSyAFnyXSAki4LiczKNhyEzbhHsvTC-abfAo";
+	const spreadsheetId = "1dGGGnSM23HxEChvN9A_LfbKrTVzPV30_ZBfRSt3ve9g";
+	const range = "ตารางเวรเหล็กแบน!A3:G3";
+
+	let allRows = [];
+
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        allRows = data.values; // Save data for filtering
+		const filteredRows = allRows;
+		const dataRow = filteredRows[0];
+		const cardHeader = "เวรเช็คเครนของวันที่ "+dataRow[0];
+		const cardContent = "เครน K2,K4 เวร "+dataRow[5]+" และ "+dataRow[6]+".   "+"เครน K5,K8 เวร "+dataRow[3]+" และ "+dataRow[4]+".    "+"เครน K9,K10 เวร "+dataRow[1]+" และ "+dataRow[2]+".";
+		displayCard(cardHeader,cardContent);
+		interactiveSpeech(cardHeader);
+		//console.log(cardContent);
+	});
+	return;
+}
+//สำหรับคำสั่งดูเวรลากยาว
+function secondShiftList() {
+	console.log("start secondShiftList");
+	const apiKey = "AIzaSyAFnyXSAki4LiczKNhyEzbhHsvTC-abfAo";
+	const spreadsheetId = "1dGGGnSM23HxEChvN9A_LfbKrTVzPV30_ZBfRSt3ve9g";
+	const range = "ตารางเวรเหล็กแบน!A6:H6";
+
+	let allRows = [];
+
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        allRows = data.values; // Save data for filtering
+		const filteredRows = allRows;
+		const dataRow = filteredRows[0];
+		const cardHeader = "เวรลากยาวของวันที่ "+dataRow[0];
+		const cardContent = "เช็คเกอร์ "+dataRow[1]+" และ "+dataRow[2]+". Operator มี "+dataRow[3]+", "+dataRow[4]+", "+dataRow[5]+", "+dataRow[6]+", "+dataRow[7];
+		displayCard(cardHeader,cardContent);
+		interactiveSpeech(cardHeader);
+		//console.log(cardContent);
+	});
+	return;
+}
+
 //ฟังชั่นที่ใช้ในการพูด
 function interactiveSpeech(sentence) {
 	let utterance = new SpeechSynthesisUtterance(sentence);
@@ -520,6 +585,18 @@ function interactiveSpeech(sentence) {
 	speechSynthesis.speak(utterance);
 }
 
+function displayCard(title, content) {
+    cardTitle.textContent = title;
+    cardContent.textContent = content;
+    infoCard.style.display = 'block';
+}
+
+function clearCard() {
+    cardTitle.textContent = "";
+    cardContent.textContent = "";
+    infoCard.style.display = 'none';
+	document.getElementById('dataTable').style.display = 'none';
+}
     </script>
 
 </body>
