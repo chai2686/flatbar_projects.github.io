@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="เว็บแอพผู้ช่วยงานคำสั่งเสียง">
-    <meta name="Version" content="1.65 Beta">
-	<link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
-    <link rel="icon" href="flatbar_fav.png" type="image/png">
+    <meta name="Version" content="1.66 Beta">
+	<link rel="icon" href="FLATBAR_AI.ico" type="image/x-icon">
+    <link rel="icon" href="FLATBAR_AI.png" type="image/png">
     <title>F.L.A.T.B.A.R. AI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
@@ -100,6 +100,21 @@
             margin-top: 0;
             color: var(--accent-color);
         }
+		
+		.confirmbutton {
+			display: none;
+			text-align: end;
+		}
+		
+		.button {
+			font-size: 18px;
+			background: rgba(0, 255, 255, 0.1);
+			border: 1px solid var(--accent-color);
+			border-radius: 10px;
+			position: relative;
+			padding-left: 10px;
+			padding-right: 10px;
+		}
 
         .footer {
             margin-top: 20px;
@@ -138,13 +153,17 @@
 			  </thead>
 			  <tbody></tbody>
 			</table>
+			<div id="confirmbutton" class="confirmbutton">
+			<button type="button" class="button" id="savebutton" style="color: limegreen;"> บันทึก </button>
+			<button type="button" class="button" id="cancelbutton" style="color: red;"> ยกเลิก </button>
+			</div>
         </div>
 
         <footer class="footer">
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.65 Beta</p>
+            <p class="version">Version 1.66 Beta</p>
         </footer>
     </div>
 
@@ -181,7 +200,7 @@ const cardContent = document.getElementById('card-content');
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | ยกเลิก | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย ;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
@@ -205,6 +224,16 @@ const cardContent = document.getElementById('card-content');
 				clearCard();
 				status.textContent = 'กำลังฟังอยู่...';
 				interactiveSpeech('ว่ามาเลยครับเจ้านาย');
+			}, 1000);
+		}
+	  const hasCancel = textInput.includes("ยกเลิก"); //ค้นหาคำว่ายกเลิกในรายการคำพูด
+		if (hasRenew) {
+			textInput = ""; //เมื่อพบคำว่ายกเลิก ให้ล้างข้อความในอินพุททั้งหมดเพื่อรับคำสั่งใหม่
+			status.textContent = 'กำลังเริ่มคำสั่งใหม่';
+			setTimeout(() => {
+				clearCard();
+				status.textContent = 'กำลังฟังอยู่...';
+				interactiveSpeech('ยกเลิกแล้วครับเจ้านาย');
 			}, 1000);
 		}
     };
@@ -234,7 +263,7 @@ const cardContent = document.getElementById('card-content');
 
   function stopListening() {
 	//Debug
-	//textInput = "วันนี้ใครเวรลากยาว";
+	//textInput = "รถลูกค้า ทะเบียน 3172 ขึ้นไม้ไป 8 ท่อน ชื่อลูกค้า เหล็กใต้ บันทึก";
 	//console.log("Debug : ",textInput);
   
     isListening = false;
@@ -301,6 +330,10 @@ function getCommand() {
 	//สำหรับคำนวณน้ำหนัก
 	const hasWeight = textInput.includes("น้ำหนัก");
 	const hasKG = textInput.includes("กิโล");
+	
+	//สำหรับคำนวณจำนวน
+	const hasQuantity = textInput.includes("จำนวน");
+	const hasPcs = textInput.includes("เส้น");
 	
 	//สำหรับคำสั่งดูเวรเช็คเครน
 	const hasCraneCheck = textInput.includes("เช็คเครน");
@@ -388,8 +421,9 @@ function getCommand() {
 		if (!hasCustomerName) {
 			const hasConfirm = textInput.includes("บันทึก");
 			if(hasConfirm) {
-				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน";
+				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน ทำการบันทึกแล้วครับ";
 				displayCard("F.L.A.T.B.A.R AI", sentence);
+				saveWoodMemo(fleettype,truckno,"",wood);
 				interactiveSpeech("ทำการบันทึกแล้วครับเจ้านาย.");
 				textInput = "";
 			}else{
@@ -398,11 +432,19 @@ function getCommand() {
 				interactiveSpeech(sentence);
 			}
 		}else{
-			const customername = textInput.match(/ชื่อลูกค้า(.*?) /);
-			sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ชื่อลูกค้า "+customername;
-			displayCard("F.L.A.T.B.A.R AI", sentence);
-			interactiveSpeech("ทำการบันทึกแล้วครับเจ้านาย.");
-			textInput = "";
+			const customername = textInput.match(/ชื่อลูกค้า\s+(\S+)/);
+			const hasConfirm = textInput.includes("บันทึก");
+			if(hasConfirm) {
+				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน ชื่อลูกค้า "+customername[1]+" ทำการบันทึกแล้วครับ";
+				displayCard("บันทึกการใช้ไม้", sentence);
+				saveWoodMemo(fleettype,truckno,customername[1],wood);
+				interactiveSpeech("ทำการบันทึกแล้วครับเจ้านาย.");
+				textInput = "";
+			}else{
+				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน ชื่อลูกค้า "+customername[1]+" ทำการบันทึกไหมครับ?";
+				displayCard("บันทึกการใช้ไม้", sentence);
+				interactiveSpeech("ทำการบันทึกไหมครับ?");
+			}
 		}
 	}
 	
@@ -426,7 +468,7 @@ function getCommand() {
 	}
 	
 	//สำหรับข้อความต้อนรับเมื่อไม่ได้คำสั่งใดๆ
-	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName && !hasWeight && !hasKG && !hasCraneCheck && !hasSecondShift){
+	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName && !hasWeight && !hasKG && !hasCraneCheck && !hasSecondShift && !hasQuantity && !hasPcs){
 		let sentence = "";
 		const randomSentence = Math.floor(Math.random() * 3);
 		console.log(randomSentence);
@@ -452,8 +494,13 @@ function getCommand() {
 	//สำหรับคำนวณน้ำหนัก
 	if (hasWeight && hasKG) {
 		console.log("พบข้อมูลน้ำหนัก");
-		
 		weightProcess();
+	}
+	
+	//สำหรับคำนวณจำนวน
+	if (hasQuantity && hasPcs) {
+		console.log("พบข้อมูลจำนวน");
+		quantityProcess();
 	}
 }
 
@@ -530,6 +577,27 @@ function weightProcess () {
 	}
 }
 
+//ฟังชั่นที่ใช้คำนวณจำนวน
+function quantityProcess () {
+	const match = textInput.match(/จำนวน(.*?)เส้น/);
+
+	if (match && match[1]) {
+		const mathText = match[1].trim();
+		const cleanExpr = mathText.replace(/[^0-9+\-*/.]/g, '');
+		try {
+			const sum = eval(cleanExpr); // e.g., eval("352+675-300")
+			console.log("จำนวน:", sum);
+			sentence = "จำนวนเท่ากับ = "+sum+" เส้น";
+			displayCard("("+cleanExpr+") ", sentence);
+			interactiveSpeech(sentence+".");
+		} catch (err) {
+			console.error("ไม่สามารถคำนวณได้:", err);
+		}
+	} else {
+		console.log("ไม่พบรูปแบบจำนวนที่ถูกต้อง");
+	}
+}
+
 //สำหรับคำสั่งดูเวรเช็คเครน
 function craneCheckList() {
 	console.log("start craneCheckList");
@@ -575,6 +643,20 @@ function secondShiftList() {
 		//console.log(cardContent);
 	});
 	return;
+}
+
+function saveWoodMemo(fleettype,truckno,customer,quantity) {
+	const mainurl = "https://docs.google.com/forms/d/e/1FAIpQLSfRIk4d3QxWchVrmBwDBzd_N9Aw9nyynW7iNXTQpOGrf0TmfA/formResponse?entry.1884278026=";
+	const entryfleettype = "&entry.773222215=";
+	const entrycustomer = "&entry.1554877634=";
+	const entrycuantity = "&entry.1601287085=";
+	
+	let url = "";
+	
+	url += mainurl + truckno + entryfleettype + fleettype + entrycustomer + customer + entrycuantity + quantity;
+	
+	var img = document.createElement("img");
+	img.src = url;
 }
 
 //ฟังชั่นที่ใช้ในการพูด
