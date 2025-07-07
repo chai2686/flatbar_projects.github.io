@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="เว็บแอพผู้ช่วยงานคำสั่งเสียง">
-    <meta name="Version" content="1.66 Beta">
+    <meta name="Version" content="1.67 Beta">
 	<link rel="icon" href="FLATBAR_AI.ico" type="image/x-icon">
     <link rel="icon" href="FLATBAR_AI.png" type="image/png">
     <title>F.L.A.T.B.A.R. AI</title>
@@ -163,7 +163,7 @@
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.66 Beta</p>
+            <p class="version">Version 1.67 Beta</p>
         </footer>
     </div>
 
@@ -434,7 +434,8 @@ function getCommand() {
 				return;
 			}
 		}else{
-			const customername = textInput.match(/ชื่อลูกค้า\s+(\S+)/);
+			const customerString = textInput.replace("ชื่อลูกค้า", "ชื่อลูกค้า ");
+			const customername = customerString.match(/ชื่อลูกค้า\s+(\S+)/);
 			const hasConfirm = textInput.includes("บันทึก");
 			if(hasConfirm) {
 				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน ชื่อลูกค้า "+customername[1]+" ทำการบันทึกแล้วครับ";
