@@ -426,10 +426,12 @@ function getCommand() {
 				saveWoodMemo(fleettype,truckno,"",wood);
 				interactiveSpeech("ทำการบันทึกแล้วครับเจ้านาย.");
 				textInput = "";
+				return;
 			}else{
 				sentence = "ต้องการบันทึกโดยไม่ระบุชื่อลูกค้าหรือไม่? ถ้ามีชื่อลูกค้ากรุณาบอกด้วยครับ.";
 				displayCard("F.L.A.T.B.A.R AI", sentence);
 				interactiveSpeech(sentence);
+				return;
 			}
 		}else{
 			const customername = textInput.match(/ชื่อลูกค้า\s+(\S+)/);
@@ -440,10 +442,12 @@ function getCommand() {
 				saveWoodMemo(fleettype,truckno,customername[1],wood);
 				interactiveSpeech("ทำการบันทึกแล้วครับเจ้านาย.");
 				textInput = "";
+				return;
 			}else{
 				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน ชื่อลูกค้า "+customername[1]+" ทำการบันทึกไหมครับ?";
 				displayCard("บันทึกการใช้ไม้", sentence);
 				interactiveSpeech("ทำการบันทึกไหมครับ?");
+				return;
 			}
 		}
 	}
