@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="เว็บแอพผู้ช่วยงานคำสั่งเสียง">
-    <meta name="Version" content="1.67 Beta">
+    <meta name="Version" content="1.68 Beta">
 	<link rel="icon" href="FLATBAR_AI.ico" type="image/x-icon">
     <link rel="icon" href="FLATBAR_AI.png" type="image/png">
     <title>F.L.A.T.B.A.R. AI</title>
@@ -158,12 +158,19 @@
 			<button type="button" class="button" id="cancelbutton" style="color: red;"> ยกเลิก </button>
 			</div>
         </div>
+		
+		<div id="inputcard" class="card">
+            <h3 id="inputcard-title"></h3>
+            <p id="inputcard-content"></p>
+			<br><br>
+			</table>
+        </div>
 
         <footer class="footer">
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.67 Beta</p>
+            <p class="version">Version 1.68 Beta</p>
         </footer>
     </div>
 
@@ -191,7 +198,10 @@ const status = document.getElementById('status');
 const infoCard = document.getElementById('info-card');
 const cardTitle = document.getElementById('card-title');
 const cardContent = document.getElementById('card-content');
+const inputCard = document.getElementById('inputcard');
+const inputCardContent = document.getElementById('inputcard-content');
 
+	let userInput = "";
 	let textInput = "";
 	let recognition;
 	let isListening = false;
@@ -200,41 +210,47 @@ const cardContent = document.getElementById('card-content');
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | ยกเลิก | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | ยกเลิก | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย | รถ | เหลือ | กี่คัน | เช็ครถ | เท่าไร | เท่าไหร่ ;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
     //recognition.lang = 'en-US';
 	recognition.lang = 'th-TH';
     recognition.continuous = true; // <-- long dictation
-    recognition.interimResults = false;
+    recognition.interimResults = true;
 
     recognition.onresult = function(event) {
       let transcript = '';
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         transcript += event.results[i][0].transcript;
       }
-      textInput += transcript + ' ';
+      textInput = userInput + transcript + ' ';
+	  inputCardContent.textContent = textInput;
 	  const hasRenew = textInput.includes("เอาใหม่"); //ค้นหาคำว่าเอาใหม่ในรายการคำพูด
 		if (hasRenew) {
 			textInput = ""; //เมื่อพบคำว่าเอาใหม่ ให้ล้างข้อความในอินพุททั้งหมดเพื่อรับคำสั่งใหม่
+			userInput = "";
+			transcript = "";
 			status.textContent = 'กำลังเริ่มคำสั่งใหม่';
-			interactiveSpeech('รอสักครู่.');
 			setTimeout(() => {
 				clearCard();
 				status.textContent = 'กำลังฟังอยู่...';
 				interactiveSpeech('ว่ามาเลยครับเจ้านาย');
-			}, 1000);
+			}, 100);
+			return;
 		}
 	  const hasCancel = textInput.includes("ยกเลิก"); //ค้นหาคำว่ายกเลิกในรายการคำพูด
-		if (hasRenew) {
+		if (hasCancel) {
 			textInput = ""; //เมื่อพบคำว่ายกเลิก ให้ล้างข้อความในอินพุททั้งหมดเพื่อรับคำสั่งใหม่
+			userInput = "";
+			transcript = "";
 			status.textContent = 'กำลังเริ่มคำสั่งใหม่';
 			setTimeout(() => {
 				clearCard();
 				status.textContent = 'กำลังฟังอยู่...';
 				interactiveSpeech('ยกเลิกแล้วครับเจ้านาย');
-			}, 1000);
+			}, 100);
+			return;
 		}
     };
 
@@ -256,6 +272,7 @@ const cardContent = document.getElementById('card-content');
 
   function startListening() {
 	clearCard();
+	inputcard.style.display = 'block';
     isListening = true;
     recognition.start();
     status.textContent = 'กำลังฟังอยู่...';
@@ -268,6 +285,8 @@ const cardContent = document.getElementById('card-content');
   
     isListening = false;
     recognition.stop();
+	userInput = textInput;
+	inputcard.style.display = 'none';
     status.textContent = 'กดที่ลูกบอลเพื่อพูด';
 	console.log(textInput);
 	getCommand()
@@ -325,6 +344,7 @@ function getCommand() {
 	
 	//สำหรับคำสั่งบันทึกการใช้ไม้
 	const hasWood = textInput.includes("ท่อน");
+	
 	const hasCustomerName = textInput.includes("ชื่อลูกค้า");
 	
 	//สำหรับคำนวณน้ำหนัก
@@ -346,6 +366,15 @@ function getCommand() {
 		hasSecondShift = true;
 		console.log("คำสั่งหาเวรลากยาว");
 	}
+	
+	//สำหรับคำสั่งเช็ครถ
+	let hasGateTracking = false;
+	const hasTruckTracking = textInput.includes("เช็ครถ");
+	const hasTruckRemain = textInput.includes("เหลือกี่คัน");
+	if (hasTruckTracking || hasTruckRemain) {
+		hasGateTracking = true;
+	}
+	
 	
 	//สำหรับตอบกลับเมื่อมีแค่ข้อมูลทะเบียนอย่างเดียว
 	if (hasTruckNo && !hasNeedList && !hasFleet) {
@@ -396,8 +425,8 @@ function getCommand() {
 		let wood = 0;
 		let truckno = "";
 		
-		const words = textInput.split(/\s+/);
-		
+		const woodString = textInput.replace("ชื่อลูกค้า", " ชื่อลูกค้า ");
+		const words = woodString.split(/\s+/);
 		const woodKeywords = ["ท่อน"];
 		for (const keyword of woodKeywords) {
         const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
@@ -428,7 +457,7 @@ function getCommand() {
 				textInput = "";
 				return;
 			}else{
-				sentence = "ต้องการบันทึกโดยไม่ระบุชื่อลูกค้าหรือไม่? ถ้ามีชื่อลูกค้ากรุณาบอกด้วยครับ.";
+				sentence = "ต้องการบันทึกโดยไม่ระบุชื่อลูกค้าหรือไม่?.";
 				displayCard("F.L.A.T.B.A.R AI", sentence);
 				interactiveSpeech(sentence);
 				return;
@@ -473,7 +502,7 @@ function getCommand() {
 	}
 	
 	//สำหรับข้อความต้อนรับเมื่อไม่ได้คำสั่งใดๆ
-	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName && !hasWeight && !hasKG && !hasCraneCheck && !hasSecondShift && !hasQuantity && !hasPcs){
+	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName && !hasWeight && !hasKG && !hasCraneCheck && !hasSecondShift && !hasQuantity && !hasPcs && !hasTruckTracking && !hasTruckRemain){
 		let sentence = "";
 		const randomSentence = Math.floor(Math.random() * 3);
 		console.log(randomSentence);
@@ -506,6 +535,13 @@ function getCommand() {
 	if (hasQuantity && hasPcs) {
 		console.log("พบข้อมูลจำนวน");
 		quantityProcess();
+	}
+	
+	//สำหรับคำสั่งเช็ครถ
+	if (hasGateTracking) {
+		console.log("พบคำสั่งเช็ครถ");
+		interactiveSpeech("กำลังเปิดหน้าเช็ครถครับ");
+		window.open("http://192.168.2.22/wms/Report/Tracking", "_blank");
 	}
 }
 
