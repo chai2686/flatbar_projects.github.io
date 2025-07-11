@@ -107,6 +107,7 @@
             },
             qrCodeMessage => {
               document.getElementById('qr-input01').value = qrCodeMessage;
+			  beep();
               closeScanner();
 			  if (continuousscan.checked) {
 				save();
@@ -221,6 +222,18 @@
 	function goToReport() {
 			window.open("https://docs.google.com/spreadsheets/d/1Pt-i1x8uGM3Czue4mdV9yh0wdOVrit7a63ln1AEps_Y/htmlview?gid=1117717488#gid=1117717488", "_blank");
 		}
+		
+	function beep() {
+		const audioCtx = new AudioContext();
+		const oscillator = audioCtx.createOscillator();
+
+		oscillator.type = "sine";
+		oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
+		oscillator.connect(audioCtx.destination);
+		setTimeout(() => {
+			oscillator.start();
+		}, 100);
+	}
   </script>
 </body>
 </html>
