@@ -230,8 +230,9 @@
 		oscillator.type = "sine";
 		oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
 		oscillator.connect(audioCtx.destination);
+		oscillator.start();
 		setTimeout(() => {
-			oscillator.start();
+			oscillator.stop();
 		}, 100);
 	}
   </script>
