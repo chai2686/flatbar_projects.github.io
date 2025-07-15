@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="เว็บแอพผู้ช่วยงานคำสั่งเสียง">
-    <meta name="Version" content="1.68 Beta">
+    <meta name="Version" content="1.69 Beta">
 	<link rel="icon" href="FLATBAR_AI.ico" type="image/x-icon">
     <link rel="icon" href="FLATBAR_AI.png" type="image/png">
-    <title>F.L.A.T.B.A.R. AI</title>
+    <title>F.L.A.T.B.A.R.</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
@@ -136,7 +136,7 @@
 
     <div class="container">
         <header class="header">
-            <h1>F.L.A.T.B.A.R AI</h1>
+            <h1>F.L.A.T.B.A.R</h1>
         </header>
 
         <div class="main-content">
@@ -170,7 +170,7 @@
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.68 Beta</p>
+            <p class="version">Version 1.69 Beta</p>
         </footer>
     </div>
 
@@ -201,16 +201,16 @@ const cardContent = document.getElementById('card-content');
 const inputCard = document.getElementById('inputcard');
 const inputCardContent = document.getElementById('inputcard-content');
 
-	let userInput = "";
-	let textInput = "";
-	let recognition;
-	let isListening = false;
+let userInput = "";
+let textInput = "";
+let recognition;
+let isListening = false;
  
   if ('webkitSpeechRecognition' in window) {
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | มม | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | ยกเลิก | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย | รถ | เหลือ | กี่คัน | เช็ครถ | เท่าไร | เท่าไหร่ ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | ยกเลิก | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย | รถ | เหลือ | กี่คัน | เช็ครถ | เท่าไร | เท่าไหร่ ;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
@@ -267,6 +267,7 @@ const inputCardContent = document.getElementById('inputcard-content');
       }
     };
   } else {
+	displayCard("F.L.A.T.B.A.R.", "บราวเซอร์ไม่รองรับ กรุณาเปิดด้วย Google Chrome.");
     alert("Your browser doesn't support Speech Recognition.");
   }
 
@@ -377,7 +378,7 @@ function getCommand() {
 	
 	
 	//สำหรับตอบกลับเมื่อมีแค่ข้อมูลทะเบียนอย่างเดียว
-	if (hasTruckNo && !hasNeedList && !hasFleet) {
+	if (hasTruckNo && !hasNeedList && !hasFleet && !hasWood) {
 		console.log("Start TruckNo");
 		const words = textInput.split(/\s+/);
 		const TruckNoKeywords = ["ทะเบียน"];
@@ -412,6 +413,12 @@ function getCommand() {
 	}
 	
 	//สำหรับคำสั่งบันทึกการใช้ไม้
+	if (hasTruckNo && hasWood && !hasFleet) {
+		sentence = "กรุณาระบุประเภทรถขนส่งด้วยครับ";
+		displayCard("F.L.A.T.B.A.R AI", sentence);
+		interactiveSpeech(sentence);
+		return;
+	}
 	if (hasTruckNo && hasFleet && hasWood) {
 		let fleettype = "";
 		if (hasCustomerFleet) {
