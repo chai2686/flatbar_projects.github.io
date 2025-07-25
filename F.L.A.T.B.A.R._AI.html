@@ -170,7 +170,7 @@
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.69 Beta</p>
+            <p class="version">Version 1.70 Beta</p>
         </footer>
     </div>
 
@@ -210,7 +210,7 @@ let isListening = false;
     recognition = new webkitSpeechRecognition();
 	grammarlist = new webkitSpeechGrammarList();
 	
-	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล | min | หน้า | ยาว | ความยาว | ไซส์ | size | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | ยกเลิก | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย | รถ | เหลือ | กี่คัน | เช็ครถ | เท่าไร | เท่าไหร่ ;';
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล หน้า | หน้า | ยาว | ความยาว | ไซส์ | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | ยกเลิก | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย | รถ | เหลือ | กี่คัน | เช็ครถ | เท่าไร | เท่าไหร่ ;';
 	grammarlist.addFromString(grammarsize, 1.0);
 	recognition.grammars = grammarlist;
 	
@@ -535,13 +535,13 @@ function getCommand() {
 	//สำหรับคำนวณน้ำหนัก
 	if (hasWeight && hasKG) {
 		console.log("พบข้อมูลน้ำหนัก");
-		weightProcess();
+		//weightProcess();
 	}
 	
 	//สำหรับคำนวณจำนวน
 	if (hasQuantity && hasPcs) {
 		console.log("พบข้อมูลจำนวน");
-		quantityProcess();
+		//quantityProcess();
 	}
 	
 	//สำหรับคำสั่งเช็ครถ
