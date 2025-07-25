@@ -170,7 +170,7 @@
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.70 Beta</p>
+            <p class="version">Version 1.71 Beta</p>
         </footer>
     </div>
 
@@ -211,7 +211,9 @@ let isListening = false;
 	grammarlist = new webkitSpeechGrammarList();
 	
 	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล หน้า | หน้า | ยาว | ความยาว | ไซส์ | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | ยกเลิก | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย | รถ | เหลือ | กี่คัน | เช็ครถ | เท่าไร | เท่าไหร่ ;';
+	const grammarsizename = '#JSGF V1.0; grammar sizename; public <sizename> = 2 min 5 | 2 min 7 | 2 min 8 | 3 min | 3 min 2 | 4 min | 4 min 5 | 5 min | 6 min | 8 min | 9 min | 10 min | 12 min | 15 min | 16 min | 19 min | 20 min | 25 min ;';
 	grammarlist.addFromString(grammarsize, 1.0);
+	grammarlist.addFromString(grammarsizename, 1.0);
 	recognition.grammars = grammarlist;
 	
     //recognition.lang = 'en-US';
