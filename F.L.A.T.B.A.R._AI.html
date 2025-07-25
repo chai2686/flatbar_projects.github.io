@@ -170,7 +170,7 @@
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.72 Beta</p>
+            <p class="version">Version 1.73 Beta</p>
         </footer>
     </div>
 
@@ -333,7 +333,7 @@ function inputCorrection() {
         "2 มิน 5": " 2.5 มิล "
     };
 
-    for (const [pattern, replacement] of Object.entries(sizeMap)) {
+    for (const [pattern, replacement] of Object.entries(thickMap)) {
         textInput.replace(new RegExp(pattern, "i"), replacement);
     }
 
