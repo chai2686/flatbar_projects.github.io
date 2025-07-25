@@ -170,7 +170,7 @@
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.74 Beta</p>
+            <p class="version">Version 1.75 Beta</p>
         </footer>
     </div>
 
@@ -227,6 +227,7 @@ let isListening = false;
         transcript += event.results[i][0].transcript;
       }
       textInput = userInput + transcript + ' ';
+	  console.log("inputCorrection Start");
 	  inputCorrection();
 	  inputCardContent.textContent = textInput;
 	  const hasRenew = textInput.includes("เอาใหม่"); //ค้นหาคำว่าเอาใหม่ในรายการคำพูด
@@ -284,8 +285,8 @@ let isListening = false;
 
   function stopListening() {
 	//Debug
-	//textInput = "รถลูกค้า ทะเบียน 3172 ขึ้นไม้ไป 8 ท่อน ชื่อลูกค้า เหล็กใต้ บันทึก";
-	//console.log("Debug : ",textInput);
+	textInput = "2 min 5 หน้า 50";
+	console.log("Debug : ",textInput);
   
     isListening = false;
     recognition.stop();
@@ -334,7 +335,7 @@ function inputCorrection() {
     };
 
     for (const [pattern, replacement] of Object.entries(thickMap)) {
-        textInput.replace(pattern, replacement);
+        textInput = textInput.replace(pattern, replacement);
     }
     return;
 }
