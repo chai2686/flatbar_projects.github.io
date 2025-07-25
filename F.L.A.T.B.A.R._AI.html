@@ -227,6 +227,7 @@ let isListening = false;
         transcript += event.results[i][0].transcript;
       }
       textInput = userInput + transcript + ' ';
+	  inputCorrection();
 	  inputCardContent.textContent = textInput;
 	  const hasRenew = textInput.includes("เอาใหม่"); //ค้นหาคำว่าเอาใหม่ในรายการคำพูด
 		if (hasRenew) {
@@ -320,6 +321,24 @@ let isListening = false;
 //            orb.style.animation = 'pulse 4s infinite';
 //
 //});
+
+
+//แปล userinput ให้เป็น command ที่ถูกต้อง
+function inputCorrection() {
+    const thickMap = {
+        "2 min 5": " 2.5 มิล ",
+        "2 มิล 5": " 2.5 มิล ",
+        "2 มม 5": " 2.5 มิล ",
+        "2 บิล 5": " 2.5 มิล ",
+        "2 มิน 5": " 2.5 มิล "
+    };
+
+    for (const [pattern, replacement] of Object.entries(sizeMap)) {
+        textInput = textInput.replace(new RegExp(pattern, "i"), replacement);
+    }
+
+    return;
+}
 
 function getCommand() {
 	//สำหรับคำสั่งหาข้อมูลรายการสินค้า
