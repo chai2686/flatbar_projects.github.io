@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="เว็บแอพผู้ช่วยงานคำสั่งเสียง">
-    <meta name="Version" content="1.69 Beta">
+    <meta name="Version" content="1.7 Beta">
 	<link rel="icon" href="FLATBAR_AI.ico" type="image/x-icon">
     <link rel="icon" href="FLATBAR_AI.png" type="image/png">
     <title>F.L.A.T.B.A.R.</title>
@@ -170,7 +170,7 @@
             <p id="status">กดที่ลูกบอลเพื่อพูด...</p>
         </footer>
 		<footer>
-            <p class="version">Version 1.79 Beta</p>
+            <p class="version">Version 1.7 Beta</p>
         </footer>
     </div>
 
@@ -227,7 +227,7 @@ let isListening = false;
         transcript += event.results[i][0].transcript;
       }
       textInput = userInput + transcript + ' ';
-	  console.log("inputCorrection Start");
+	  //console.log(textInput);
 	  inputCorrection();
 	  inputCardContent.textContent = textInput;
 	  const hasRenew = textInput.includes("เอาใหม่"); //ค้นหาคำว่าเอาใหม่ในรายการคำพูด
@@ -363,7 +363,8 @@ function inputCorrection() {
         "4 นิน 5": " 4.5 มิล",
 		"min": "มิล",
 		"Min": "มิล",
-		"มิล": "มิล",
+		"มิลหน้า": "มิล หน้า",
+		"มมหน้า": "มิล หน้า",
 		"มม": "มิล",
 		"บิล": "มิล",
 		"มิน": "มิล",
