@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="เว็บแอพผู้ช่วยงานคำสั่งเสียง">
+    <meta name="Version" content="2.0 Beta">
+	<link rel="icon" href="FLATBAR_AI.ico" type="image/x-icon">
+    <link rel="icon" href="FLATBAR_AI.png" type="image/png">
+    <title>F.L.A.T.B.A.R.</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        :root {
+            --primary-bg: #0a0f1e;
+            --primary-text: #e0e0e0;
+            --accent-color: #00ffff;
+            --glow-color: rgba(0, 255, 255, 0.7);
+            --secondary-color: #ff00ff;
+            --tertiary-color: #ffff00;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            font-family: 'ADLaM Display', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            height: 90%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .header, .footer {
+            text-align: center;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #orb {
+            width: 150px;
+            height: 150px;
+			cursor: pointer;
+            animation: pulse 4s infinite;
+        }
+
+        #orb:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(0, 255, 255, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(0, 255, 255, 0);
+            }
+        }
+
+        .card {
+			max-height: 60vh;
+			overflow-y: auto;
+			scroll-behavior: smooth;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+		
+		.confirmbutton {
+			display: none;
+			text-align: end;
+		}
+		
+		.button {
+			font-size: 18px;
+			background: rgba(0, 255, 255, 0.1);
+			border: 1px solid var(--accent-color);
+			border-radius: 10px;
+			position: relative;
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+
+        .footer {
+            margin-top: 20px;
+        }
+		
+		td {
+			font-size: 14px;
+		}
+		
+		
+	.version {
+		    font-size: 12px;
+			display: flex;
+			flex-direction: row-reverse;
+		}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <h1>F.L.A.T.B.A.R</h1>
+        </header>
+
+        <div class="main-content">
+            
+            <img id="orb" src="walkie-talkie.png" alt="walkie-talkie">
+        </div>
+
+        <div id="info-card" class="card">
+            <h3 id="card-title"></h3>
+            <p id="card-content"></p>
+			<br><br>
+			<table id="dataTable" style="display: none;">
+			  <thead>
+				<tr><th>ไซส์</th><th>แบชท์</th><th>จำนวน</th><th>ลูกค้า</th></tr>
+			  </thead>
+			  <tbody></tbody>
+			</table>
+        </div>
+		
+		<div id="inputcard" class="card">
+            <h3 id="inputcard-title"></h3>
+            <p id="inputcard-content"></p>
+			<div id="confirmbutton" class="confirmbutton">
+			<button type="button" class="button" id="savebutton" style="color: limegreen;"> บันทึก </button>
+			<button type="button" class="button" id="cancelbutton" style="color: red;"> ยกเลิก </button>
+			</div>
+			<br><br>
+        </div>
+
+        <footer class="footer">
+            <p id="status">กดที่วิทยุเพื่อพูด...</p>
+        </footer>
+		<footer>
+            <p class="version">Version 2.0 Beta</p>
+        </footer>
+    </div>
+
+    <script>
+        let selectedVoice = null;
+
+// Load available voices and select a female Thai voice
+speechSynthesis.onvoiceschanged = () => {
+    const voices = speechSynthesis.getVoices();
+    selectedVoice = voices.find(voice =>
+        //voice.lang === "th-TH" && voice.name.toLowerCase().includes("female")
+	voice.lang === "th-TH" && voice.name.toLowerCase().includes("male")
+    );
+
+    // Fallback: just pick any Thai voice if a female one is not found
+    if (!selectedVoice) {
+        selectedVoice = voices.find(voice => voice.lang === "th-TH");
+    }
+};
+
+
+
+const orb = document.getElementById('orb');
+const status = document.getElementById('status');
+const infoCard = document.getElementById('info-card');
+const cardTitle = document.getElementById('card-title');
+const cardContent = document.getElementById('card-content');
+const inputCard = document.getElementById('inputcard');
+const inputCardContent = document.getElementById('inputcard-content');
+
+let userInput = "";
+let textInput = "";
+let recognition;
+let isListening = false;
+ 
+  if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
+	grammarlist = new webkitSpeechGrammarList();
+	
+	const grammarsize = '#JSGF V1.0; grammar size; public <size> = มิล หน้า | หน้า | ยาว | ความยาว | ไซส์ | กิโล | น้ำหนัก | จำนวน | เส้น | เอาใหม่ | ยกเลิก | เหล็กแบน | คือใคร | เป็นใคร | รถลูกค้า | รถร่วม | รถบริษัท | ใช้ไม้ | ใช้ไม้ไป | ขึ้นไม้ | ขึ้นไม้ไป | ท่อน | ชื่อลูกค้า | บันทึก | เช็คเครน | เวรเช็คเครน | ลากยาว | เวรลากยาว | เบรคบ่าย | เวรเบรคบ่าย | รถ | เหลือ | กี่คัน | เช็ครถ | เท่าไร | เท่าไหร่ ;';
+	const grammarsizename = '#JSGF V1.0; grammar sizename; public <sizename> = 2 min 5 | 2 min 7 | 2 min 8 | 3 min | 3 min 2 | 4 min | 4 min 5 | 5 min | 6 min | 8 min | 9 min | 10 min | 12 min | 15 min | 16 min | 19 min | 20 min | 25 min ;';
+	grammarlist.addFromString(grammarsize, 1.0);
+	grammarlist.addFromString(grammarsizename, 1.0);
+	recognition.grammars = grammarlist;
+	
+    //recognition.lang = 'en-US';
+	recognition.lang = 'th-TH';
+    recognition.continuous = true; // <-- long dictation
+    recognition.interimResults = true;
+
+    recognition.onresult = function(event) {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        transcript += event.results[i][0].transcript;
+      }
+      textInput = userInput + transcript + ' ';
+	  //console.log(textInput);
+	  inputCorrection();
+	  inputCardContent.textContent = textInput;
+	  const hasRenew = textInput.includes("เอาใหม่"); //ค้นหาคำว่าเอาใหม่ในรายการคำพูด
+		if (hasRenew) {
+			textInput = ""; //เมื่อพบคำว่าเอาใหม่ ให้ล้างข้อความในอินพุททั้งหมดเพื่อรับคำสั่งใหม่
+			userInput = "";
+			transcript = "";
+			status.textContent = 'กำลังเริ่มคำสั่งใหม่';
+			setTimeout(() => {
+				clearCard();
+				status.textContent = 'กำลังฟังอยู่...';
+				interactiveSpeech('ว่ามาเลยครับ');
+			}, 100);
+			return;
+		}
+	  const hasCancel = textInput.includes("ยกเลิก"); //ค้นหาคำว่ายกเลิกในรายการคำพูด
+		if (hasCancel) {
+			textInput = ""; //เมื่อพบคำว่ายกเลิก ให้ล้างข้อความในอินพุททั้งหมดเพื่อรับคำสั่งใหม่
+			userInput = "";
+			transcript = "";
+			status.textContent = 'กำลังเริ่มคำสั่งใหม่';
+			setTimeout(() => {
+				clearCard();
+				status.textContent = 'กำลังฟังอยู่...';
+				interactiveSpeech('ยกเลิกแล้วครับ');
+			}, 100);
+			return;
+		}
+	  const hasOut = textInput.includes("เปลี่ยน"); //ค้นหาคำว่าเปลี่ยนในรายการคำพูด
+		if (hasOut) {
+			//เมื่อพบคำว่าเปลี่ยน ให้ดำเนินการตามคำสั่งเหมือนการกดหยุด
+			setTimeout(() => {
+				stopListening();
+			}, 700);
+			return;
+		}
+    };
+
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error:', event.error);
+      if (event.error === 'no-speech' || event.error === 'audio-capture') {
+        //stopListening();
+      }
+    };
+
+    recognition.onend = function() {
+      if (isListening) {
+        recognition.start(); // restart if still active
+      }
+    };
+  } else {
+	displayCard("F.L.A.T.B.A.R.", "บราวเซอร์ไม่รองรับ กรุณาเปิดด้วย Google Chrome.");
+    alert("Your browser doesn't support Speech Recognition.");
+  }
+
+  function startListening() {
+	clearCard();
+	inputcard.style.display = 'block';
+    isListening = true;
+    recognition.start();
+    status.textContent = 'กำลังฟังอยู่...';
+  }
+
+  function stopListening() {
+	//Debug
+	//textInput = "2 min 5 หน้า 50";
+	//console.log("Debug : ",textInput);
+  
+    isListening = false;
+    recognition.stop();
+	userInput = textInput;
+	inputcard.style.display = 'none';
+    status.textContent = 'กดที่วิทยุเพื่อพูด';
+	console.log(textInput);
+	getCommand()
+  }
+
+  orb.addEventListener('click', () => {
+    if (!isListening) {
+      startListening();
+    } else {
+      stopListening();
+    }
+  });
+
+//แปล userinput ให้เป็น command ที่ถูกต้อง
+function inputCorrection() {
+    const thickMap = {
+        "2 min 5": " 2.5 มิล",
+		"2 Min 5": " 2.5 มิล",
+        "2 มิล 5": " 2.5 มิล",
+        "2 มม 5": " 2.5 มิล",
+        "2 บิล 5": " 2.5 มิล",
+        "2 มิน 5": " 2.5 มิล",
+        "2 นิน 5": " 2.5 มิล",
+		"2 min 7": " 2.7 มิล",
+		"2 Min 7": " 2.7 มิล",
+        "2 มิล 7": " 2.7 มิล",
+        "2 มม 7": " 2.7 มิล",
+        "2 บิล 7": " 2.7 มิล",
+        "2 มิน 7": " 2.7 มิล",
+        "2 นิน 7": " 2.7 มิล",
+		"2 min 8": " 2.8 มิล",
+		"2 Min 8": " 2.8 มิล",
+        "2 มิล 8": " 2.8 มิล",
+        "2 มม 8": " 2.8 มิล",
+        "2 บิล 8": " 2.8 มิล",
+        "2 มิน 8": " 2.8 มิล",
+        "2 นิน 8": " 2.8 มิล",
+		"3 min 2": " 3.2 มิล",
+		"3 Min 2": " 3.2 มิล",
+        "3 มิล 2": " 3.2 มิล",
+        "3 มม 2": " 3.2 มิล",
+        "3 บิล 2": " 3.2 มิล",
+        "3 มิน 2": " 3.2 มิล",
+		"4 min 5": " 4.5 มิล",
+		"4 Min 5": " 4.5 มิล",
+        "4 มิล 5": " 4.5 มิล",
+        "4 มม 5": " 4.5 มิล",
+        "4 บิล 5": " 4.5 มิล",
+        "4 มิน 5": " 4.5 มิล",
+        "4 นิน 5": " 4.5 มิล",
+		"min": "มิล",
+		"Min": "มิล",
+		"มิลหน้า": "มิล หน้า",
+		"มมหน้า": "มิล หน้า",
+		"มม": "มิล",
+		"บิล": "มิล",
+		"มิน": "มิล",
+		"นิน": "มิล"
+    };
+
+    for (const [pattern, replacement] of Object.entries(thickMap)) {
+        textInput = textInput.replace(pattern, replacement);
+    }
+    return;
+}
+
+function getCommand() {
+	//สำหรับคำสั่งหาข้อมูลรายการสินค้า
+    const hasTruckNo = textInput.includes("ทะเบียน");
+	
+	let hasNeedList = false;
+	const hasNeedList1 = textInput.includes("เอาอะไร");
+	const hasNeedList2 = textInput.includes("ขึ้นอะไร");
+	if (hasNeedList1 || hasNeedList2) {
+		hasNeedList = true;
+	}
+	
+	//สำหรับคำสั่งแนะนำตัวเอง
+	const hasIntroduce0 = textInput.includes("คือใคร");
+	const hasIntroduce1 = textInput.includes("เป็นใคร");
+	
+	let hasFleet = false;
+	const hasCustomerFleet = textInput.includes("รถลูกค้า");
+	const hasVenderFleet = textInput.includes("รถร่วม");
+	const hasTMTFleet = textInput.includes("รถบริษัท");
+	if (hasCustomerFleet || hasVenderFleet || hasTMTFleet) {
+		hasFleet = true;
+		console.log(hasFleet);
+	}
+	
+	//สำหรับคำสั่งบันทึกการใช้ไม้
+	const hasWood = textInput.includes("ท่อน");
+	
+	const hasCustomerName = textInput.includes("ชื่อลูกค้า");
+	
+	//สำหรับคำนวณน้ำหนัก
+	const hasWeight = textInput.includes("น้ำหนัก");
+	const hasKG = textInput.includes("กิโล");
+	
+	//สำหรับคำนวณจำนวน
+	const hasQuantity = textInput.includes("จำนวน");
+	const hasPcs = textInput.includes("เส้น");
+	
+	//สำหรับคำสั่งดูเวรเช็คเครน
+	const hasCraneCheck = textInput.includes("เช็คเครน");
+	
+	//สำหรับคำสั่งดูเวรลากยาว
+	let hasSecondShift = false;
+	const hasSecondShift1 = textInput.includes("ลากยาว");
+	const hasSecondShift2 = textInput.includes("เบรคบ่าย");
+	if (hasSecondShift1 || hasSecondShift2) {
+		hasSecondShift = true;
+		console.log("คำสั่งหาเวรลากยาว");
+	}
+	
+	//สำหรับคำสั่งเช็ครถ
+	let hasGateTracking = false;
+	const hasTruckTracking = textInput.includes("เช็ครถ");
+	const hasTruckRemain = textInput.includes("เหลือกี่คัน");
+	if (hasTruckTracking || hasTruckRemain) {
+		hasGateTracking = true;
+	}
+	
+	
+	//สำหรับตอบกลับเมื่อมีแค่ข้อมูลทะเบียนอย่างเดียว
+	if (hasTruckNo && !hasNeedList && !hasFleet && !hasWood) {
+		console.log("Start TruckNo");
+		const words = textInput.split(/\s+/);
+		const TruckNoKeywords = ["ทะเบียน"];
+		let truckno = "";
+		for (const keyword of TruckNoKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index >= 0) {
+            truckno = words[index + 1];
+			sentence = "ทะเบียน "+truckno+" ต้องการข้อมูลอะไรครับ";
+			displayCard("F.L.A.T.B.A.R", sentence);
+			interactiveSpeech(sentence);
+            console.log(truckno);
+			break;
+			}	
+		}
+	}
+	
+	//สำหรับคำสั่งหาข้อมูลรายการสินค้า
+	if (hasTruckNo && hasNeedList) {
+		console.log("คำสั่งหารายการ");
+		let truckNo = "";
+		if (hasNeedList1) {
+			truckNo = textInput.match(/ทะเบียน(.*?)เอาอะไร/);
+		}else if (hasNeedList2) {
+			truckNo = textInput.match(/ทะเบียน(.*?)ขึ้นอะไร/);
+		}
+		console.log(truckNo);
+		if (truckNo && truckNo[1]) {
+			needListProcess(truckNo[1]);
+			return;
+		}
+	}
+	
+	//สำหรับคำสั่งบันทึกการใช้ไม้
+	if (hasTruckNo && hasWood && !hasFleet) {
+		sentence = "กรุณาระบุประเภทรถขนส่งด้วยครับ";
+		displayCard("F.L.A.T.B.A.R", sentence);
+		interactiveSpeech(sentence);
+		return;
+	}
+	if (hasTruckNo && hasFleet && hasWood) {
+		let fleettype = "";
+		if (hasCustomerFleet) {
+			fleettype = "รถลูกค้า";
+		}else if (hasVenderFleet) {
+			fleettype = "รถร่วม";
+		}else if (hasTMTFleet) {
+			fleettype = "รถบริษัท";
+		}
+		
+		let wood = 0;
+		let truckno = "";
+		
+		const woodString = textInput.replace("ชื่อลูกค้า", " ชื่อลูกค้า ");
+		const words = woodString.split(/\s+/);
+		const woodKeywords = ["ท่อน"];
+		for (const keyword of woodKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index > 0) {
+            wood = words[index - 1]; // Get the word before the keyword
+            console.log(fleettype, " จำนวนไม้: ", words[index - 1]," ท่อน");
+			break;
+			}	
+		}
+		
+		const trucknoKeywords = ["ทะเบียน", "รถบริษัททะเบียน", "รถร่วมทะเบียน", "รถลูกค้าทะเบียน"];
+		for (const keyword of trucknoKeywords) {
+        const index = words.findIndex(word => word.toLowerCase() === keyword.toLowerCase());
+        if (index >= 0) {
+            truckno = words[index + 1]; // Get the word before the keyword
+            console.log("ทะเบียน : ",truckno);
+			break;
+			}	
+		}
+		
+		if (!hasCustomerName) {
+			const hasConfirm = textInput.includes("บันทึก");
+			if(hasConfirm) {
+				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน ทำการบันทึกแล้วครับ";
+				displayCard("F.L.A.T.B.A.R", sentence);
+				saveWoodMemo(fleettype,truckno,"",wood);
+				interactiveSpeech("ทำการบันทึกแล้วครับ.");
+				textInput = "";
+				return;
+			}else{
+				sentence = "ต้องการบันทึกโดยไม่ระบุชื่อลูกค้าหรือไม่?.";
+				displayCard("F.L.A.T.B.A.R", sentence);
+				interactiveSpeech(sentence);
+				return;
+			}
+		}else{
+			const customerString = textInput.replace("ชื่อลูกค้า", "ชื่อลูกค้า ");
+			const customername = customerString.match(/ชื่อลูกค้า\s+(\S+)/);
+			const hasConfirm = textInput.includes("บันทึก");
+			if(hasConfirm) {
+				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน ชื่อลูกค้า "+customername[1]+" ทำการบันทึกแล้วครับ";
+				displayCard("บันทึกการใช้ไม้", sentence);
+				saveWoodMemo(fleettype,truckno,customername[1],wood);
+				interactiveSpeech("ทำการบันทึกแล้วครับ.");
+				textInput = "";
+				return;
+			}else{
+				sentence = fleettype+" ทะเบียน "+truckno+" ใช้ไม้ไป "+wood+" ท่อน ชื่อลูกค้า "+customername[1]+" ทำการบันทึกไหมครับ?";
+				displayCard("บันทึกการใช้ไม้", sentence);
+				interactiveSpeech("ทำการบันทึกไหมครับ?");
+				return;
+			}
+		}
+	}
+	
+	//สำหรับคำสั่งแนะนำตัวเอง
+	if (hasIntroduce0 || hasIntroduce1) {
+		console.log("Introduce start");
+		sentence = "ผมคือโปรแกรมผู้ช่วยของส่วนงานเหล็กแบนชื่อว่า 'แฟลตบาร์'  มีหน้าที่ช่วยงานของคุณให้ง่ายขึ้นด้วยคำสั่งเสียง แต่ในตอนนี้ยังขาดความแม่นยำซึ่งผมจะพยายามปรับปรุงอยู่ครับ";
+		displayCard("F.L.A.T.B.A.R", sentence);
+		interactiveSpeech(sentence);
+		textInput = "";
+		return;
+	}
+	
+	//สำหรับคำสั่งดูเวรเช็คเครน
+	if (hasCraneCheck) {
+		craneCheckList();
+	}
+	//สำหรับคำสั่งดูเวรลากยาว
+	if (hasSecondShift) {
+		secondShiftList();
+	}
+	
+	//สำหรับข้อความต้อนรับเมื่อไม่ได้คำสั่งใดๆ
+	if (!hasTruckNo && !hasNeedList && !hasIntroduce0 && !hasIntroduce1 && !hasFleet && !hasWood && !hasCustomerName && !hasWeight && !hasKG && !hasCraneCheck && !hasSecondShift && !hasQuantity && !hasPcs && !hasTruckTracking && !hasTruckRemain){
+		let sentence = "";
+		const randomSentence = Math.floor(Math.random() * 3);
+		console.log(randomSentence);
+		switch (randomSentence) {
+			case 0:
+				sentence = "ต้องการให้ช่วยอะไรครับ";
+				console.log(sentence);
+			break;
+			case 1:
+				sentence = "มีอะไรให้รับใช้ครับ";
+				console.log(sentence);
+			break;
+			default:
+				sentence = "แฟลตบาร์ยินดีรับใช้ครับ";
+				console.log(sentence);
+		}
+		
+        displayCard("F.L.A.T.B.A.R", sentence);
+        interactiveSpeech(sentence);
+        return;
+	}
+	
+	//สำหรับคำนวณน้ำหนัก
+	if (hasWeight && hasKG) {
+		console.log("พบข้อมูลน้ำหนัก");
+		//weightProcess();
+	}
+	
+	//สำหรับคำนวณจำนวน
+	if (hasQuantity && hasPcs) {
+		console.log("พบข้อมูลจำนวน");
+		//quantityProcess();
+	}
+	
+	//สำหรับคำสั่งเช็ครถ
+	if (hasGateTracking) {
+		console.log("พบคำสั่งเช็ครถ");
+		interactiveSpeech("กำลังเปิดหน้าเช็ครถครับ");
+		window.open("http://192.168.2.22/wms/Report/Tracking", "_blank");
+	}
+}
+
+//สำหรับคำสั่งหาข้อมูลรายการสินค้า
+function needListProcess(keyword) {
+	console.log("start process"+keyword);
+	const apiKey = "AIzaSyAFnyXSAki4LiczKNhyEzbhHsvTC-abfAo";
+	const spreadsheetId = "1Ia10xULe8AHMKDQGfidlf9eBdi0RUtZe4OQlFeF_ELY";
+	const range = "Shipment for AI!A:E";
+
+	let allRows = [];
+
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        allRows = data.values; // Save data for filtering
+		const filteredRows = allRows.filter(row =>
+		row[0] && row[0].toString().toLowerCase().includes(keyword.trim().toLowerCase()) // filter column A
+		);
+		console.log("start filter"+keyword.toLowerCase());
+		console.log("start filter"+filteredRows);
+		const tableBody = document.querySelector("#dataTable tbody");
+		tableBody.innerHTML = "";
+		filteredRows.forEach(row => {
+		const tr = document.createElement("tr");
+		for (let i = 1; i < 5; i++) {
+        const td = document.createElement("td");
+        td.textContent = row[i] || ""; // Fill blank if undefined
+        tr.appendChild(td);
+      }
+      tableBody.appendChild(tr);
+    });
+	document.getElementById('dataTable').style.display = 'block';
+	const cardHeader = "รายการสินค้าสำหรับทะเบียน "+keyword;
+	displayCard(cardHeader);
+	
+	if (filteredRows.length === 0) {
+        const sentence = `ไม่พบรายการสินค้าสำหรับทะเบียน ${keyword}`;
+        cardTitle.textContent = "ไม่พบข้อมูล";
+        cardContent.textContent = sentence;
+        displayCard();
+        interactiveSpeech(sentence);
+        return; // Exit early
+    }else{
+		const sentence = "ทะเบียน "+keyword+" มีรายการสินค้าตามนี้.";
+		interactiveSpeech(sentence);
+	}
+	})
+	
+      .catch(error => {
+        console.error("Error fetching data:", error);
+      });
+
+}
+
+//ฟังชั่นที่ใช้คำนวณน้ำหนัก
+function weightProcess () {
+	const match = textInput.match(/น้ำหนัก(.*?)กิโล/);
+
+	if (match && match[1]) {
+		const mathText = match[1].trim();
+		const cleanExpr = mathText.replace(/[^0-9+\-*/.]/g, '');
+		try {
+			const sum = eval(cleanExpr); // e.g., eval("352+675-300")
+			console.log("รวม:", sum);
+			sentence = "น้ำหนักเท่ากับ = "+sum+" กิโล";
+			displayCard("("+cleanExpr+") ", sentence+"กรัม");
+			interactiveSpeech(sentence+".");
+		} catch (err) {
+			console.error("ไม่สามารถคำนวณได้:", err);
+		}
+	} else {
+		console.log("ไม่พบรูปแบบน้ำหนักที่ถูกต้อง");
+	}
+}
+
+//ฟังชั่นที่ใช้คำนวณจำนวน
+function quantityProcess () {
+	const match = textInput.match(/จำนวน(.*?)เส้น/);
+
+	if (match && match[1]) {
+		const mathText = match[1].trim();
+		const cleanExpr = mathText.replace(/[^0-9+\-*/.]/g, '');
+		try {
+			const sum = eval(cleanExpr); // e.g., eval("352+675-300")
+			console.log("จำนวน:", sum);
+			sentence = "จำนวนเท่ากับ = "+sum+" เส้น";
+			displayCard("("+cleanExpr+") ", sentence);
+			interactiveSpeech(sentence+".");
+		} catch (err) {
+			console.error("ไม่สามารถคำนวณได้:", err);
+		}
+	} else {
+		console.log("ไม่พบรูปแบบจำนวนที่ถูกต้อง");
+	}
+}
+
+//สำหรับคำสั่งดูเวรเช็คเครน
+function craneCheckList() {
+	console.log("start craneCheckList");
+	const apiKey = "AIzaSyAFnyXSAki4LiczKNhyEzbhHsvTC-abfAo";
+	const spreadsheetId = "1dGGGnSM23HxEChvN9A_LfbKrTVzPV30_ZBfRSt3ve9g";
+	const range = "ตารางเวรเหล็กแบน!A3:G3";
+
+	let allRows = [];
+
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        allRows = data.values; // Save data for filtering
+		const filteredRows = allRows;
+		const dataRow = filteredRows[0];
+		const cardHeader = "เวรเช็คเครนของวันที่ "+dataRow[0];
+		const cardContent = "เครน K2,K4 เวร "+dataRow[5]+" และ "+dataRow[6]+".   "+"เครน K5,K8 เวร "+dataRow[3]+" และ "+dataRow[4]+".    "+"เครน K9,K10 เวร "+dataRow[1]+" และ "+dataRow[2]+".";
+		displayCard(cardHeader,cardContent);
+		interactiveSpeech(cardHeader);
+		//console.log(cardContent);
+	});
+	return;
+}
+//สำหรับคำสั่งดูเวรลากยาว
+function secondShiftList() {
+	console.log("start secondShiftList");
+	const apiKey = "AIzaSyAFnyXSAki4LiczKNhyEzbhHsvTC-abfAo";
+	const spreadsheetId = "1dGGGnSM23HxEChvN9A_LfbKrTVzPV30_ZBfRSt3ve9g";
+	const range = "ตารางเวรเหล็กแบน!A6:H6";
+
+	let allRows = [];
+
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        allRows = data.values; // Save data for filtering
+		const filteredRows = allRows;
+		const dataRow = filteredRows[0];
+		const cardHeader = "เวรลากยาวของวันที่ "+dataRow[0];
+		const cardContent = "เช็คเกอร์ "+dataRow[1]+" และ "+dataRow[2]+". Operator มี "+dataRow[3]+", "+dataRow[4]+", "+dataRow[5]+", "+dataRow[6]+", "+dataRow[7];
+		displayCard(cardHeader,cardContent);
+		interactiveSpeech(cardHeader);
+		//console.log(cardContent);
+	});
+	return;
+}
+
+function saveWoodMemo(fleettype,truckno,customer,quantity) {
+	const mainurl = "https://docs.google.com/forms/d/e/1FAIpQLSfRIk4d3QxWchVrmBwDBzd_N9Aw9nyynW7iNXTQpOGrf0TmfA/formResponse?entry.1884278026=";
+	const entryfleettype = "&entry.773222215=";
+	const entrycustomer = "&entry.1554877634=";
+	const entrycuantity = "&entry.1601287085=";
+	
+	let url = "";
+	
+	url += mainurl + truckno + entryfleettype + fleettype + entrycustomer + customer + entrycuantity + quantity;
+	
+	var img = document.createElement("img");
+	img.src = url;
+}
+
+//ฟังชั่นที่ใช้ในการพูด
+function interactiveSpeech(sentence) {
+	let utterance = new SpeechSynthesisUtterance(sentence);
+	utterance.lang = "th-TH";
+	utterance.rate = 0.9;
+	speechSynthesis.speak(utterance);
+}
+
+function displayCard(title, content) {
+    cardTitle.textContent = title;
+    cardContent.textContent = content;
+    infoCard.style.display = 'block';
+}
+
+function clearCard() {
+    cardTitle.textContent = "";
+    cardContent.textContent = "";
+    infoCard.style.display = 'none';
+	document.getElementById('dataTable').style.display = 'none';
+}
+    </script>
+
+
+</body></html>
