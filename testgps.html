@@ -1,135 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>HTML5 Driving Navigation</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Smart Navigator Pro</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
+    <style>
+        :root { --google-blue: #1a73e8; --google-red: #ea4335; --google-green: #34a853; }
+        body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background: #f8f9fa; }
+        #map { height: 100vh; width: 100vw; z-index: 1; }
 
-<style>
-html, body {
-  height: 100%;
-  margin: 0;
-}
-#map {
-  height: 100%;
-}
-#panel {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: white;
-  padding: 10px;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-  font-family: sans-serif;
-}
-#steps {
-  max-height: 120px;
-  overflow-y: auto;
-  font-size: 14px;
-}
-button {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-}
-</style>
+        /* Navigation Header */
+        #instruction-panel {
+            position: absolute; top: 10px; left: 10px; right: 10px;
+            background: var(--google-blue); color: white; padding: 15px;
+            border-radius: 12px; z-index: 2000; font-weight: 600;
+            text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+        }
+
+        /* Speedometer Overlay */
+        #speed-card {
+            position: absolute; bottom: 100px; left: 20px;
+            background: rgba(0, 0, 0, 0.8); color: #00ff00;
+            padding: 12px; border-radius: 50%; width: 70px; height: 70px;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 2000; border: 3px solid #444;
+        }
+        .speed-val { font-size: 24px; font-weight: bold; line-height: 1; }
+        .speed-unit { font-size: 10px; text-transform: uppercase; margin-top: 2px; }
+
+        /* Control Buttons */
+        .ui-controls {
+            position: absolute; bottom: 30px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+        }
+        .btn {
+            border: none; padding: 15px 25px; border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: bold;
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-start { background: var(--google-green); color: white; min-width: 120px; }
+        .btn-locate { background: white; color: #555; font-size: 20px; width: 55px; height: 55px; border-radius: 50%; }
+
+        /* Hide the messy default itinerary list on mobile */
+        .leaflet-routing-container { display: none; }
+    </style>
 </head>
-
 <body>
 
-<div id="map"></div>
+    <div id="instruction-panel">Calculating route...</div>
+    
+    <div id="speed-card">
+        <span class="speed-val" id="current-speed">0</span>
+        <span class="speed-unit">km/h</span>
+    </div>
 
-<div id="panel">
-  <button onclick="startNavigation()">▶ Start Navigation</button>
-  <div id="steps"></div>
-</div>
+    <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <div class="ui-controls">
+        <button class="btn btn-locate" onclick="locateUser()">🎯</button>
+        <button id="start-btn" class="btn btn-start" onclick="toggleNavigation()">Start Navigation</button>
+    </div>
 
-<script>
-const map = L.map('map').setView([13.7563, 100.5018], 14);
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
-// Map tiles
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19
-}).addTo(map);
+    <script>
+        const map = L.map('map', { zoomControl: false }).setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-let startMarker, endMarker, routeLine;
-let routeSteps = [];
-let userMarker;
+        let userMarker, watchId, routingControl, destination, wakeLock = null;
+        let isNavigating = false;
 
-// Tap to set start / destination
-map.on('click', e => {
-  if (!startMarker) {
-    startMarker = L.marker(e.latlng).addTo(map).bindPopup("START").openPopup();
-  } else if (!endMarker) {
-    endMarker = L.marker(e.latlng).addTo(map).bindPopup("DESTINATION").openPopup();
-    loadRoute();
-  }
-});
+        // 1. Initial Position Setup
+        function locateUser() {
+            navigator.geolocation.getCurrentPosition(pos => {
+                const { latitude, longitude } = pos.coords;
+                map.setView([latitude, longitude], 17);
+                updateUserMarker(latitude, longitude);
+            }, (err) => alert("Please enable GPS"), { enableHighAccuracy: true });
+        }
 
-// Get route from OSRM
-function loadRoute() {
-  const s = startMarker.getLatLng();
-  const d = endMarker.getLatLng();
+        function updateUserMarker(lat, lng) {
+            const latlng = [lat, lng];
+            if (userMarker) {
+                userMarker.setLatLng(latlng);
+            } else {
+                userMarker = L.circleMarker(latlng, { 
+                    color: 'white', fillColor: '#1a73e8', 
+                    fillOpacity: 1, radius: 10, weight: 3 
+                }).addTo(map);
+            }
+        }
 
-  const url = `https://router.project-osrm.org/route/v1/driving/`
-    + `${s.lng},${s.lat};${d.lng},${d.lat}`
-    + `?steps=true&overview=full&geometries=geojson`;
+        // 2. Select Destination (Click or Search)
+        map.on('click', (e) => setDestination(e.latlng));
 
-  fetch(url)
-    .then(r => r.json())
-    .then(data => {
-      const route = data.routes[0];
-      routeSteps = route.legs[0].steps;
+        const geocoder = L.Control.geocoder({ defaultMarkGeocode: false })
+            .on('markgeocode', (e) => {
+                setDestination(e.geocode.center);
+                map.fitBounds(e.geocode.bbox);
+            }).addTo(map);
 
-      const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
-      routeLine = L.polyline(coords, { color: 'blue', weight: 6 }).addTo(map);
-      map.fitBounds(routeLine.getBounds());
+        function setDestination(latlng) {
+            destination = latlng;
+            if (routingControl) map.removeControl(routingControl);
+            
+            routingControl = L.Routing.control({
+                waypoints: [userMarker.getLatLng(), destination],
+                addWaypoints: false,
+                createMarker: () => null
+            }).on('routesfound', (e) => {
+                const s = e.routes[0].summary;
+                const dist = (s.totalDistance / 1000).toFixed(1);
+                const time = Math.round(s.totalTime / 60);
+                document.getElementById('instruction-panel').style.display = 'block';
+                document.getElementById('instruction-panel').innerHTML = `🏁 ${dist} km — ${time} mins`;
+            }).addTo(map);
+        }
 
-      showSteps();
-    });
-}
+        // 3. Keep Screen On (Wake Lock)
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) { console.error(`${err.name}, ${err.message}`); }
+        }
 
-// Show turn-by-turn instructions
-function showSteps() {
-  const stepsDiv = document.getElementById("steps");
-  stepsDiv.innerHTML = "<b>Directions:</b><br>";
+        // 4. Drive Logic
+        function toggleNavigation() {
+            if (!destination) return alert("Tap map or search to set destination!");
 
-  routeSteps.forEach((s, i) => {
-    stepsDiv.innerHTML += `${i+1}. ${s.maneuver.instruction}<br>`;
-  });
-}
+            if (!isNavigating) {
+                isNavigating = true;
+                requestWakeLock();
+                document.getElementById('start-btn').innerText = "Exit";
+                document.getElementById('start-btn').style.background = "#ea4335";
 
-// Start navigation (follow GPS)
-function startNavigation() {
-  map.locate({ watch: true, enableHighAccuracy: true });
-}
+                watchId = navigator.geolocation.watchPosition((pos) => {
+                    const { latitude, longitude, speed } = pos.coords;
+                    
+                    // Speed Calculation (m/s to km/h)
+                    const kmh = speed ? Math.round(speed * 3.6) : 0;
+                    document.getElementById('current-speed').innerText = kmh;
+                    document.getElementById('speed-card').style.color = kmh > 100 ? '#ff0000' : '#00ff00';
 
-// Live GPS tracking
-map.on('locationfound', e => {
-  if (!userMarker) {
-    userMarker = L.circleMarker(e.latlng, {
-      radius: 8,
-      color: 'green'
-    }).addTo(map).bindPopup("YOU");
-  } else {
-    userMarker.setLatLng(e.latlng);
-  }
+                    updateUserMarker(latitude, longitude);
+                    map.panTo([latitude, longitude]); // Auto-follow
 
-  // Auto center map while driving
-  map.setView(e.latlng, 17);
-});
+                    if (routingControl) {
+                        routingControl.setWaypoints([L.latLng(latitude, longitude), destination]);
+                    }
+                }, (err) => {}, { enableHighAccuracy: true });
+            } else {
+                location.reload(); // Quick reset
+            }
+        }
 
-map.on('locationerror', () => {
-  alert("GPS permission required");
-});
-</script>
-
+        locateUser();
+    </script>
 </body>
 </html>
