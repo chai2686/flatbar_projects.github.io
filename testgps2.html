@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Smart Navigator Pro</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <style>
+        :root { --google-blue: #1a73e8; --google-red: #ea4335; --google-green: #34a853; }
+        body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background: #f8f9fa; overflow: hidden; }
+        #map { height: 100vh; width: 100vw; z-index: 1; }
+
+        #instruction-panel {
+            position: absolute; top: 10px; left: 10px; right: 10px;
+            background: var(--google-blue); color: white; padding: 15px;
+            border-radius: 12px; z-index: 2000; font-weight: 600;
+            text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none; transition: background 0.5s;
+        }
+
+        #speed-card {
+            position: absolute; bottom: 100px; left: 20px;
+            background: rgba(0, 0, 0, 0.8); color: #00ff00;
+            padding: 12px; border-radius: 50%; width: 70px; height: 70px;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 2000; border: 3px solid #444;
+        }
+        .speed-val { font-size: 24px; font-weight: bold; line-height: 1; }
+        .speed-unit { font-size: 10px; text-transform: uppercase; margin-top: 2px; }
+
+        .ui-controls {
+            position: absolute; bottom: 30px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+        }
+        .btn {
+            border: none; border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: bold;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-side { background: white; color: #555; font-size: 22px; width: 55px; height: 55px; }
+        .btn-start { 
+            background: var(--google-green); color: white; 
+            width: 80px; height: 80px; border-radius: 50%; font-size: 14px;
+        }
+        .btn-active { color: var(--google-blue); border: 2px solid var(--google-blue); }
+
+        /* Directional Arrow Marker */
+        .user-arrow { transition: transform 0.2s linear; }
+        
+        .leaflet-routing-container { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="instruction-panel">Calculating route...</div>
+    
+    <div id="speed-card">
+        <span class="speed-val" id="current-speed">0</span>
+        <span class="speed-unit">km/h</span>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="ui-controls">
+        <button class="btn btn-side" id="compass-btn" onclick="toggleCompass()">🧭</button>
+        <button id="start-btn" class="btn btn-start" onclick="toggleNavigation()">START</button>
+        <button class="btn btn-side" onclick="locateUser()">🎯</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    <script>
+        // 1. Initialize Map with Rotation support
+        const map = L.map('map', { 
+            zoomControl: false,
+            rotate: true,
+            touchRotate: true 
+        }).setView([0, 0], 2);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        let userMarker, watchId, routingControl, destination, wakeLock = null;
+        let isNavigating = false;
+        let followMode = false; // "Course-Up" toggle
+        let hasArrived = false;
+        const ARRIVAL_THRESHOLD = 100; // meters
+
+        // Custom Arrow Icon
+        const arrowIcon = L.divIcon({
+            className: 'user-arrow',
+            html: `<div id="arrow-inner" style="transform: rotate(0deg);"><svg width="40" height="40" viewBox="0 0 24 24"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z" fill="#1a73e8" stroke="white" stroke-width="2"/></svg></div>`,
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+
+        function locateUser() {
+            navigator.geolocation.getCurrentPosition(pos => {
+                const { latitude, longitude } = pos.coords;
+                map.setView([latitude, longitude], 17);
+                updateUserMarker(latitude, longitude, pos.coords.heading);
+            }, (err) => alert("GPS Required"), { enableHighAccuracy: true });
+        }
+
+        function updateUserMarker(lat, lng, heading) {
+            if (userMarker) {
+                userMarker.setLatLng([lat, lng]);
+            } else {
+                userMarker = L.marker([lat, lng], { icon: arrowIcon }).addTo(map);
+            }
+
+            if (heading !== null) {
+                const el = document.getElementById('arrow-inner');
+                if (el) el.style.transform = `rotate(${heading}deg)`;
+            }
+        }
+
+        function toggleCompass() {
+            followMode = !followMode;
+            const btn = document.getElementById('compass-btn');
+            btn.classList.toggle('btn-active', followMode);
+            if (!followMode) map.setBearing(0); // Reset to North
+        }
+
+        map.on('click', (e) => setDestination(e.latlng));
+
+        const geocoder = L.Control.geocoder({ defaultMarkGeocode: false })
+            .on('markgeocode', (e) => {
+                setDestination(e.geocode.center);
+                map.fitBounds(e.geocode.bbox);
+            }).addTo(map);
+
+        function setDestination(latlng) {
+            destination = latlng;
+            hasArrived = false;
+            if (routingControl) map.removeControl(routingControl);
+            
+            routingControl = L.Routing.control({
+                waypoints: [userMarker ? userMarker.getLatLng() : map.getCenter(), destination],
+                addWaypoints: false,
+                createMarker: () => null
+            }).on('routesfound', (e) => {
+                const s = e.routes[0].summary;
+                document.getElementById('instruction-panel').style.display = 'block';
+                document.getElementById('instruction-panel').innerHTML = `🏁 ${(s.totalDistance / 1000).toFixed(1)} km — ${Math.round(s.totalTime / 60)} mins`;
+            }).addTo(map);
+        }
+
+        async function requestWakeLock() {
+            try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } 
+            catch (err) { console.error(err); }
+        }
+
+        function toggleNavigation() {
+            if (!destination) return alert("Select a destination!");
+
+            if (!isNavigating) {
+                isNavigating = true;
+                requestWakeLock();
+                document.getElementById('start-btn').innerText = "STOP";
+                document.getElementById('start-btn').style.background = "var(--google-red)";
+
+                watchId = navigator.geolocation.watchPosition((pos) => {
+                    const { latitude, longitude, speed, heading } = pos.coords;
+                    const currentLatLng = L.latLng(latitude, longitude);
+
+                    // 1. Update UI
+                    const kmh = speed ? Math.round(speed * 3.6) : 0;
+                    document.getElementById('current-speed').innerText = kmh;
+                    updateUserMarker(latitude, longitude, heading);
+
+                    // 2. Map Behavior
+                    map.panTo(currentLatLng);
+                    if (followMode && heading !== null && speed > 1) {
+                        map.setBearing(heading);
+                    }
+
+                    // 3. Geofence Check
+                    const distToDest = currentLatLng.distanceTo(destination);
+                    if (distToDest < ARRIVAL_THRESHOLD && !hasArrived) {
+                        hasArrived = true;
+                        document.getElementById('instruction-panel').style.background = "var(--google-green)";
+                        document.getElementById('instruction-panel').innerHTML = "🎉 You have arrived!";
+                        alert("Destination reached!");
+                    }
+
+                    if (routingControl) routingControl.setWaypoints([currentLatLng, destination]);
+
+                }, (err) => {}, { enableHighAccuracy: true });
+            } else {
+                location.reload();
+            }
+        }
+
+        locateUser();
+    </script>
+</body>
+</html>
