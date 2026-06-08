@@ -1,0 +1,489 @@
+/**
+ * Apps Milk Run Section - OPTIMIZED VERSION
+ * ระบบบันทึกข้อมูล Milk Run เชื่อมต่อกับ Google Sheet
+ * 
+ * PERFORMANCE IMPROVEMENTS:
+ * - Cached spreadsheet and sheet references
+ * - Batch operations for multiple data access
+ * - Optimized range operations
+ * - Reduced API calls
+ * - Better error handling
+ * 
+ * UPDATES:
+ * - Changed Factory from "Pipe O" to "Section"
+ * - Updated header from "Factory" to "Pipe O" (now Section)
+ * - Added Inspector column (from Inspector sheet)
+ * - Added moveDataToBackup validation (block if pending statuses exist)
+ */
+
+// Cache objects for performance
+var cache = {
+  ss: null,
+  dataSheet: null,
+  allSheet: null,
+  backupSheet: null,
+  inspectorSheet: null,
+  lastCacheTime: null,
+  cacheDuration: 300000 // 5 minutes
+};
+
+/**
+ * Get spreadsheet with caching
+ */
+function getSpreadsheet() {
+  var now = new Date().getTime();
+  if (!cache.ss || !cache.lastCacheTime || (now - cache.lastCacheTime) > cache.cacheDuration) {
+    cache.ss = SpreadsheetApp.getActiveSpreadsheet();
+    cache.lastCacheTime = now;
+  }
+  return cache.ss;
+}
+
+/**
+ * Get sheet with caching
+ */
+function getSheet(sheetName) {
+  var ss = getSpreadsheet();
+  
+  if (sheetName === "Data") {
+    if (!cache.dataSheet) {
+      cache.dataSheet = ss.getSheetByName("Data") || ss.getSheets()[0];
+    }
+    return cache.dataSheet;
+  } else if (sheetName === "All") {
+    if (!cache.allSheet) {
+      cache.allSheet = ss.getSheetByName("All");
+    }
+    return cache.allSheet;
+  } else if (sheetName === "Backup") {
+    if (!cache.backupSheet) {
+      cache.backupSheet = ss.getSheetByName("Backup");
+    }
+    return cache.backupSheet;
+  } else if (sheetName === "Inspector") {
+    if (!cache.inspectorSheet) {
+      cache.inspectorSheet = ss.getSheetByName("Inspector");
+    }
+    return cache.inspectorSheet;
+  }
+  
+  return ss.getSheetByName(sheetName);
+}
+
+/**
+ * Clear cache (useful after sheet modifications)
+ */
+function clearCache() {
+  cache.dataSheet = null;
+  cache.allSheet = null;
+  cache.backupSheet = null;
+  cache.inspectorSheet = null;
+  cache.lastCacheTime = null;
+}
+
+function doGet() {
+  return HtmlService.createTemplateFromFile('index')
+    .evaluate()
+    .setTitle('Apps Milk Run Section')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+
+/**
+ * Initialize sheet headers if needed
+ * UPDATED: Added "Inspector" column
+ */
+function initializeDataSheet(sheet) {
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "วันที่", "เวลาบันทึก", "สถานะ", "Shipment No.", "ทะเบียน", "ลูกค้า", 
+      "ข้ามเจ้า", "ร้าน", "ประตู", "จุดไปฝาก", "จุดรับฝาก", "ระบบ", "หมายเหตุ", 
+      "เวลาจบสถานะ", "แจ้งเตือน", "Section", "Inspector"
+    ];
+    
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    
+    var headerRange = sheet.getRange(1, 1, 1, headers.length);
+    headerRange.setBackground("#0a2540")
+               .setFontColor("#ffffff")
+               .setFontWeight("bold")
+               .setHorizontalAlignment("center");
+    
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Get current timestamp strings
+ */
+function getTimestamp() {
+  var now = new Date();
+  var timezone = Session.getScriptTimeZone();
+  
+  return {
+    date: Utilities.formatDate(now, timezone, "dd/MM/yyyy"),
+    time: Utilities.formatDate(now, timezone, "HH:mm:ss"),
+    raw: now
+  };
+}
+
+/**
+ * Get Inspector list from Inspector sheet
+ */
+function getInspectorList() {
+  try {
+    var sheet = getSheet("Inspector");
+    if (!sheet) return [];
+    
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return [];
+    
+    var data = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    return data.map(function(row) { return row[0]; }).filter(function(v) { return v !== ''; });
+    
+  } catch (e) {
+    Logger.log('Error in getInspectorList: ' + e.toString());
+    return [];
+  }
+}
+
+/**
+ * บันทึกข้อมูลใหม่ (ลงชีท Data)
+ * UPDATED: Added Inspector field
+ */
+function saveData(data) {
+  try {
+    var sheet = getSheet("Data");
+    
+    initializeDataSheet(sheet);
+    
+    var timestamp = getTimestamp();
+    
+    var depositLoc = "-";
+    var receiveLoc = "-";
+    
+    if (data.status === 'แจ้งฝาก') {
+      depositLoc = data.location || "-";
+    } else if (data.status === 'รับฝาก') {
+      receiveLoc = data.location || "-";
+    }
+    
+    var rowData = [
+      timestamp.date,                   // 1
+      timestamp.time,                   // 2
+      data.status || "-",               // 3
+      "'" + (data.shipment || "-"),     // 4
+      data.plate || "-",                // 5
+      data.customer || "-",             // 6
+      data.skipOwner || "-",            // 7
+      data.shop || "-",                 // 8
+      data.gate || "Section",            // 9
+      depositLoc,                       // 10
+      receiveLoc,                       // 11
+      data.systemStatus || "-",         // 12
+      data.remark || "-",               // 13
+      timestamp.time,                   // 14
+      data.alert || "-",                // 15
+      "Section",                         // 16 (Factory)
+      data.inspector || "-"             // 17 (Inspector)
+    ];
+    
+    sheet.appendRow(rowData);
+    
+    clearCache();
+    
+    return { success: true, message: "บันทึกข้อมูลสำเร็จ!" };
+    
+  } catch (e) {
+    Logger.log('Error in saveData: ' + e.toString());
+    return { success: false, message: "เกิดข้อผิดพลาด: " + e.toString() };
+  }
+}
+
+/**
+ * อัปเดตข้อมูลเดิม (แก้ที่ชีท Data)
+ * UPDATED: ใช้ rowNum จริงจาก sheet แทน index
+ */
+function updateData(data, rowNum) {
+  try {
+    var sheet = getSheet("Data");
+    var lastRow = sheet.getLastRow();
+    
+    if (lastRow < 2) {
+      return { success: false, message: "ไม่มีข้อมูลในระบบ" };
+    }
+    
+    var realRow = parseInt(rowNum);
+    
+    if (isNaN(realRow) || realRow < 2 || realRow > lastRow) {
+      return { success: false, message: "ไม่พบข้อมูลแถวที่ระบุ (row: " + rowNum + ")" };
+    }
+    
+    var timestamp = getTimestamp();
+    
+    if (data.status === 'ลบข้อมูล') {
+      sheet.getRange(realRow, 3).setValue('ลบข้อมูล');
+      clearCache();
+      return { success: true, message: "ลบข้อมูลเรียบร้อยแล้ว" };
+    }
+    
+    var currentRange = sheet.getRange(realRow, 1, 1, 17);
+    var currentValues = currentRange.getValues()[0];
+    
+    var depositLoc = currentValues[9];
+    var receiveLoc = currentValues[10];
+    
+    if (data.status === 'แจ้งฝาก') {
+      depositLoc = data.location || "-";
+    } else if (data.status === 'รับฝาก') {
+      receiveLoc = data.location || "-";
+    } else if (data.status === 'ไปแล้ว' || data.status === 'ยกเลิก') {
+      // อัปเดต location ตาม prevStatus ที่ส่งมาจาก client
+      var prev = data.prevStatus || '';
+      if (prev === 'แจ้งฝาก') {
+        if (data.location) depositLoc = data.location;
+      } else if (prev === 'รับฝาก') {
+        if (data.location) receiveLoc = data.location;
+      } else {
+        // ไม่รู้ prevStatus — ดูจาก location ที่ส่งมา ถ้ามีให้ลองเขียนทับทั้งคู่ตามค่าเดิม
+        if (data.location) {
+          // ถ้า col10 (receiveLoc เดิม) มีค่า แสดงว่าเดิมเป็น รับฝาก
+          if (currentValues[10] && currentValues[10] !== '-') {
+            receiveLoc = data.location;
+          } else {
+            depositLoc = data.location;
+          }
+        }
+      }
+    }
+    
+    var updateValues = [[
+      data.status || "-",               // 3
+      "'" + (data.shipment || "-"),     // 4
+      data.plate || "-",                // 5
+      data.customer || "-",             // 6
+      data.skipOwner || "-",            // 7
+      data.shop || "-",                 // 8
+      data.gate || "Section",            // 9
+      depositLoc,                       // 10
+      receiveLoc,                       // 11
+      data.systemStatus || "-",         // 12
+      data.remark || "-",               // 13
+      timestamp.time,                   // 14
+      data.alert || "-",                // 15
+      "Section",                         // 16
+      data.inspector || "-"             // 17
+    ]];
+    
+    var updateRange = sheet.getRange(realRow, 3, 1, 15);
+    updateRange.setValues(updateValues);
+    
+    clearCache();
+    
+    return { success: true, message: "แก้ไขข้อมูลสำเร็จ!" };
+    
+  } catch (e) {
+    Logger.log('Error in updateData: ' + e.toString());
+    return { success: false, message: "เกิดข้อผิดพลาด: " + e.toString() };
+  }
+}
+
+/**
+ * ดึงข้อมูล (จากชีท Data)
+ */
+function getData() {
+  try {
+    var sheet = getSheet("Data");
+    var lastRow = sheet.getLastRow();
+    
+    if (lastRow < 2) {
+      return [];
+    }
+    
+    var lastColumn = sheet.getLastColumn();
+    var dataRange = sheet.getRange(2, 1, lastRow - 1, lastColumn);
+    var data = dataRange.getDisplayValues();
+    
+    // แนบ sheet row number ท้ายแต่ละ row เพื่อให้ updateData ใช้ตรงๆ
+    var result = [];
+    for (var i = 0; i < data.length; i++) {
+      var row = data[i].slice();
+      row.push(i + 2); // col index 17 = sheet row number
+      result.push(row);
+    }
+    
+    return result.reverse();
+    
+  } catch (e) {
+    Logger.log('Error in getData: ' + e.toString());
+    return [];
+  }
+}
+
+/**
+ * ดึงข้อมูลสำหรับภาพรวม (จากชีท All)
+ */
+function getOverviewData() {
+  try {
+    var sheet = getSheet("All");
+    
+    if (!sheet) {
+      return [];
+    }
+    
+    var lastRow = sheet.getLastRow();
+    
+    if (lastRow < 2) {
+      return [];
+    }
+    
+    var lastColumn = sheet.getLastColumn();
+    var dataRange = sheet.getRange(2, 1, lastRow - 1, lastColumn);
+    var data = dataRange.getDisplayValues();
+    
+    return data;
+    
+  } catch (e) {
+    Logger.log('Error in getOverviewData: ' + e.toString());
+    return [];
+  }
+}
+
+/**
+ * ย้ายข้อมูลไป Backup (จาก Data -> Backup)
+ * UPDATED: ตรวจสอบสถานะก่อนว่ามี แจ้งฝาก / รับฝาก มั้ย
+ */
+function moveDataToBackup() {
+  try {
+    var ss = getSpreadsheet();
+    var sourceSheet = getSheet("Data");
+    var backupSheet = getSheet("Backup");
+    
+    var sourceLastRow = sourceSheet.getLastRow();
+    
+    if (sourceLastRow < 2) {
+      return { success: false, message: "ไม่มีข้อมูลให้ย้าย" };
+    }
+    
+    // ตรวจสอบสถานะทั้งหมด
+    var dataRange = sourceSheet.getRange(2, 1, sourceLastRow - 1, 3);
+    var allData = dataRange.getValues();
+    
+    var blockedStatuses = ['แจ้งฝาก', 'รับฝาก'];        // ห้ามมี
+    var allowedStatuses = ['ไปแล้ว', 'ยกเลิก']; // ต้องมีอย่างน้อย 1
+    
+    var blockedRows = [];
+    var hasAllowed = false;
+    
+    allData.forEach(function(row) {
+      var status = row[2];
+      if (status === 'ลบข้อมูล') return;
+      if (blockedStatuses.indexOf(status) !== -1) {
+        blockedRows.push(status);
+      }
+      if (allowedStatuses.indexOf(status) !== -1) {
+        hasAllowed = true;
+      }
+    });
+    
+    // บล็อกถ้ายังมี แจ้งฝาก / รับฝาก ค้างอยู่
+    if (blockedRows.length > 0) {
+      var statusCount = {};
+      blockedRows.forEach(function(s) { statusCount[s] = (statusCount[s] || 0) + 1; });
+      var detail = Object.keys(statusCount).map(function(k) { return k + ' ' + statusCount[k] + ' รายการ'; }).join(', ');
+      return { 
+        success: false, 
+        message: "ไม่สามารถย้ายได้ ยังมีรายการค้างอยู่: " + detail + "\nกรุณาปิดสถานะเป็น ไปแล้ว หรือ ยกเลิก ก่อน"
+      };
+    }
+    
+    // บล็อกถ้าไม่มีรายการที่พร้อมย้ายเลย (ต้องมี ไปแล้ว / ยกเลิก อย่างน้อย 1)
+    if (!hasAllowed) {
+      return {
+        success: false,
+        message: "ไม่มีรายการที่พร้อมย้าย\nต้องมีสถานะ ไปแล้ว หรือ ยกเลิก อย่างน้อย 1 รายการ"
+      };
+    }
+    
+    // Create Backup sheet if it doesn't exist
+    if (!backupSheet) {
+      backupSheet = ss.insertSheet("Backup");
+      cache.backupSheet = backupSheet;
+      
+      var sourceLastColumn = sourceSheet.getLastColumn();
+      var headerRange = sourceSheet.getRange(1, 1, 1, sourceLastColumn);
+      headerRange.copyTo(backupSheet.getRange(1, 1));
+    }
+    
+    // Copy data in one operation
+    var sourceLastColumn = sourceSheet.getLastColumn();
+    var sourceRange = sourceSheet.getRange(2, 1, sourceLastRow - 1, sourceLastColumn);
+    var backupLastRow = backupSheet.getLastRow();
+    
+    sourceRange.copyTo(
+      backupSheet.getRange(backupLastRow + 1, 1), 
+      SpreadsheetApp.CopyPasteType.PASTE_NORMAL, 
+      false
+    );
+    
+    sourceSheet.deleteRows(2, sourceLastRow - 1);
+    
+    clearCache();
+    
+    return { success: true, message: "ย้ายข้อมูลไป Backup เรียบร้อยแล้ว" };
+    
+  } catch (e) {
+    Logger.log('Error in moveDataToBackup: ' + e.toString());
+    return { success: false, message: "เกิดข้อผิดพลาด: " + e.toString() };
+  }
+}
+
+/**
+ * Batch data retrieval
+ */
+function getBatchData() {
+  try {
+    var result = {
+      data: getData(),
+      overview: getOverviewData(),
+      timestamp: new Date().getTime()
+    };
+    
+    return result;
+    
+  } catch (e) {
+    Logger.log('Error in getBatchData: ' + e.toString());
+    return {
+      data: [],
+      overview: [],
+      timestamp: new Date().getTime(),
+      error: e.toString()
+    };
+  }
+}
+
+/**
+ * Get sheet statistics
+ */
+function getSheetStats() {
+  try {
+    var dataSheet = getSheet("Data");
+    var allSheet = getSheet("All");
+    var backupSheet = getSheet("Backup");
+    
+    return {
+      dataRows: dataSheet ? dataSheet.getLastRow() - 1 : 0,
+      allRows: allSheet ? allSheet.getLastRow() - 1 : 0,
+      backupRows: backupSheet ? backupSheet.getLastRow() - 1 : 0,
+      timestamp: new Date().getTime()
+    };
+    
+  } catch (e) {
+    Logger.log('Error in getSheetStats: ' + e.toString());
+    return null;
+  }
+}
