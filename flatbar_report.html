@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      /* Simple styling for a clean, modern table */
+      body {
+        font-family: Arial, sans-serif;
+        padding: 0px;
+        background-color: #f4f7f6;
+        color: #333;
+      }
+      .table-container {
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow-x: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 10px;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="table-container">
+      <h2>รายการจดน้ำหนัก</h2>
+      <div id="data-output">Loading data...</div>
+    </div>
+
+    <script>
+  window.onload = function() {
+    const part0 = "AIzaSyAFnyXSAki4Licz";
+  	const part1 = "KNhyEzbhHsvTC-abfAo";
+  	const apiKey = part0 + part1;
+	  const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
+	  const range = "รายงานจดน้ำหนัก!A:E";
+
+	  let dataArray = [];
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        dataArray = data.values; // Save data for filtering
+		buildGroupedTable(dataArray);
+    });
+  };
+
+  function buildGroupedTable(dataArray) {
+    const container = document.getElementById('data-output');
+    if (!dataArray || dataArray.length <= 1) {
+      container.innerHTML = "<p>No data found in the sheet.</p>";
+      return;
+    }
+
+    // 1. Separate headers from the data
+    const headers = dataArray.shift(); 
+    
+    // 2. Sort the data alphabetically by Column A (index 0)
+    dataArray.sort((a, b) => a[0].toString().localeCompare(b[0].toString()));
+
+    let html = '<table>';
+    
+    // 3. Build the Header Row (Skipping Column A since it will be our group header)
+    html += '<thead><tr>';
+    for (let j = 1; j < headers.length; j++) {
+      html += '<th>' + headers[j] + '</th>';
+    }
+    html += '</tr></thead><tbody>';
+
+    let currentGroup = null;
+
+    // 4. Build the Data Rows
+    for (let i = 0; i < dataArray.length; i++) {
+      let groupValue = dataArray[i][0]; // Value in Column A
+      
+      // If we hit a new category in Column A, insert a full-width header row
+      if (groupValue !== currentGroup) {
+        html += `<tr style="background-color: #e0e0e0;">
+                   <td colspan="${headers.length - 1}"><strong>📁 ${groupValue}</strong></td>
+                 </tr>`;
+        currentGroup = groupValue;
+      }
+
+      // Output the rest of the row's data (Columns B, C, etc.)
+      html += '<tr>';
+      for (let j = 1; j < dataArray[i].length; j++) {
+        html += '<td>' + dataArray[i][j] + '</td>';
+      }
+      html += '</tr>';
+    }
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+</script>
+  </body>
+</html>
