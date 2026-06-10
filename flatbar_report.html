@@ -44,7 +44,7 @@
 
     <div class="table-container">
       <h2>รายการจดน้ำหนัก</h2>
-      <div id="data-output">Loading data...</div>
+      <div id="data-output">กำลังโหลด...</div>
     </div>
 	<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.7 BETA</p>
     <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
@@ -69,7 +69,7 @@
   function buildGroupedTable(dataArray) {
     const container = document.getElementById('data-output');
     if (!dataArray || dataArray.length <= 1) {
-      container.innerHTML = "<p>No data found in the sheet.</p>";
+      container.innerHTML = "<p>ไม่พบข้อมูลรายการ.</p>";
       return;
     }
 
