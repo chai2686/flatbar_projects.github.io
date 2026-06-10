@@ -18,7 +18,7 @@
 
 body{
     background:#eef2f7;
-    padding:25px;
+    padding:0px;
 }
 
 .container{
@@ -30,7 +30,7 @@ body{
 
     background:white;
     border-radius:15px;
-    padding:20px;
+    padding:10px;
     box-shadow:0 4px 12px rgba(0,0,0,.15);
 
 }
@@ -56,11 +56,11 @@ body{
 
 .searchBox{
 
-    padding:10px;
+    padding:4px;
     width:300px;
     border-radius:8px;
     border:1px solid #ccc;
-    font-size:16px;
+    font-size:14px;
 
 }
 
@@ -90,17 +90,17 @@ th{
 
     background:#2c5282;
     color:white;
-    padding:14px;
+    padding:4px;
     text-align:left;
-	font-size: 14px;
+	font-size: 12px;
 
 }
 
 td{
 
-    padding:12px;
+    padding:4px;
     border-bottom:1px solid #eee;
-	font-size: 14px;
+	font-size: 12px;
 
 }
 
@@ -126,7 +126,6 @@ tr:hover{
 
 .qty{
 
-    font-weight:bold;
     color:#006600;
 
 }
@@ -151,7 +150,7 @@ font-size:22px;
 
 .searchBox{
 
-width:100%;
+width:40%;
 
 }
 
@@ -205,7 +204,7 @@ placeholder="Search...">
 <tr>
 
 <td colspan="6" class="loading">
-Loading...
+กำลังโหลด...
 </td>
 
 </tr>
@@ -219,6 +218,8 @@ Loading...
 </div>
 
 </div>
+<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 2.0 Beta</p>
+<p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
 
 <script>
 
@@ -267,14 +268,14 @@ async function loadData() {
 
             const card = document.createElement("div");
 
-            card.style.marginBottom = "25px";
+            card.style.marginBottom = "10px";
             card.style.background = "#fff";
             card.style.borderRadius = "12px";
-            card.style.padding = "15px";
+            //card.style.padding = "15px";
             card.style.boxShadow = "0 2px 8px rgba(0,0,0,.15)";
 
             let html = `
-                <h4 style="margin-bottom:10px;color:#2c5282;">
+                <h4 style="margin-bottom:4px;color:#000000;">
                     🚚 ทะเบียน ${truck}
                 </h4>
 
@@ -284,7 +285,7 @@ async function loadData() {
 
                 <tr>
 
-                <th>Material Code</th>
+<th style="display: none;">ทะเบียน</th>                
 <th>ชื่อผลิตภัณฑ์</th>
 <th>Batch</th>
 <th>จำนวน</th>
@@ -302,7 +303,7 @@ async function loadData() {
                 html += `
                 <tr>
 
-                <td>${r[1] || ""}</td>
+                <td style="display: none;">${r[0] || ""}</td>
                 <td>${r[2] || ""}</td>
                 <td>${r[3] || ""}</td>
                 <td><b>${r[4] || ""}</b></td>
