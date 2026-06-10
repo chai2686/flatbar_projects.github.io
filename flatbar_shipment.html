@@ -1,358 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายการรถขนส่ง</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Segoe UI, Arial, sans-serif;
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        body {
+            background: #eef2f7;
+            padding: 0px;
+        }
 
-<title>Shipment Report</title>
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 10px;
+        }
 
-<style>
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.15);
+        }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Segoe UI,Arial,sans-serif;
-}
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
 
-body{
-    background:#eef2f7;
-    padding:0px;
-}
+        .title {
+            font-size: 28px;
+            color: #2c5282;
+            font-weight: bold;
+        }
 
-.container{
-    max-width:1500px;
-    margin:auto;
-}
+        .searchBox {
+            padding: 8px;
+            width: 300px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
 
-.card{
+        .data-container {
+            overflow: auto;
+            max-height: 700px;
+            padding-right: 5px; /* Scrollbar breathing room */
+        }
 
-    background:white;
-    border-radius:15px;
-    padding:10px;
-    box-shadow:0 4px 12px rgba(0,0,0,.15);
+        /* Individual Truck Cards */
+        .truck-card {
+            margin-bottom: 5px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 5px rgba(0,0,0,.05);
+            overflow: hidden;
+        }
 
-}
+        .truck-header {
+            margin: 0;
+            padding: 4px;
+            background: #f1f5f9;
+            color: #1e293b;
+            font-size: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
 
-.header{
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-    flex-wrap:wrap;
-    gap:10px;
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
 
-}
+        th {
+            background: #2c5282;
+            color: white;
+            padding: 4px;
+            text-align: left;
+            font-size: 13px;
+        }
 
-.title{
+        td {
+            padding: 4px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
 
-    font-size:28px;
-    color:#2c5282;
-    font-weight:bold;
+        tr:nth-child(even) { background: #f8f8f8; }
+        tr:hover { background: #d9ebff; }
 
-}
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: gray;
+            font-size: 16px;
+        }
 
-.searchBox{
+        .qty { color: #006600; }
 
-    padding:4px;
-    width:300px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    font-size:14px;
+        .footer-text {
+            font-size: 12px;
+            text-align: right;
+            padding-right: 15px;
+            color: #64748b;
+        }
 
-}
-
-.table-container{
-
-    overflow:auto;
-    max-height:700px;
-
-}
-
-table{
-
-    width:100%;
-    border-collapse:collapse;
-
-}
-
-thead{
-
-    position:sticky;
-    top:0;
-    z-index:2;
-
-}
-
-th{
-
-    background:#2c5282;
-    color:white;
-    padding:4px;
-    text-align:left;
-	font-size: 12px;
-
-}
-
-td{
-
-    padding:4px;
-    border-bottom:1px solid #eee;
-	font-size: 12px;
-
-}
-
-tr:nth-child(even){
-
-    background:#f8f8f8;
-
-}
-
-tr:hover{
-
-    background:#d9ebff;
-
-}
-
-.loading{
-
-    text-align:center;
-    padding:20px;
-    color:gray;
-
-}
-
-.qty{
-
-    color:#006600;
-
-}
-
-.badge{
-
-    background:#2c5282;
-    color:white;
-    padding:4px 8px;
-    border-radius:20px;
-    font-size:13px;
-
-}
-
-@media(max-width:700px){
-
-.title{
-
-font-size:22px;
-
-}
-
-.searchBox{
-
-width:40%;
-
-}
-
-}
-
-</style>
-
+        @media(max-width: 700px) {
+            .title { font-size: 22px; }
+            .searchBox { width: 40%; }
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <div class="main-card">
+        <div class="header">
+            <div class="title">🚚 รายการรถขนส่ง</div>
+            <input type="text" class="searchBox" id="search" placeholder="ค้นหาทะเบียน">
+        </div>
 
-<div class="card">
-
-<div class="header">
-
-<div class="title">
-🚚 รายการรถขนส่ง
+        <div class="data-container" id="data-container">
+            <div class="loading">กำลังโหลดข้อมูล...</div>
+        </div>
+    </div>
+    
+    <div class="footer-text" style="margin-top: 15px;">Version 2.0 Beta</div>
+    <div class="footer-text">Powered by Flatbar Division™️</div>
 </div>
-
-<input
-type="text"
-class="searchBox"
-id="search"
-placeholder="Search...">
-
-</div>
-
-<div class="table-container">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>ทะเบียน</th>
-<th>Material Code</th>
-<th>ชื่อผลิตภัณฑ์</th>
-<th>Batch</th>
-<th>จำนวน</th>
-<th>ชื่อลูกค้า</th>
-
-</tr>
-
-</thead>
-
-<tbody id="tbody">
-
-<tr>
-
-<td colspan="6" class="loading">
-กำลังโหลด...
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</div>
-<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 2.0 Beta</p>
-<p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
 
 <script>
+    const part0 = "AIzaSyAFnyXSAki4Licz";
+    const part1 = "KNhyEzbhHsvTC-abfAo";
+    const apiKey = part0 + part1;
+    const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
+    const range = "รายการขนส่ง!A:F";
 
-const part0 = "AIzaSyAFnyXSAki4Licz";
-  	const part1 = "KNhyEzbhHsvTC-abfAo";
-  	const apiKey = part0 + part1;
-	  const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
-	  const range = "รายการขนส่ง!A:F";
+    async function loadData() {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+        const container = document.getElementById("data-container");
 
-async function loadData() {
+        try {
+            const response = await fetch(url);
+            const json = await response.json();
 
-    const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
-
-    const container = document.getElementById("tbody").parentElement;
-
-    try {
-
-        const response = await fetch(url);
-        const json = await response.json();
-		
-
-        if (!json.values) {
-            container.innerHTML = "<h3>No data found.</h3>";
-            return;
-        }
-
-        // Group by Truck No.
-        const groups = {};
-
-        json.values.forEach(row => {
-
-            const truck = row[0] || "Unknown";
-
-            if (!groups[truck]) {
-                groups[truck] = [];
+            if (!json.values || json.values.length === 0) {
+                container.innerHTML = "<div class='loading'>No data found.</div>";
+                return;
             }
 
-            groups[truck].push(row);
+            const groups = {};
 
-        });
+            // Group by Truck No.
+            json.values.forEach((row, index) => {
+                // Optional: Skip the header row from Google Sheets if it gets pulled in
+                if (index === 0 && row[0] === "ทะเบียน") return; 
 
-        container.innerHTML = "";
-
-        for (const truck in groups) {
-
-            const card = document.createElement("div");
-
-            card.style.marginBottom = "10px";
-            card.style.background = "#fff";
-            card.style.borderRadius = "12px";
-            //card.style.padding = "15px";
-            card.style.boxShadow = "0 2px 8px rgba(0,0,0,.15)";
-
-            let html = `
-                <h4 style="margin-bottom:4px;color:#000000;">
-                    🚚 ทะเบียน ${truck}
-                </h4>
-
-                <table style="width:100%;border-collapse:collapse;">
-
-                <thead>
-
-                <tr>
-
-<th style="display: none;">ทะเบียน</th>                
-<th>ชื่อผลิตภัณฑ์</th>
-<th>Batch</th>
-<th>จำนวน</th>
-<th>ชื่อลูกค้า</th>
-
-                </tr>
-
-                </thead>
-
-                <tbody>
-            `;
-
-            groups[truck].forEach(r => {
-
-                html += `
-                <tr>
-
-                <td style="display: none;">${r[0] || ""}</td>
-                <td>${r[2] || ""}</td>
-                <td>${r[3] || ""}</td>
-                <td><b>${r[4] || ""}</b></td>
-                <td>${r[5] || ""}</td>
-
-                </tr>
-                `;
-
+                const truck = row[0] || "Unknown";
+                if (!groups[truck]) {
+                    groups[truck] = [];
+                }
+                groups[truck].push(row);
             });
 
-            html += "</tbody></table>";
+            // Build HTML as a single string for better performance
+            let html = "";
 
-            card.innerHTML = html;
+            for (const truck in groups) {
+                html += `
+                    <div class="truck-card">
+                        <h4 class="truck-header">🚚 ทะเบียน ${truck}</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ชื่อผลิตภัณฑ์</th>
+                                    <th>Batch</th>
+                                    <th>จำนวน</th>
+                                    <th>ชื่อลูกค้า</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
 
-            container.appendChild(card);
+                groups[truck].forEach(r => {
+                    // Combine row data into a single string for easy searching
+                    const searchData = `${truck} ${r[2] || ""} ${r[3] || ""} ${r[4] || ""} ${r[5] || ""}`.toLowerCase();
+                    
+                    html += `
+                                <tr data-search="${searchData}">
+                                    <td>${r[2] || "-"}</td>
+                                    <td>${r[3] || "-"}</td>
+                                    <td class="qty"><b>${r[4] || "-"}</b></td>
+                                    <td>${r[5] || "-"}</td>
+                                </tr>
+                    `;
+                });
 
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+
+            // Re-apply search filter in case data refreshed while user is typing/searching
+            applySearchFilter();
+
+        } catch (e) {
+            container.innerHTML = "<div class='loading'>Cannot load data. Please check your connection.</div>";
+            console.error("Data fetch error:", e);
         }
-
-    }
-    catch (e) {
-
-        container.innerHTML = "<h3>Cannot load data.</h3>";
-
-        console.log(e);
-
     }
 
-}
+    // --- Search Functionality ---
+    function applySearchFilter() {
+        const keyword = document.getElementById('search').value.toLowerCase();
+        const cards = document.querySelectorAll(".truck-card");
 
-loadData();
+        cards.forEach(card => {
+            let hasVisibleRow = false;
+            const rows = card.querySelectorAll("tbody tr");
 
-/* Auto refresh every 60 seconds */
+            rows.forEach(row => {
+                const text = row.getAttribute('data-search');
+                if (text.includes(keyword)) {
+                    row.style.display = "";
+                    hasVisibleRow = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
 
-setInterval(loadData,60000);
+            // Hide the entire truck card if no rows match the search
+            card.style.display = hasVisibleRow ? "" : "none";
+        });
+    }
 
-/* Search */
+    let typingTimer; 
+    const delay = 250; // 250ms is standard for search debounce
 
-document.getElementById("search").addEventListener("keyup",function(){
-const keyword=this.value.toLowerCase();
-const rows=document.querySelectorAll("tbody tr");
-rows.forEach(row=>{
+    document.getElementById("search").addEventListener("keyup", function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(applySearchFilter, delay);
+    });
 
-const text=row.innerText.toLowerCase();
+    // Initialize data load
+    loadData();
 
-row.style.display=text.includes(keyword)?"":"none";
-
-});
-
-});
+    // Auto refresh every 60 seconds
+    setInterval(loadData, 60000);
 
 </script>
 
