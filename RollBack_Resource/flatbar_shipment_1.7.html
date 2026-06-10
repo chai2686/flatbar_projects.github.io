@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Shipment Report</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,Arial,sans-serif;
+}
+
+body{
+    background:#eef2f7;
+    padding:0px;
+}
+
+.container{
+    max-width:1500px;
+    margin:auto;
+}
+
+.card{
+
+    background:white;
+    border-radius:15px;
+    padding:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+
+}
+
+.header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+    gap:10px;
+
+}
+
+.title{
+
+    font-size:28px;
+    color:#2c5282;
+    font-weight:bold;
+
+}
+
+.searchBox{
+
+    padding:4px;
+    width:300px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:14px;
+
+}
+
+.table-container{
+
+    overflow:auto;
+    max-height:700px;
+
+}
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+thead{
+
+    position:sticky;
+    top:0;
+    z-index:2;
+
+}
+
+th{
+
+    background:#2c5282;
+    color:white;
+    padding:4px;
+    text-align:left;
+	font-size: 12px;
+
+}
+
+td{
+
+    padding:4px;
+    border-bottom:1px solid #eee;
+	font-size: 12px;
+
+}
+
+tr:nth-child(even){
+
+    background:#f8f8f8;
+
+}
+
+tr:hover{
+
+    background:#d9ebff;
+
+}
+
+.loading{
+
+    text-align:center;
+    padding:20px;
+    color:gray;
+
+}
+
+.qty{
+
+    color:#006600;
+
+}
+
+.badge{
+
+    background:#2c5282;
+    color:white;
+    padding:4px 8px;
+    border-radius:20px;
+    font-size:13px;
+
+}
+
+@media(max-width:700px){
+
+.title{
+
+font-size:22px;
+
+}
+
+.searchBox{
+
+width:40%;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="header">
+
+<div class="title">
+🚚 รายการรถขนส่ง
+</div>
+
+<input
+type="text"
+class="searchBox"
+id="search"
+placeholder="Search...">
+
+</div>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ทะเบียน</th>
+<th>Material Code</th>
+<th>ชื่อผลิตภัณฑ์</th>
+<th>Batch</th>
+<th>จำนวน</th>
+<th>ชื่อลูกค้า</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tbody">
+
+<tr>
+
+<td colspan="6" class="loading">
+กำลังโหลด...
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 2.0 Beta</p>
+<p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+
+<script>
+
+const part0 = "AIzaSyAFnyXSAki4Licz";
+  	const part1 = "KNhyEzbhHsvTC-abfAo";
+  	const apiKey = part0 + part1;
+	  const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
+	  const range = "รายการขนส่ง!A:F";
+
+async function loadData() {
+
+    const url =
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+
+    const container = document.getElementById("tbody").parentElement;
+
+    try {
+
+        const response = await fetch(url);
+        const json = await response.json();
+		
+
+        if (!json.values) {
+            container.innerHTML = "<h3>No data found.</h3>";
+            return;
+        }
+
+        // Group by Truck No.
+        const groups = {};
+
+        json.values.forEach(row => {
+
+            const truck = row[0] || "Unknown";
+
+            if (!groups[truck]) {
+                groups[truck] = [];
+            }
+
+            groups[truck].push(row);
+
+        });
+
+        container.innerHTML = "";
+
+        for (const truck in groups) {
+
+            const card = document.createElement("div");
+
+            card.style.marginBottom = "10px";
+            card.style.background = "#fff";
+            card.style.borderRadius = "12px";
+            //card.style.padding = "15px";
+            card.style.boxShadow = "0 2px 8px rgba(0,0,0,.15)";
+
+            let html = `
+                <h4 style="margin-bottom:4px;color:#000000;">
+                    🚚 ทะเบียน ${truck}
+                </h4>
+
+                <table style="width:100%;border-collapse:collapse;">
+
+                <thead>
+
+                <tr>
+
+<th style="display: none;">ทะเบียน</th>                
+<th>ชื่อผลิตภัณฑ์</th>
+<th>Batch</th>
+<th>จำนวน</th>
+<th>ชื่อลูกค้า</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+            `;
+
+            groups[truck].forEach(r => {
+
+                html += `
+                <tr>
+
+                <td style="display: none;">${r[0] || ""}</td>
+                <td>${r[2] || ""}</td>
+                <td>${r[3] || ""}</td>
+                <td><b>${r[4] || ""}</b></td>
+                <td>${r[5] || ""}</td>
+
+                </tr>
+                `;
+
+            });
+
+            html += "</tbody></table>";
+
+            card.innerHTML = html;
+
+            container.appendChild(card);
+
+        }
+
+    }
+    catch (e) {
+
+        container.innerHTML = "<h3>Cannot load data.</h3>";
+
+        console.log(e);
+
+    }
+
+}
+
+loadData();
+
+/* Auto refresh every 60 seconds */
+
+setInterval(loadData,60000);
+
+/* Search */
+
+document.getElementById("search").addEventListener("keyup",function(){
+const keyword=this.value.toLowerCase();
+const rows=document.querySelectorAll("tbody tr");
+rows.forEach(row=>{
+
+const text=row.innerText.toLowerCase();
+
+row.style.display=text.includes(keyword)?"":"none";
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
