@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตารางเวรประจำวัน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8" style="padding: 5px;">
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-2">ตารางเวรประจำวัน</h1>
+
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100" style="margin-top: 0px;">
+            <div class="bg-[#38b2ac] p-4 text-center flex flex-col md:flex-row items-center justify-center gap-2" style="padding: 5px;">
+                <h2 class="text-xl md:text-2xl font-bold text-white">
+                    เวรเช็คเครนประจำวัน2025
+                </h2>
+                <span class="text-red-600 bg-white px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
+                    (ส่งภายใน 10 นาที หลังมิดติ้งเสร็จ)
+                </span>
+            </div>
+            
+            <div class="p-6">
+                <div class="mb-6 flex items-center">
+                    <div class="bg-gray-100 px-4 py-2 rounded-lg border border-gray-200 inline-flex items-center shadow-sm" style="padding: 5px;">
+                        <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="font-semibold text-gray-600">วันที่:</span>
+                        <span id="date" class="text-lg font-bold text-[#38b2ac] ml-2">11/6/2026</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <div class="border-2 border-[#00d2ff] rounded-xl overflow-hidden shadow-sm transition hover:shadow-md">
+                        <div class="bg-[#00d2ff] text-gray-900 font-bold p-2 text-center text-lg" style="padding: 5px;">โซน K2</div>
+                        <div class="p-3 bg-white divide-y divide-gray-100">
+                            <div class="py-2 flex justify-between items-center" style="padding-top: 0px; padding-bottom: 0px;">
+                                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Operator</span>
+                                <span id="k2op" class="font-semibold text-gray-800">จำเรียง</span>
+                            </div>
+                            <div class="py-2 flex justify-between items-center" style="padding-top: 0px; padding-bottom: 0px;">
+                                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Inspector</span>
+                                <span id="k2in" class="font-semibold text-gray-800">ปรีดา</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-2 border-[#4fd1c5] rounded-xl overflow-hidden shadow-sm transition hover:shadow-md">
+                        <div class="bg-[#4fd1c5] text-gray-900 font-bold p-2 text-center text-lg" style="padding: 5px;">โซน K4</div>
+                        <div class="p-3 bg-white divide-y divide-gray-100">
+                            <div class="py-2 flex justify-between items-center" style="padding-top: 0px; padding-bottom: 0px;">
+                                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Operator</span>
+                                <span id="k4op" class="font-semibold text-gray-800">กร</span>
+                            </div>
+                            <div class="py-2 flex justify-between items-center" style="padding-top: 0px; padding-bottom: 0px;">
+                                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Inspector</span>
+                                <span id="k4in" class="font-semibold text-gray-800">ธนาวุฒิ</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-2 border-[#ff9ff3] rounded-xl overflow-hidden shadow-sm transition hover:shadow-md">
+                        <div class="bg-[#ff9ff3] text-gray-900 font-bold p-2 text-center text-lg" style="padding: 5px;">โซน K6</div>
+                        <div class="p-3 bg-white divide-y divide-gray-100">
+                            <div class="py-2 flex justify-between items-center" style="padding-top: 0px; padding-bottom: 0px;">
+                                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Operator</span>
+                                <span id="k6op" class="font-semibold text-gray-800">เนนิตย์</span>
+                            </div>
+                            <div class="py-2 flex justify-between items-center" style="padding-top: 0px; padding-bottom: 0px;">
+                                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Inspector</span>
+                                <span id="k6in" class="font-semibold text-gray-800">นพพล</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-2 border-gray-300 rounded-xl overflow-hidden shadow-sm transition hover:shadow-md bg-gray-50">
+                        <div class="bg-gray-200 text-gray-700 font-bold p-2 text-center text-sm md:text-base leading-tight flex flex-col justify-center h-[44px]" style="padding: 5px;">
+                            ตรวจสอบ Sr.inspector
+                        </div>
+                        <div class="p-3 flex items-center justify-center h-[90px]">
+                            <span id="srin" class="font-bold text-xl text-gray-800 bg-white px-6 py-2 rounded-lg border border-gray-200 shadow-sm">รัตนะ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <div class="md:col-span-2 bg-white rounded-2xl shadow-md overflow-hidden border-t-4 border-[#38b2ac]">
+                <div class="p-6" style="padding-top: 10px;">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 border-b border-gray-100 pb-4 gap-4" style="padding-bottom: 0px;">
+                        <h2 class="text-xl font-bold text-[#2b6cb0] flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-[#38b2ac]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            เวรเบรคบ่าย
+                        </h2>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        <span id="ins1" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm" style="background-color: lightgray;">ธนาวุฒิ</span>
+                        <span id="ins2" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm" style="background-color: lightgray;">อิสระ</span>
+                        <span id="opt1" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm">ราชัน</span>
+                        <span id="opt2" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm">จำเรียง</span>
+                        <span id="opt3" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm">สุรชาต</span>
+                        <span id="opt4" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm">บอล</span>
+                        <span id="opt5" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm">ณัฐพงศ์</span>
+						<span id="opt6" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm"></span>
+						<span id="opt7" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm"></span>
+					</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden border-t-4 border-[#ed8936]">
+                <div class="bg-[#ed8936] p-3 text-center" style="padding: 5px">
+                    <h2 class="text-lg font-bold text-white flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        เวรทิ้งถุงมือ
+                    </h2>
+                </div>
+                <div class="p-6 flex flex-col items-center justify-center h-[calc(100%-52px)] bg-orange-50/30">
+                    <span id="opt00" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm">จำเรียง</span>
+                </div>
+    
+            </div>
+            </div>
+        </div>
+
+    </div>
+	<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 10px;margin-bottom: 5px;">Version 2.0 Beta</p>
+    <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+</body>
+</html>
