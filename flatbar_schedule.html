@@ -122,7 +122,7 @@
                     </h2>
                 </div>
                 <div class="p-6 flex flex-col items-center justify-center h-[calc(100%-52px)] bg-orange-50/30">
-                    <span id="opt00" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm">จำเรียง</span>
+                    <span onclick="test()" id="opt00" class="px-4 py-2 text-blue-700 border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200 rounded-lg font-medium shadow-sm">จำเรียง</span>
                 </div>
     
             </div>
@@ -132,5 +132,30 @@
     </div>
 	<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 10px;margin-bottom: 5px;">Version 2.0 Beta</p>
     <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+	
+	<script>
+		function test(){
+			console.log("test start");
+			const part0 = "AIzaSyAFnyXSAki4Licz";
+			const part1 = "KNhyEzbhHsvTC-abfAo";
+			const apiKey = part0 + part1;
+			const spreadsheetId = "1dGGGnSM23HxEChvN9A_LfbKrTVzPV30_ZBfRSt3ve9g";
+			const rangeDate = "ตารางเวรเหล็กแบน!A3";
+			
+			let Date = "";
+			
+			let dataArray = [];
+			fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${rangeDate}?key=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        dataArray = data.values; // Save data for filtering
+		Date = dataArray[0][0];
+		document.getElementById("date").textContent = Date;
+		console.log(Date);
+    });
+		return;	
+		}
+    </script>
+	
 </body>
 </html>
