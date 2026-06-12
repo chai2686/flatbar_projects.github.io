@@ -27,6 +27,7 @@
         border: 1px solid #ddd;
         padding: 8px;
         text-align: left;
+		font-size: larger;
       }
       th {
         background-color: #4CAF50;
@@ -44,10 +45,10 @@
   <body>
 
     <div class="table-container">
-      <h2>รายการจดน้ำหนัก</h2>
+      <h2>📋 รายการจดน้ำหนัก</h2>
       <div id="data-output">กำลังโหลด...</div>
     </div>
-	<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.7 BETA</p>
+	<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 2.0 BETA</p>
     <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
 
     <script>
@@ -98,7 +99,7 @@
       // If we hit a new category in Column A, insert a full-width header row
       if (groupValue !== currentGroup) {
         html += `<tr style="background-color: #e0e0e0;">
-                   <td colspan="${headers.length - 1}"><strong>📁 ${groupValue}</strong></td>
+                   <td colspan="${headers.length - 1}"><strong>🚛 ทะเบียน ${groupValue}</strong></td>
                  </tr>`;
         currentGroup = groupValue;
       }
