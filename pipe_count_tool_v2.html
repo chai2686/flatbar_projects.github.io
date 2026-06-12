@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เครื่องมือช่วยนับท่อเกรดบี</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 md:p-8 font-sans text-slate-800 flex justify-center">
+
+  <div class="w-full max-w-5xl bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-100 flex flex-col">
+    
+    <div class="flex flex-col md:flex-row justify-between items-center border-b border-slate-200 pb-4 mb-6">
+      <h1 class="text-2xl font-bold text-slate-800">เครื่องมือช่วยนับท่อเกรดบี</h1>
+      <div class="text-xl font-semibold bg-blue-50 text-blue-700 px-4 py-2 rounded-lg mt-4 md:mt-0 shadow-sm border border-blue-100">
+        จำนวน : <span id="markerCount" class="text-2xl font-bold text-blue-600">0</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+      
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-slate-600 mb-2">อัปโหลดรูปภาพ</label>
+        <input type="file" id="imageInput" accept="image/*" 
+          class="block w-full text-sm text-slate-500
+                 file:mr-4 file:py-2.5 file:px-4
+                 file:rounded-lg file:border-0
+                 file:text-sm file:font-semibold
+                 file:bg-blue-600 file:text-white
+                 hover:file:bg-blue-700 file:cursor-pointer file:transition-colors
+                 cursor-pointer">
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-slate-600 mb-2">สีมาร์คเกอร์</label>
+        <div class="flex items-center gap-2">
+          <input type="color" id="markerColor" value="#ff0000" class="h-10 w-14 rounded cursor-pointer border-0 p-0 bg-transparent">
+          <span class="text-sm text-slate-500" id="colorHex">#ff0000</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-slate-600 mb-2 flex justify-between">
+          <span>ขนาดมาร์คเกอร์</span>
+          <span id="sizeDisplay" class="text-blue-600">25px</span>
+        </label>
+        <input type="range" id="markerSize" min="5" max="100" value="25" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mt-2">
+      </div>
+
+      <div class="flex gap-2">
+        <button id="undoButton" class="flex-1 px-4 py-2.5 bg-amber-500 text-white font-semibold rounded-lg shadow-sm hover:bg-amber-600 transition-colors focus:ring-4 focus:ring-amber-200">
+          ย้อนกลับ
+        </button>
+        <button id="clearButton" class="flex-1 px-4 py-2.5 bg-red-500 text-white font-semibold rounded-lg shadow-sm hover:bg-red-600 transition-colors focus:ring-4 focus:ring-red-200">
+          ล้างทั้งหมด
+        </button>
+      </div>
+    </div>
+
+    <div class="relative w-full bg-slate-200 rounded-xl border border-slate-300 overflow-hidden flex justify-center items-center" style="min-height: 400px;">
+      <p id="placeholderText" class="absolute text-slate-500 font-medium">กรุณาอัปโหลดรูปภาพเพื่อเริ่มการนับ</p>
+      <canvas id="imageCanvas" class="max-w-full h-auto cursor-crosshair shadow-md"></canvas>
+    </div>
+
+    <div class="mt-8 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm border-t border-slate-200 pt-6">
+      <button onclick="goBack()" id="backButton" class="px-6 py-2 bg-slate-600 text-white font-semibold rounded-lg shadow-sm hover:bg-slate-700 transition-colors mb-4 md:mb-0">
+        กลับหน้าหลัก
+      </button>
+      <div class="text-right">
+        <p class="font-medium">Version 1.4 TR (Modernized)</p>
+        <p class="text-xs">Powered by Flatbar Division™️</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const imageCanvas = document.getElementById('imageCanvas');
+    const markerCountEl = document.getElementById('markerCount');
+    const undoButton = document.getElementById('undoButton');
+    const clearButton = document.getElementById('clearButton');
+    const markerSizeInput = document.getElementById('markerSize');
+    const sizeDisplay = document.getElementById('sizeDisplay');
+    const markerColorInput = document.getElementById('markerColor');
+    const colorHexDisplay = document.getElementById('colorHex');
+    const placeholderText = document.getElementById('placeholderText');
+
+    const ctx = imageCanvas.getContext('2d');
+    let markers = [];
+    let image = new Image();
+
+    // Update UI labels when inputs change
+    markerSizeInput.addEventListener('input', (e) => {
+      sizeDisplay.textContent = `${e.target.value}px`;
+    });
+
+    markerColorInput.addEventListener('input', (e) => {
+      colorHexDisplay.textContent = e.target.value;
+    });
+
+    // Load image
+    imageInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          image = new Image();
+          image.onload = function () {
+            // Hide placeholder text
+            placeholderText.style.display = 'none';
+            
+            // Set canvas dimensions to actual image dimensions
+            imageCanvas.width = image.width;
+            imageCanvas.height = image.height;
+            
+            // Reset state
+            markers = [];
+            updateCanvas();
+          };
+          image.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Add marker on click
+    imageCanvas.addEventListener('click', (event) => {
+      if (!image.src) return; // Do nothing if no image is loaded
+
+      const rect = imageCanvas.getBoundingClientRect();
+      
+      // Calculate scale to account for CSS max-width resizing
+      const scaleX = imageCanvas.width / rect.width;
+      const scaleY = imageCanvas.height / rect.height;
+      
+      const x = (event.clientX - rect.left) * scaleX;
+      const y = (event.clientY - rect.top) * scaleY;
+
+      // Save individual marker properties so history is preserved
+      markers.push({ 
+        x: x, 
+        y: y, 
+        size: parseInt(markerSizeInput.value),
+        color: markerColorInput.value
+      });
+      
+      updateCanvas();
+    });
+
+    // Undo last marker
+    undoButton.addEventListener('click', () => {
+      if (markers.length > 0) {
+        markers.pop();
+        updateCanvas();
+      }
+    });
+
+    // Clear all markers
+    clearButton.addEventListener('click', () => {
+      if (markers.length > 0) {
+        if(confirm('คุณแน่ใจหรือไม่ว่าต้องการลบมาร์คเกอร์ทั้งหมด? (Are you sure you want to clear all?)')) {
+          markers = [];
+          updateCanvas();
+        }
+      }
+    });
+
+    // Update canvas with image and all markers
+    function updateCanvas() {
+      // Clear canvas
+      ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+      
+      // Draw base image
+      if (image.src) {
+        ctx.drawImage(image, 0, 0);
+      }
+
+      // Draw all saved markers
+      markers.forEach(marker => {
+        ctx.fillStyle = marker.color;
+        ctx.beginPath();
+        ctx.arc(marker.x, marker.y, marker.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Optional: Add a subtle border to markers for better visibility on same-color backgrounds
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = marker.size > 10 ? 2 : 1;
+        ctx.stroke();
+      });
+
+      // Update count
+      markerCountEl.textContent = markers.length;
+    }
+
+    // Navigation
+    function goBack() {
+      window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/typebsection_landing.html";
+    }
+  </script>
+</body>
+</html>
