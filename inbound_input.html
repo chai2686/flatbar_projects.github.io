@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
     <meta name="Version" content="2.0">
-    <title>ส่วนงานท่อเกรดบี</title>
+    <title>บันทึกรับเข้าท่อเกรดบี</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="icon" href="tubes_fav.ico" type="image/x-icon">
-    <link rel="icon" href="tubes_fav.png" type="image/png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
             --primary-blue: #2563eb;
+            --primary-hover: #1d4ed8;
             --surface: #ffffff;
             --background: #f1f5f9;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-light: #e2e8f0;
+            --text-main: #334155;
+            --border-light: #cbd5e1;
         }
 
         body, html {
@@ -36,10 +36,10 @@
 
         .container {
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
             background-color: var(--surface);
-            padding: 40px 25px;
-            border-radius: 20px;
+            padding: 30px 20px;
+            border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
@@ -49,100 +49,110 @@
 
         h2 {
             width: 100%;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
             margin-top: 0;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             color: #0f172a;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            text-align: center;
         }
 
-        .menu-group {
-            display: flex;
-            flex-direction: column;
+        .dropdown, .text-input {
             width: 100%;
-            gap: 12px;
-        }
-
-        /* Modern App-Style Menu Buttons */
-        .menu-button {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            padding: 18px 20px;
-            background-color: var(--surface);
-            border: 1.5px solid var(--border-light);
-            border-radius: 12px;
-            font-family: 'Sarabun', sans-serif;
+            height: 50px;
             font-size: 16px;
+            font-family: 'Sarabun', sans-serif;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown:focus, .text-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background-color: #fff;
+        }
+
+        /* Modern Radio Buttons as Tap Cards */
+        .radio-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .radio-check {
+            display: none; /* Hide default radio */
+        }
+
+        .radio-label {
+            flex: 1;
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 15px;
             font-weight: 500;
-            color: var(--text-main);
+            border: 1.5px solid var(--border-light);
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            box-sizing: border-box;
+            color: #64748b;
+            background-color: var(--surface);
         }
 
-        .menu-button:hover {
+        /* Active state for custom radios */
+        .radio-check:checked + .radio-label {
+            background-color: #eff6ff;
             border-color: var(--primary-blue);
             color: var(--primary-blue);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+            font-weight: 600;
         }
 
-        .menu-button:active {
-            transform: translateY(0);
-            background-color: #f8fafc;
-        }
-
-        .menu-button-content {
+        .button-group {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
         }
 
-        .menu-icon {
-            font-size: 20px;
-        }
-
-        .chevron {
-            color: #cbd5e1;
-            font-size: 18px;
-            font-weight: bold;
-            transition: color 0.2s;
-        }
-
-        .menu-button:hover .chevron {
-            color: var(--primary-blue);
-        }
-
-        /* Secondary Button (Back) */
-        .btn-back {
-            margin-top: 25px;
+        .button {
+            flex: 1;
+            height: 48px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            display: flex;
             justify-content: center;
-            background-color: #f8fafc;
-            border-color: transparent;
-            color: var(--text-muted);
-            box-shadow: none;
+            align-items: center;
+            gap: 5px;
         }
 
-        .btn-back:hover {
-            background-color: #e2e8f0;
-            border-color: transparent;
-            color: var(--text-main);
+        .button:active {
+            transform: scale(0.96);
         }
+
+        .btn-primary { background-color: var(--primary-blue); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        .btn-secondary { background-color: #e2e8f0; color: #475569; }
+        .btn-secondary:hover { background-color: #cbd5e1; }
 
         .footer-text {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            margin-top: 35px;
-            font-size: 13px;
+            margin-top: 25px;
+            font-size: 12px;
             color: #94a3b8;
         }
 
@@ -152,76 +162,194 @@
 </head>
 <body>
     <div class="container">
-        <h2>🅱️🆖 ส่วนงานท่อเกรดบี</h2>
+        <h2>📥 บันทึกรับเข้าท่อเกรดบี</h2>
         
-        <div class="menu-group">
-            <button onclick="goToInbound()" class="menu-button">
-                <div class="menu-button-content">
-                    <span class="menu-icon">📥</span>
-                    <span>บันทึกรับเข้า</span>
-                </div>
-                <span class="chevron">›</span>
-            </button>		
+        <select class="dropdown" id="size" aria-label="เลือกขนาดของท่อ">
+            <option value="" disabled selected>🗜️ เลือกขนาดของท่อ</option>
+            <optgroup label="ท่อดำ">
+                <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4"</option>
+                <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2"</option>
+                <option value="ท่อดำ 1&quot;">ท่อดำ 1"</option>
+                <option value="ท่อดำ 1 1/4&quot;">ท่อดำ 1 1/4"</option>
+                <option value="ท่อดำ 1 1/2&quot;">ท่อดำ 1 1/2"</option>
+                <option value="ท่อดำ 2&quot;">ท่อดำ 2"</option>
+                <option value="ท่อดำ 2 1/2&quot;">ท่อดำ 2 1/2"</option>
+                <option value="ท่อดำ 3&quot;">ท่อดำ 3"</option>
+                <option value="ท่อดำ 3 1/2&quot;">ท่อดำ 3 1/2"</option>
+                <option value="ท่อดำ 4&quot;">ท่อดำ 4"</option>
+                <option value="ท่อดำ 5&quot;">ท่อดำ 5"</option>
+                <option value="ท่อดำ 6&quot;">ท่อดำ 6"</option>
+                <option value="ท่อดำ 7&quot;">ท่อดำ 7"</option>
+                <option value="ท่อดำ 8&quot;">ท่อดำ 8"</option>
+                <option value="ท่อดำ 10&quot;">ท่อดำ 10"</option>
+                <option value="ท่อดำ 11&quot;">ท่อดำ 11"</option>
+            </optgroup>
+            <optgroup label="ท่อเหลี่ยม">
+                <option value="ท่อเหลี่ยม 19x19">ท่อเหลี่ยม 19x19</option>
+                <option value="ท่อเหลี่ยม 25x25">ท่อเหลี่ยม 25x25</option>
+                <option value="ท่อเหลี่ยม 32x32">ท่อเหลี่ยม 32x32</option>
+                <option value="ท่อเหลี่ยม 38x38">ท่อเหลี่ยม 38x38</option>
+                <option value="ท่อเหลี่ยม 50x50">ท่อเหลี่ยม 50x50</option>
+                <option value="ท่อเหลี่ยม 70x65">ท่อเหลี่ยม 70x65</option>
+                <option value="ท่อเหลี่ยม 75x75">ท่อเหลี่ยม 75x75</option>
+                <option value="ท่อเหลี่ยม 100x100">ท่อเหลี่ยม 100x100</option>
+                <option value="ท่อเหลี่ยม 125x125">ท่อเหลี่ยม 125x125</option>
+                <option value="ท่อเหลี่ยม 150x150">ท่อเหลี่ยม 150x150</option>
+                <option value="ท่อเหลี่ยม 200x200">ท่อเหลี่ยม 200x200</option>
+            </optgroup>
+            <optgroup label="แป๊บแบน">
+                <option value="แป๊บแบน 50x25">แป๊บแบน 50x25</option>
+                <option value="แป๊บแบน 60x30">แป๊บแบน 60x30</option>
+                <option value="แป๊บแบน 70x45">แป๊บแบน 70x45</option>
+                <option value="แป๊บแบน 75x38">แป๊บแบน 75x38</option>
+                <option value="แป๊บแบน 75x45">แป๊บแบน 75x45</option>
+                <option value="แป๊บแบน 75x50">แป๊บแบน 75x50</option>
+                <option value="แป๊บแบน 100x50">แป๊บแบน 100x50</option>
+                <option value="แป๊บแบน 100x75">แป๊บแบน 100x75</option>
+                <option value="แป๊บแบน 125x50">แป๊บแบน 125x50</option>
+                <option value="แป๊บแบน 125x75">แป๊บแบน 125x75</option>
+                <option value="แป๊บแบน 125x100">แป๊บแบน 125x100</option>
+                <option value="แป๊บแบน 150x50">แป๊บแบน 150x50</option>
+                <option value="แป๊บแบน 150x75">แป๊บแบน 150x75</option>
+                <option value="แป๊บแบน 150x100">แป๊บแบน 150x100</option>
+                <option value="แป๊บแบน 175x175">แป๊บแบน 175x175</option>
+                <option value="แป๊บแบน 200x100">แป๊บแบน 200x100</option>
+            </optgroup>
+        </select>
 
-            <button onclick="goToOutbound()" class="menu-button">
-                <div class="menu-button-content">
-                    <span class="menu-icon">📤</span>
-                    <span>บันทึกจ่ายออก</span>
-                </div>
-                <span class="chevron">›</span>
-            </button>
+        <div class="radio-group">
+            <input type="radio" id="nongi" class="radio-check" name="option" value="ท่อเหล็กดำ">
+            <label for="nongi" class="radio-label">ท่อเหล็กดำ 🔲</label>
 
-            <button onclick="goToReport()" class="menu-button">
-                <div class="menu-button-content">
-                    <span class="menu-icon">📊</span>
-                    <span>รายงานสต็อก</span>
-                </div>
-                <span class="chevron">›</span>
-            </button>
+            <input type="radio" id="gi" class="radio-check" name="option" value="ท่อGI">
+            <label for="gi" class="radio-label">ท่อ GI 🔳</label>
+        </div>
 
-            <button onclick="goToCountTool()" class="menu-button">
-                <div class="menu-button-content">
-                    <span class="menu-icon">🖍️</span>
-                    <span>เครื่องมือช่วยนับ</span>
-                </div>
-                <span class="chevron">›</span>
-            </button>
+        <div class="radio-group">
+            <input type="radio" id="bj" class="radio-check" name="option2" value="BJ">
+            <label for="bj" class="radio-label">ท่อ BJ 🟡</label>
 
-            <button onclick="goBack()" class="menu-button btn-back">
-                <div class="menu-button-content">
-                    <span class="menu-icon">⏮️</span>
-                    <span>กลับหน้าหลัก</span>
-                </div>
-            </button>
+            <input type="radio" id="bn" class="radio-check" name="option2" value="BN">
+            <label for="bn" class="radio-label">ท่อ BN 🔴</label>
+        </div>
+
+        <input type="number" class="text-input" placeholder="📝 ระบุจำนวนเส้น" id="quantity">
+
+        <div class="button-group">
+            <button onclick="save()" class="button btn-primary">💾 บันทึก</button>			 
+            <button onclick="clearScreen()" class="button btn-secondary">🖥️ ล้างจอ</button>
+            <button onclick="goToReport()" class="button btn-secondary">📊 ตารางสรุป</button>
         </div>
 
         <div class="footer-text">
             <span>Powered by Flatbar Division™️</span>
-            <span onclick="about()">Version 2.0 Beta</span>
+            <span onclick="about()">Version 1.6</span>
         </div>
     </div>
 
     <script>
-        function goBack() {
-            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/main_landing.html";
+        function clearScreen() {
+            document.querySelector('.dropdown').selectedIndex = 0;
+            document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            document.querySelector('.text-input').value = '';
+            
+            // Modern Alert
+            Swal.fire({
+                icon: 'success',
+                title: 'สำเร็จ',
+                text: 'ล้างหน้าจอสำเร็จ',
+                timer: 1500,
+                showConfirmButton: false
+            });
         }
-        
+
+        function save() {
+            var size = document.getElementById('size').value;
+            var sizeid = document.getElementById('size').selectedIndex;
+            var nongi = document.getElementById('nongi').checked;
+            var gi = document.getElementById('gi').checked;
+            var bj = document.getElementById('bj').checked;
+            var bn = document.getElementById('bn').checked;
+            var quantity = document.getElementById('quantity').value;
+
+            var nongibj = 0;
+            var nongibn = 0;
+            var gibj = 0;
+            var gibn = 0;
+
+            if (sizeid != 0) {
+                if (quantity != "" && quantity > 0) {
+                    if (nongi === true && gi === false) {
+                        if (bj === true && bn === false) {
+                            nongibj = nongibj + parseInt(quantity);
+                            Swal.fire('บันทึกสำเร็จ!', size + " เหล็กดำ BJ จำนวน " + nongibj + " เส้น", 'success');
+                            
+                            var i = document.createElement("img");
+                            i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdnYjNX2dLQzpFrRoD9TsNh5Vn1seAxulUgYJXV5MbTXa75XQ/formResponse?entry.501825411=" + size + "&entry.18490961=" + nongibj + "&entry.98388729=0&entry.866491760=0&entry.610239563=0";
+                            var j = document.createElement("img");
+                            j.src = "https://docs.google.com/forms/d/e/1FAIpQLSf4OqAabdM32leCV0UbLyqG-rmGZQNnxBBcm-ZlP5HLrYh4Fw/formResponse?entry.1362014552=" + size + "&entry.1472257121=" + nongibj + "&entry.1655074373=0";
+                            
+                            resetInputs(); return;
+                        } 
+                        else if (bj === false && bn === true) {
+                            nongibn = nongibn + parseInt(quantity);
+                            Swal.fire('บันทึกสำเร็จ!', size + " เหล็กดำ BN จำนวน " + nongibn + " เส้น", 'success');
+                            
+                            var i = document.createElement("img");
+                            i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdnYjNX2dLQzpFrRoD9TsNh5Vn1seAxulUgYJXV5MbTXa75XQ/formResponse?entry.501825411=" + size + "&entry.98388729=" + nongibn + "&entry.18490961=0&entry.866491760=0&entry.610239563=0";
+                            var j = document.createElement("img");
+                            j.src = "https://docs.google.com/forms/d/e/1FAIpQLSf4OqAabdM32leCV0UbLyqG-rmGZQNnxBBcm-ZlP5HLrYh4Fw/formResponse?entry.1362014552=" + size + "&entry.1472257121=" + nongibn + "&entry.1655074373=0";
+                            
+                            resetInputs(); return;
+                        } else {
+                            Swal.fire('แจ้งเตือน', 'กรุณาเลือกประเภท BJ หรือ BN', 'warning'); return;
+                        }
+                    }
+                    else if (nongi === false && gi === true) {
+                        if (bj === true && bn === false) {
+                            gibj = gibj + parseInt(quantity);
+                            Swal.fire('บันทึกสำเร็จ!', size + " เหล็กGI BJ จำนวน " + gibj + " เส้น", 'success');
+                            
+                            var i = document.createElement("img");
+                            i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdnYjNX2dLQzpFrRoD9TsNh5Vn1seAxulUgYJXV5MbTXa75XQ/formResponse?entry.501825411=" + size + "&entry.866491760=" + gibj + "&entry.18490961=0&entry.98388729=0&entry.610239563=0";
+                            var j = document.createElement("img");
+                            j.src = "https://docs.google.com/forms/d/e/1FAIpQLSf4OqAabdM32leCV0UbLyqG-rmGZQNnxBBcm-ZlP5HLrYh4Fw/formResponse?entry.1362014552=" + size + "&entry.1472257121=0&entry.1655074373=" + gibj;
+                            
+                            resetInputs(); return;
+                        }
+                        else if (bj == false && bn === true) {
+                            gibn = gibn + parseInt(quantity);
+                            Swal.fire('บันทึกสำเร็จ!', size + " เหล็กGI BN จำนวน " + gibn + " เส้น", 'success');
+                            
+                            var i = document.createElement("img");
+                            i.src = "https://docs.google.com/forms/d/e/1FAIpQLSdnYjNX2dLQzpFrRoD9TsNh5Vn1seAxulUgYJXV5MbTXa75XQ/formResponse?entry.501825411=" + size + "&entry.610239563=" + gibn + "&entry.866491760=0&entry.18490961=0&entry.98388729=0";
+                            var j = document.createElement("img");
+                            j.src = "https://docs.google.com/forms/d/e/1FAIpQLSf4OqAabdM32leCV0UbLyqG-rmGZQNnxBBcm-ZlP5HLrYh4Fw/formResponse?entry.1362014552=" + size + "&entry.1472257121=0&entry.1655074373=" + gibn;
+                            
+                            resetInputs(); return;
+                        } else {
+                            Swal.fire('แจ้งเตือน', 'กรุณาเลือกประเภท BJ หรือ BN', 'warning'); return;
+                        }
+                    } else {
+                        Swal.fire('แจ้งเตือน', 'กรุณาเลือกชนิดของเหล็ก', 'warning');
+                    }
+                } else {
+                    Swal.fire('แจ้งเตือน', 'กรุณาระบุจำนวนเส้นที่ถูกต้อง', 'warning');
+                }
+            } else {
+                Swal.fire('แจ้งเตือน', 'กรุณาเลือกไซส์ของท่อ', 'warning');
+            }
+        }
+
+        function resetInputs() {
+            document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            document.querySelector('.text-input').value = '';
+        }
+
         function goToReport() {
-            window.open("https://chai2686.github.io/flatbar_projects.github.io/typeb_stock_report.html", "_blank");
+            window.open("https://docs.google.com/spreadsheets/d/1s7a7fQUrzceR8-TNmkQuNkvWkbCkQ7rydrS6teqicXo/htmlview", "_blank");
         }
-        
-        function goToInbound() {
-            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/inbound_input.html";
-        }
-        
-        function goToOutbound() {
-            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/updatestock_input.html";
-        }
-        
-        function goToCountTool() {
-            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/pipe_count_tool.html";
-        }
-        
+
         function about() {
             window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
         }
