@@ -1,185 +1,261 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="th">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานเหล็กแบน">
-    <meta name="Version" content="1.63 BETA">
+    <meta name="Version" content="2.0">
     <title>บันทึกการใช้ไม้</title>
+    
+    <!-- Modern Thai Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
     <link rel="icon" href="flatbar_fav.png" type="image/png">
+
+    <!-- SweetAlert2 for modern popup notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        /* Set the height and width to match the desired resolution */
+        :root {
+            --primary-color: #16a34a; /* Earthy green to match the wood theme */
+            --primary-hover: #15803d;
+            --surface: #ffffff;
+            --background: #f1f5f9;
+            --text-main: #334155;
+            --border-light: #cbd5e1;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #ffffff; /* White background color */
         }
+
         .container {
-            width: 100%;
-            max-width: 768px;
-            height: 100%;
-            max-height: 1280px;
-            background-color: #f0f0f0; /* Light grey background color */
+            width: 90%;
+            max-width: 500px;
+            background-color: var(--surface);
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-sizing: border-box;
         }
-        .dropdown, .text-input {
-            width: 90%;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
+
+        h2 {
+            width: 100%;
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 0;
             margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-        }
-        .radio-group {
+            color: #0f172a;
             display: flex;
-            flex-direction: row;
-            margin-bottom: 20px;
+            align-items: center;
+            gap: 10px;
         }
-        .radio-label {
-            margin-right: 20px;
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 15px;
         }
-		.radio-check {
-			height:20px;
-			width:20px;
-			vertical-align: middle;
-		}
+
+        .dropdown, .text-input {
+            width: 100%;
+            height: 50px;
+            font-size: 16px;
+            font-family: 'Sarabun', sans-serif;
+            padding: 10px 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .input-row .dropdown, .input-row .text-input {
+            margin-bottom: 0; /* Remove margin when inside a row */
+        }
+
+        .dropdown:focus, .text-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+            background-color: #fff;
+        }
+
         .button-group {
             display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            width: 90%;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
         }
+
         .button {
-            width: 90%;
-            height: 50px;
-            margin-left: 4px;
-            margin-right: 4px;
-			box-shadow:inset 0px 1px 0px 0px #97c4fe;
-			background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
-			background-color:#3d94f6;
-			border-radius:6px;
-			border:1px solid #337fed;
-			display:inline-block;
-			cursor:pointer;
-			color:#ffffff;
-			font-family:Arial;
-			font-size:14px;
-			font-weight:bold;
-			text-decoration:none;
-			text-shadow:0px 1px 0px #1570cd;
-        }
-		.usersection {
-			margin-left: 10%;
-			margin-right: 10%;
-			width: 100%;
-			max-width: 768px;
-			display: flex;
-            flex-direction: row;
+            flex: 1;
+            height: 48px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            display: flex;
+            justify-content: center;
             align-items: center;
-			justify-content: space-around;
-		}
+            gap: 5px;
+        }
+
+        .button:active {
+            transform: scale(0.96);
+        }
+
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        .btn-secondary { background-color: #e2e8f0; color: #475569; }
+        .btn-secondary:hover { background-color: #cbd5e1; }
+
+        .footer-text {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .footer-text span { cursor: pointer; transition: color 0.2s; }
+        .footer-text span:hover { color: var(--primary-color); }
     </style>
 </head>
 <body>
     <div class="container">
-		<h2 style="text-align:left; margin-bottom: 5px;	padding-right: 55px">🪓 บันทึกการใช้ไม้</h2>
-        <div class="fleetsection" style="
-    display: flex;
-    justify-content: space-around;
-">
-            <input type="text" class="text-input" placeholder="🚛 ทะเบียนรถ" id="truckno" style="width: 45%;">
-            <select class="dropdown" id="fleettype" aria-label="ประเภทรถ" style="width: 45%;">
-			<option value="ไม่ระบุ" disabled="" selected="">ประเภทรถ</option>
-            <option value="รถ TMT">รถ TMT</option>
-            <option value="รถร่วม">รถร่วม</option>
-            <option value="รถลูกค้า">รถลูกค้า</option>
+        <h2>🪓 บันทึกการใช้ไม้</h2>
+        
+        <div class="input-row">
+            <input type="text" class="text-input" placeholder="🚛 ทะเบียนรถ" id="truckno">
+            <select class="dropdown" id="fleettype" aria-label="ประเภทรถ">
+                <option value="ไม่ระบุ" disabled selected>ประเภทรถ</option>
+                <option value="รถ TMT">รถ TMT</option>
+                <option value="รถร่วม">รถร่วม</option>
+                <option value="รถลูกค้า">รถลูกค้า</option>
             </select>
         </div>
-		
-		<div class="inputsection" style="
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    ">
-			<input type="text" class="text-input" placeholder="🚛 ชื่อลูกค้า" id="customer" style="width: 100%;">
-			<input type="number" class="text-input" placeholder="🪓 จำนวนไม้" id="quantity" style="width: 50%;">
-		</div>
-		<div class="button-group">
-            <button onclick="save()" class="button">💾บันทึก</button>			 
-            <button onclick="clearScreen()" class="button">🖥️ล้างจอ</button>
-            <button onclick="goToReport()" class="button">📊รายงานการใช้ไม้</button>
+        
+        <input type="text" class="text-input" placeholder="👤 ชื่อลูกค้า" id="customer">
+        <input type="number" class="text-input" placeholder="🪓 จำนวนไม้ (ท่อน)" id="quantity">
+        
+        <div class="button-group">
+            <button onclick="save()" class="button btn-primary">💾 บันทึก</button>			 
+            <button onclick="clearScreen(true)" class="button btn-secondary">🔄 ล้างจอ</button>
+            <button onclick="goToReport()" class="button btn-secondary">📊 รายงาน</button>
         </div>
-	    <p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 50px;margin-bottom: 5px;">Version 1.63 BETA</p>
-            <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
-    </div>
-    <script>
-	    window.onload = function() {
-        const paramstruckno = new URLSearchParams(window.location.search);
-	const paramscustomer = new URLSearchParams(window.location.search);
-	const paramsfleettype = new URLSearchParams(window.location.search);
-        const inputtruckno = paramstruckno.get("truckno");
-	const inputcustomer = paramscustomer.get("customer");
-	const inputfleettype = paramscustomer.get("fleettype");
-            if (inputtruckno) {
-                document.getElementById("truckno").value = inputtruckno;
-            }
-			if (inputcustomer) {
-                document.getElementById("customer").value = inputcustomer;
-            }
-			if (inputfleettype) {
-                document.getElementById("fleettype").value = inputfleettype;
-				console.log(inputfleettype);
-            }
-		};
-	    
-		function save() {
-			var url = "https://docs.google.com/forms/d/e/1FAIpQLSfRIk4d3QxWchVrmBwDBzd_N9Aw9nyynW7iNXTQpOGrf0TmfA/formResponse?entry.1884278026=";
-			var	entryfleettype = "&entry.773222215=";
-			var entrycustomer = "&entry.1554877634=";
-			var entrycuantity = "&entry.1601287085=";
-			
-			var fleettypeid = document.getElementById('fleettype').selectedIndex;
-			var fleettype = document.getElementById('fleettype').value;
-			var truckno = document.getElementById('truckno').value;
-			var customer = document.getElementById('customer').value;
-			var quantity = document.getElementById('quantity').value || 0;
-			
-			if (fleettypeid === 0 || !truckno || !customer ) {
-				alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
-			return;
-			}
-			
-			var alertmsg = "";
-			
-			alertmsg += fleettype + "ทะเบียน " + truckno + " ลูกค้า " + customer + " ขึ้นไม้ไปจำนวน " + quantity + " ท่อน";
-			
-			url += truckno + entryfleettype + fleettype + entrycustomer + customer + entrycuantity + quantity;
-			
-			var img = document.createElement("img");
-			img.src = url;
-			alert(alertmsg);
-			
-		}
-		function clearScreen() {
-			document.getElementById('fleettype').selectedIndex = 0;
-			document.getElementById('truckno').value = "";
-			document.getElementById('customer').value = "";
-			document.getElementById('quantity').value = "";
-		}
-		
-		function goToReport() {
-		//เปิดหน้าเว็บไปที่ลิงค์ตารางข้อมูลที่บันทึก
-      		window.open("https://docs.google.com/spreadsheets/d/15bbWzczxSOEMDnDcX6s-UivGbrs-Zjim6yBt8jrinwM/htmlview", "_blank");
-    	}
-    </script>
 
-</body></html>
+        <div class="footer-text">
+            <span>Powered by Flatbar Division™️</span>
+            <span onclick="about()">Version 2.0</span>
+        </div>
+    </div>
+
+    <script>
+        // Cleaned up URL Parameter logic
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const inputtruckno = params.get("truckno");
+            const inputcustomer = params.get("customer");
+            const inputfleettype = params.get("fleettype");
+
+            if (inputtruckno) document.getElementById("truckno").value = inputtruckno;
+            if (inputcustomer) document.getElementById("customer").value = inputcustomer;
+            if (inputfleettype) {
+                document.getElementById("fleettype").value = inputfleettype;
+                console.log("Fleet type loaded: " + inputfleettype);
+            }
+        };
+        
+        function save() {
+            var url = "https://docs.google.com/forms/d/e/1FAIpQLSfRIk4d3QxWchVrmBwDBzd_N9Aw9nyynW7iNXTQpOGrf0TmfA/formResponse?entry.1884278026=";
+            var entryfleettype = "&entry.773222215=";
+            var entrycustomer = "&entry.1554877634=";
+            var entrycuantity = "&entry.1601287085=";
+            
+            var fleettypeid = document.getElementById('fleettype').selectedIndex;
+            var fleettype = document.getElementById('fleettype').value;
+            var truckno = document.getElementById('truckno').value.trim();
+            var customer = document.getElementById('customer').value.trim();
+            var quantity = document.getElementById('quantity').value || 0;
+            
+            // Validation Check
+            if (fleettypeid === 0 || !truckno || !customer) {
+                Swal.fire('แจ้งเตือน', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'warning');
+                return;
+            }
+            if (quantity <= 0) {
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุจำนวนไม้ที่ถูกต้อง', 'warning');
+                return;
+            }
+            
+            // Encode URI components to prevent link breakage from spaces
+            var fullUrl = url + encodeURIComponent(truckno) + 
+                          entryfleettype + encodeURIComponent(fleettype) + 
+                          entrycustomer + encodeURIComponent(customer) + 
+                          entrycuantity + encodeURIComponent(quantity);
+            
+            var img = document.createElement("img");
+            img.src = fullUrl;
+            
+            // Format nice message
+            var alertmsg = fleettype + " ทะเบียน " + truckno + "<br>ลูกค้า: " + customer + "<br>ขึ้นไม้ไปจำนวน <b>" + quantity + "</b> ท่อน";
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกข้อมูลสำเร็จ!',
+                html: alertmsg,
+                confirmButtonColor: '#16a34a'
+            }).then(() => {
+                // Auto clear screen silently after user presses OK
+                clearScreen(false);
+            });
+        }
+
+        // Added 'showAlert' parameter to allow silent clearing after saving
+        function clearScreen(showAlert = true) {
+            document.getElementById('fleettype').selectedIndex = 0;
+            document.getElementById('truckno').value = "";
+            document.getElementById('customer').value = "";
+            document.getElementById('quantity').value = "";
+
+            if (showAlert) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ',
+                    text: 'ล้างหน้าจอสำเร็จ',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+        }
+        
+        function goToReport() {
+            window.open("https://docs.google.com/spreadsheets/d/15bbWzczxSOEMDnDcX6s-UivGbrs-Zjim6yBt8jrinwM/htmlview", "_blank");
+        }
+
+        function about() {
+            window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
+        }
+    </script>
+</body>
+</html>
