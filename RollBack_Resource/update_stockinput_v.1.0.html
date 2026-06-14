@@ -1,0 +1,305 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
+    <meta name="Version" content="1.0 BETA">
+    <title>จ่ายออกท่อเกรดบี</title>
+    <link rel="icon" href="tubes_fav.ico" type="image/x-icon">
+    <link rel="icon" href="tubes_fav.png" type="image/png">
+    <style>
+        /* Set the height and width to match the desired resolution */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff; /* White background color */
+        }
+        .container {
+            width: 100%;
+            max-width: 768px;
+            height: 100%;
+            max-height: 1280px;
+            background-color: #f0f0f0; /* Light grey background color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dropdown {
+            width: 90%;
+            height: 50px;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 20px;
+        }
+        .radio-label {
+            margin-right: 20px;
+        }
+		.radio-check {
+			height:20px;
+			width:20px;
+			vertical-align: middle;
+		}
+        .text-input {
+            width: 40%;
+            height: 50px;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .button {
+            width: 100%;
+            height: 50px;
+            margin-left: 4px;
+            margin-right: 4px;
+			box-shadow:inset 0px 1px 0px 0px #97c4fe;
+			background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
+			background-color:#3d94f6;
+			border-radius:6px;
+			border:1px solid #337fed;
+			display:inline-block;
+			cursor:pointer;
+			color:#ffffff;
+			font-family:Arial;
+			font-size:14px;
+			font-weight:bold;
+			
+			text-decoration:none;
+			text-shadow:0px 1px 0px #1570cd;
+        }
+		.hidden {
+            display: none;
+		width: 40%;
+		max-width: 360px;
+            height: 50px;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+        }
+		.weight-input {
+			display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 300px;
+		}
+		.weight {
+			width: 100%;
+            height: 50px;
+            font-size: 15px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #C4D1EB;
+			border-radius: 5px;
+			box-shadow: 3px 3px 2px 0px #E2E2E2;
+		}
+    </style>
+</head>
+<body>
+    <div class="container">
+		<h2 style="font-size: 20;text-align:left;margin-bottom: 5px;margin-right: 60px;">📥 บันทึกจ่ายออกท่อเกรดบี</h2>
+        
+        <select class="dropdown" id="size" aria-label="เลือกขนาดของท่อ" style="">
+	    <option value="" disabled="" selected="">🗜️ เลือกขนาดของท่อ</option>
+	    <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4"</option>
+	    <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2"</option>
+	    <option value="ท่อดำ 1&quot;">ท่อดำ 1"</option>
+	    <option value="ท่อดำ 1 1/4&quot;">ท่อดำ 1 1/4"</option>
+	    <option value="ท่อดำ 1 1/2&quot;">ท่อดำ 1 1/2"</option>
+	    <option value="ท่อดำ 2&quot;">ท่อดำ 2"</option>
+	    <option value="ท่อดำ 2 1/2&quot;">ท่อดำ 2 1/2"</option>
+	    <option value="ท่อดำ 3&quot;">ท่อดำ 3"</option>
+	    <option value="ท่อดำ 3 1/2&quot;">ท่อดำ 3 1/2"</option>
+	    <option value="ท่อดำ 4&quot;">ท่อดำ 4"</option>
+	    <option value="ท่อดำ 5&quot;">ท่อดำ 5"</option>
+	    <option value="ท่อดำ 6&quot;">ท่อดำ 6"</option>
+	    <option value="ท่อดำ 7&quot;">ท่อดำ 7"</option>
+	    <option value="ท่อดำ 8&quot;">ท่อดำ 8"</option>
+	    <option value="ท่อดำ 10&quot;">ท่อดำ 10"</option>
+	    <option value="ท่อดำ 11&quot;">ท่อดำ 11"</option>
+	    
+	    <option value="ท่อเหลี่ยม 19x19">ท่อเหลี่ยม 19x19</option>
+	    <option value="ท่อเหลี่ยม 25x25">ท่อเหลี่ยม 25x25</option>
+	    <option value="ท่อเหลี่ยม 32x32">ท่อเหลี่ยม 32x32</option>
+	    <option value="ท่อเหลี่ยม 38x38">ท่อเหลี่ยม 38x38</option>
+	    <option value="ท่อเหลี่ยม 50x50">ท่อเหลี่ยม 50x50</option>
+	    <option value="ท่อเหลี่ยม 70x65">ท่อเหลี่ยม 70x65</option>
+	    <option value="ท่อเหลี่ยม 75x75">ท่อเหลี่ยม 75x75</option>
+	    <option value="ท่อเหลี่ยม 100x100">ท่อเหลี่ยม 100x100</option>
+	    <option value="ท่อเหลี่ยม 125x125">ท่อเหลี่ยม 125x125</option>
+	    <option value="ท่อเหลี่ยม 150x150">ท่อเหลี่ยม 150x150</option>
+	    <option value="ท่อเหลี่ยม 200x200">ท่อเหลี่ยม 200x200</option>
+		
+	    <option value="แป๊บแบน 50x25">แป๊บแบน 50x25</option>
+	    <option value="แป๊บแบน 60x30">แป๊บแบน 60x30</option>
+	    <option value="แป๊บแบน 70x45">แป๊บแบน 70x45</option>
+	    <option value="แป๊บแบน 75x38">แป๊บแบน 75x38</option>
+	    <option value="แป๊บแบน 75x45">แป๊บแบน 75x45</option>
+	    <option value="แป๊บแบน 75x50">แป๊บแบน 75x50</option>
+	    <option value="แป๊บแบน 100x50">แป๊บแบน 100x50</option>
+	    <option value="แป๊บแบน 100x75">แป๊บแบน 100x75</option>
+	    <option value="แป๊บแบน 125x50">แป๊บแบน 125x50</option>
+	    <option value="แป๊บแบน 125x75">แป๊บแบน 125x75</option>
+	    <option value="แป๊บแบน 125x100">แป๊บแบน 125x100</option>
+	    <option value="แป๊บแบน 150x50">แป๊บแบน 150x50</option>
+	    <option value="แป๊บแบน 150x75">แป๊บแบน 150x75</option>
+	    <option value="แป๊บแบน 150x100">แป๊บแบน 150x100</option>
+	    <option value="แป๊บแบน 200x100">แป๊บแบน 200x100</option>
+        </select>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" class="radio-check" name="option" value="ท่อเหล็กดำ" id="nongi">
+                ท่อเหล็กดำ  🔲
+            </label>
+            <label class="radio-label">
+                <input type="radio" class="radio-check" name="option" value="ท่อGI">
+                ท่อ GI 🔳
+            </label>
+        </div>
+        <div class="radio-group">
+            <label class="radio-label" style="
+    margin-left: 0px;
+    margin-right: 60px;
+">
+                <input type="checkbox" class="radio-check" name="option2" value="BJ" id="bj-checkbox">
+                ท่อ BJ 🟡
+            </label>
+            <label class="radio-label">
+                <input type="checkbox" class="radio-check" name="option2" value="BN" id="bn-checkbox">
+                ท่อ BN 🔴
+            </label>
+        </div>
+		<div id="bj-content" class="hidden">
+    Content related to ท่อ BJ 🟡
+</div>
+<div id="bn-content" class="hidden">
+    Content related to ท่อ BN 🔴
+</div>
+        <div class="quantity-input" style="display: flex; align-items: center; justify-content: center;">
+    <div>
+        <input type="number" class="hidden" placeholder="📝 จำนวน BJ" id="bjamount" style="position: fixed; display: none; top: 210px; right: 51%;">
+    </div>
+    <div>
+        <input type="number" class="hidden" placeholder="📝 จำนวน BN" id="bnamount" style="position: fixed; display: none; top: 210px;">
+    </div>
+</div>
+
+
+
+
+        <div class="button-group" style="
+    margin-top: 70px;
+">
+            <button onclick="save()" class="button">💾 บันทึก</button>		
+			<button onclick="clearScreen()" class="button">🔄 ล้างจอ</button>
+            <button style="font-size:12px;" onclick="goToReport()" class="button">📊 รายงานสต็อก</button>
+        </div>
+			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 2.0 BETA</p>
+            <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+    </div>
+    <script>
+        document.getElementById('bj-checkbox').addEventListener('change', function() {
+        document.getElementById('bjamount').style.display = this.checked ? 'block' : 'none';
+    });
+
+    document.getElementById('bn-checkbox').addEventListener('change', function() {
+        document.getElementById('bnamount').style.display = this.checked ? 'block' : 'none';
+    });
+
+
+	function clearScreen(){
+		document.getElementById('size').selectedIndex = 0;
+		document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+		document.querySelectorAll('input[type="checkbox"]').forEach(radio => radio.checked = false);
+		document.getElementById('bjamount').value = "";
+		document.getElementById('bnamount').value = "";
+		document.getElementById('bjamount').style.display = 'none';
+		document.getElementById('bnamount').style.display = 'none';
+	}
+	
+	function save() {
+    // Get values from the form
+	var url = "https://docs.google.com/forms/d/e/1FAIpQLSf4OqAabdM32leCV0UbLyqG-rmGZQNnxBBcm-ZlP5HLrYh4Fw/formResponse?entry.1362014552=";
+	var entrynongi = "&entry.1472257121="
+	var entrygi = "&entry.1655074373=";
+	var sizeElement = document.getElementById('size');
+    var size = sizeElement.value;
+    var sizeid = sizeElement.selectedIndex;
+    var nongi = document.getElementById('nongi').checked;
+    var bj = document.getElementById('bj-checkbox').checked;
+	var bn = document.getElementById('bn-checkbox').checked;
+	var bjamount = document.getElementById('bjamount').value || 0;
+	var bnamount = document.getElementById('bnamount').value || 0;
+	var parsebjamount = parseInt(bjamount);
+	var parsebnamount = parseInt(bnamount);
+	var alertMessage = size;
+	
+	// Check if size are selected
+    if (sizeid === 0) {
+        alert("กรุณาเลือกไซส์ของท่อ");
+        return;
+    }
+	
+	if (nongi) {
+		var amount = parsebjamount + parsebnamount;
+		amount = -amount;
+		alertMessage += " เหล็กดำ จำนวน " + amount + " เส้น";
+		url += size + entrynongi + amount + entrygi + 0;
+	} else {
+		var amount = parsebjamount + parsebnamount;
+		amount = -amount;
+		alertMessage += " GI จำนวน " + amount + " เส้น"
+		url += size + entrygi + amount + entrynongi + 0;
+	}
+    // Send data to Google Sheets
+    var img = document.createElement("img");
+    img.src = url;
+    
+    // Display alert
+    alert(alertMessage);
+
+    // Clear the form
+    document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+	document.querySelectorAll('input[type="checkbox"]').forEach(radio => radio.checked = false);
+	document.getElementById('bjamount').style.display = 'none';
+	document.getElementById('bnamount').style.display = 'none';
+	document.getElementById('bjamount').value = "";
+	document.getElementById('bnamount').value = "";
+}
+	function goToReport() {
+		//เปิดหน้าเว็บไปที่ลิงค์ตารางข้อมูลที่บันทึก
+      		window.open("https://chai2686.github.io/flatbar_projects.github.io/typeb_stock_report.html", "_blank");
+    	}
+	
+	function about() {
+		//เปิดหน้าเว็บไปที่ลิงค์เกี่ยวกับโปรแกรม
+      		window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
+    	}
+    </script>
+
+</body></html>
