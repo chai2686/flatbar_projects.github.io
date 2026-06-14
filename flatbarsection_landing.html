@@ -1,179 +1,248 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="th">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="1.63 Technical Review">
+    <meta name="Version" content="2.0 BETA">
     <title>ส่วนงานเหล็กแบน</title>
+    
+    <!-- Modern Thai Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="icon" href="flatbar_fav.ico" type="image/x-icon">
     <link rel="icon" href="flatbar_fav.png" type="image/png">
+
     <style>
-        /* Set the height and width to match the desired resolution */
+        :root {
+            --primary-blue: #2563eb;
+            --surface: #ffffff;
+            --background: #f1f5f9;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #ffffff; /* White background color */
         }
+
         .container {
-            width: 100%;
-            max-width: 768px;
-            height: 100%;
-            max-height: 1280px;
-            background-color: #f0f0f0; /* Light grey background color */
+            width: 90%;
+            max-width: 450px;
+            background-color: var(--surface);
+            padding: 40px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-sizing: border-box;
         }
-        .dropdown {
-            width: 90%;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-        }
-        .radio-group {
+
+        h2 {
+            width: 100%;
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #0f172a;
             display: flex;
-            flex-direction: row;
-            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
         }
-        .radio-label {
-            margin-right: 20px;
-        }
-		.radio-check {
-			height:20px;
-			width:20px;
-			vertical-align: middle;
-		}
-        .text-input {
-            width: 40%;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-        }
-        .button-group {
+
+        .menu-group {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            width: 90%;
-        }
-        .button {
             width: 100%;
-            height: 50px;
-            margin-bottom: 5px;
-            margin-left: 4px;
-            margin-right: 4px;
-			box-shadow:inset 0px 1px 0px 0px #97c4fe;
-			background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
-			background-color:#3d94f6;
-			border-radius:6px;
-			border:1px solid #337fed;
-			display:inline-block;
-			cursor:pointer;
-			color:#ffffff;
-			font-family:Arial;
-			font-size:16px;
-			font-weight:bold;
-			
-			text-decoration:none;
-			text-shadow:0px 1px 0px #1570cd;
+            gap: 12px;
         }
-		.hidden {
-            display: none;
-			width: 40%;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-        }
-		.weight-input {
-			display: flex;
-            flex-direction: row;
+
+        /* Modern App-Style Menu Buttons */
+        .menu-button {
+            display: flex;
+            align-items: center;
             justify-content: space-between;
-            width: 300px;
-		}
-		.weight {
-			width: 100%;
-            height: 50px;
-            font-size: 15px;
+            width: 100%;
+            padding: 16px 20px;
+            background-color: var(--surface);
+            border: 1.5px solid var(--border-light);
+            border-radius: 12px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            box-sizing: border-box;
+        }
+
+        .menu-button:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+        }
+
+        .menu-button:active {
+            transform: translateY(0);
+            background-color: #f8fafc;
+        }
+
+        .menu-button-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+        }
+
+        .chevron {
+            color: #cbd5e1;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        .menu-button:hover .chevron {
+            color: var(--primary-blue);
+        }
+
+        /* Secondary Button (Back) */
+        .btn-back {
             margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-		}
+            justify-content: center;
+            background-color: #f8fafc;
+            border-color: transparent;
+            color: var(--text-muted);
+            box-shadow: none;
+        }
+
+        .btn-back:hover {
+            background-color: #e2e8f0;
+            border-color: transparent;
+            color: var(--text-main);
+        }
+
+        .footer-text {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 35px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .footer-text span { cursor: pointer; transition: color 0.2s; }
+        .footer-text span:hover { color: var(--primary-blue); }
     </style>
 </head>
 <body>
     <div class="container">
-		<h2 style="font-size: 20;text-align:left;margin-bottom: 5px;">🧱 ส่วนงานเหล็กแบน</h2>
+        <h2>🧱 ส่วนงานเหล็กแบน</h2>
         
+        <div class="menu-group">
+            <button onclick="goToShipment()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">🚛</span>
+                    <span>รายการรถ</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
 
-        <div class="button-group" style="
-    margin-top: 20px;
-">
-            <button onclick="goToShipment()" class="button">🚛 รายการรถ</button>
-		<button onclick="goToCalc()" class="button" style="
-    border-bottom-width: 1px;
-    padding-bottom: 1px;
-    
-">📝 จดน้ำหนัก</button>
-			<button onclick="goToHistory()" class="button">📋 ตารางบันทึกจดน้ำหนัก</button>
-			<button onclick="goToStockCheck()" class="button">📦 เช็คสต็อกประจำวัน</button>
-			<button onclick="goToBundleCheck()" class="button">📟 เช็คบันเดิ้ลเหล็กแบน</button>
-            <button onclick="goToWoodReport()" class="button">🪓 บันทึกการใช้ไม้</button>
-			<button onclick="goBack()" class="button" style="
-    align-self: center;
-    width: 50%;
-    margin-top: 15px;
-">⏮️ กลับหน้าหลัก</button>
+            <button onclick="goToCalc()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">📝</span>
+                    <span>จดน้ำหนัก</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+
+            <button onclick="goToHistory()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">📋</span>
+                    <span>ตารางบันทึกจดน้ำหนัก</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+
+            <button onclick="goToStockCheck()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">📦</span>
+                    <span>เช็คสต็อกประจำวัน</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+
+            <button onclick="goToBundleCheck()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">📟</span>
+                    <span>เช็คบันเดิ้ลเหล็กแบน</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+
+            <button onclick="goToWoodReport()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">🪓</span>
+                    <span>บันทึกการใช้ไม้</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+
+            <button onclick="goBack()" class="menu-button btn-back">
+                <div class="menu-button-content">
+                    <span class="menu-icon">⏮️</span>
+                    <span>กลับหน้าหลัก</span>
+                </div>
+            </button>
         </div>
-			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 2.0 BETA</p>
-            <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+
+        <div class="footer-text">
+            <span>Powered by Flatbar Division™️</span>
+            <span onclick="about()">Version 2.0 BETA</span>
+        </div>
     </div>
+
     <script>
         function goBack() {
-			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/main_landing.html";
-		}
-	    	function goToShipment() {
-			window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_shipment.html", "_blank");
-		}
-		function goToCalc() {
-			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_calculator.html";
-		}
-		function goToHistory() {
-			window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_report.html", "_blank");
-		}
-		function goToStockCheck() {
-			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/fbstock_input.html";
-		}
-	    	function goToBundleCheck() {
-			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_bundle_check.html";
-		}
-		function goToWoodReport() {
-			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/wood_memo.html";
-		}
-		function about() {
-		//เปิดหน้าเว็บไปที่ลิงค์เกี่ยวกับโปรแกรม
-      		window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
-    	}
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/main_landing.html";
+        }
+        function goToShipment() {
+            window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_shipment.html", "_blank");
+        }
+        function goToCalc() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_calculator.html";
+        }
+        function goToHistory() {
+            window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_report.html", "_blank");
+        }
+        function goToStockCheck() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/fbstock_input.html";
+        }
+        function goToBundleCheck() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_bundle_check.html";
+        }
+        function goToWoodReport() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/wood_memo.html";
+        }
+        function about() {
+            window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
+        }
     </script>
-
-
-</body></html>
+</body>
+</html>
