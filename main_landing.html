@@ -1,157 +1,191 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="th">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับส่วนงานท่อเกรดบี และส่วนงานเหล็กแบน">
-    <meta name="Version" content="1.4 Beta">
-    <title>🚚 หน้าหลัก 🚚</title>
+    <meta name="Version" content="2.0 BETA">
+    <title>หน้าหลัก | Flatbar Division</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="icon" href="warehouse_fav.ico" type="image/x-icon">
     <link rel="icon" href="warehouse_fav.png" type="image/png">
+
     <style>
-        /* Set the height and width to match the desired resolution */
+        :root {
+            --primary-blue: #2563eb;
+            --surface: #ffffff;
+            --background: #f1f5f9;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #ffffff; /* White background color */
         }
+
         .container {
-            width: 100%;
-            max-width: 768px;
-            height: 100%;
-            max-height: 1280px;
-            background-color: #f0f0f0; /* Light grey background color */
+            width: 90%;
+            max-width: 450px;
+            background-color: var(--surface);
+            padding: 40px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-sizing: border-box;
         }
-        .dropdown {
-            width: 90%;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-        }
-        .radio-group {
+
+        h2 {
+            width: 100%;
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 30px;
+            color: #0f172a;
             display: flex;
-            flex-direction: row;
-            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
         }
-        .radio-label {
-            margin-right: 20px;
-        }
-		.radio-check {
-			height:20px;
-			width:20px;
-			vertical-align: middle;
-		}
-        .text-input {
-            width: 40%;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-        }
-        .button-group {
+
+        .menu-group {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            width: 90%;
-        }
-        .button {
             width: 100%;
-            height: 50px;
-            margin-bottom: 5px;
-            margin-left: 4px;
-            margin-right: 4px;
-			box-shadow:inset 0px 1px 0px 0px #97c4fe;
-			background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
-			background-color:#3d94f6;
-			border-radius:6px;
-			border:1px solid #337fed;
-			display:inline-block;
-			cursor:pointer;
-			color:#ffffff;
-			font-family:Arial;
-			font-size:16px;
-			font-weight:bold;
-			
-			text-decoration:none;
-			text-shadow:0px 1px 0px #1570cd;
+            gap: 15px; /* Slightly larger gap for the main menu */
         }
-		.hidden {
-            display: none;
-			width: 40%;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-        }
-		.weight-input {
-			display: flex;
-            flex-direction: row;
+
+        /* Modern App-Style Menu Buttons */
+        .menu-button {
+            display: flex;
+            align-items: center;
             justify-content: space-between;
-            width: 300px;
-		}
-		.weight {
-			width: 100%;
-            height: 50px;
-            font-size: 15px;
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-		}
+            width: 100%;
+            padding: 20px 20px;
+            background-color: var(--surface);
+            border: 1.5px solid var(--border-light);
+            border-radius: 14px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            box-sizing: border-box;
+        }
+
+        .menu-button:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .menu-button:active {
+            transform: translateY(0);
+            background-color: #f8fafc;
+        }
+
+        .menu-button-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-icon {
+            font-size: 22px;
+        }
+
+        .chevron {
+            color: #cbd5e1;
+            font-size: 20px;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        .menu-button:hover .chevron {
+            color: var(--primary-blue);
+        }
+
+        .footer-text {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .footer-text span { cursor: pointer; transition: color 0.2s; }
+        .footer-text span:hover { color: var(--primary-blue); }
     </style>
 </head>
 <body>
     <div class="container">
-		<h2 style="font-size: 20;text-align:left;margin-bottom: 5px;">🗃️ หน้าหลัก เหล็กแบน ⛓️</h2>
+        <h2>🗃️ หน้าหลัก เหล็กแบน ⛓️</h2>
         
+        <div class="menu-group">
+            <button onclick="goToSchedule()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">🗓️</span>
+                    <span>ตารางเวรประจำวัน</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>		
 
-        <div class="button-group" style="
-    margin-top: 20px;
-">
-            
-			<button onclick="goToSchedule()" class="button">🗓️ ตารางเวรประจำวัน</button>
-			<button onclick="goToFlatbar()" class="button">🧱 ส่วนงานเหล็กแบน</button>
-            <button onclick="goToTypeB()" class="button">🆖 ส่วนงานท่อเกรดบี</button>
-			
+            <button onclick="goToFlatbar()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">🧱</span>
+                    <span>ส่วนงานเหล็กแบน</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+
+            <button onclick="goToTypeB()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">🆖</span>
+                    <span>ส่วนงานท่อเกรดบี</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
         </div>
-			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 2.0 Beta</p>
-            <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+
+        <div class="footer-text">
+            <span>Powered by Flatbar Division™️</span>
+            <span onclick="about()">Version 2.0 BETA</span>
+        </div>
     </div>
+
     <script>
-		function goToSchedule() {
-      		window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_schedule.html");
-    	}
-		function goToFlatbar() {
-      		window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbarsection_landing.html";
-    	}
-		function goToTypeB() {
-			window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/typebsection_landing.html";
-		}
-		function about() {
-		//เปิดหน้าเว็บไปที่ลิงค์เกี่ยวกับโปรแกรม
-      		window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
-    	}
+        function goToSchedule() {
+            window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_schedule.html", "_blank");
+        }
+        
+        function goToFlatbar() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbarsection_landing.html";
+        }
+        
+        function goToTypeB() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/typebsection_landing.html";
+        }
+        
+        function about() {
+            window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
+        }
     </script>
-
-
-</body></html>
+</body>
+</html>
