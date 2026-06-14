@@ -1,305 +1,391 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="th">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="1.0 BETA">
+    <meta name="description" content="เว็บแอพสำหรับบันทึกจ่ายออกสต๊อก ส่วนงานท่อเกรดบี">
+    <meta name="Version" content="2.0 BETA">
     <title>จ่ายออกท่อเกรดบี</title>
-    <link rel="icon" href="tubes_fav.ico" type="image/x-icon">
-    <link rel="icon" href="tubes_fav.png" type="image/png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        /* Set the height and width to match the desired resolution */
+        :root {
+            --primary-red: #ef4444;
+            --primary-hover: #dc2626;
+            --surface: #ffffff;
+            --background: #f1f5f9;
+            --text-main: #334155;
+            --border-light: #cbd5e1;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #ffffff; /* White background color */
         }
+
         .container {
-            width: 100%;
-            max-width: 768px;
-            height: 100%;
-            max-height: 1280px;
-            background-color: #f0f0f0; /* Light grey background color */
+            width: 90%;
+            max-width: 500px;
+            background-color: var(--surface);
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-sizing: border-box;
         }
-        .dropdown {
-            width: 90%;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
+
+        h2 {
+            width: 100%;
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 0;
             margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
+        .dropdown, .text-input {
+            width: 100%;
+            height: 50px;
+            font-size: 16px;
+            font-family: 'Sarabun', sans-serif;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown:focus, .text-input:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+            background-color: #fff;
+        }
+
+        /* Modern Radio and Checkbox Buttons as Tap Cards */
         .radio-group {
             display: flex;
-            flex-direction: row;
-            margin-bottom: 20px;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 15px;
         }
+
+        .radio-check {
+            display: none; /* Hide default inputs */
+        }
+
         .radio-label {
-            margin-right: 20px;
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 500;
+            border: 1.5px solid var(--border-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #64748b;
+            background-color: var(--surface);
+            user-select: none;
         }
-		.radio-check {
-			height:20px;
-			width:20px;
-			vertical-align: middle;
-		}
-        .text-input {
-            width: 40%;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
+
+        /* Active state for Radio (Type of Steel) */
+        input[type="radio"]:checked + .radio-label {
+            background-color: #fef2f2;
+            border-color: var(--primary-red);
+            color: var(--primary-red);
+            font-weight: 600;
         }
+
+        /* Active state for Checkbox (BJ/BN) */
+        input[type="checkbox"]:checked + .radio-label {
+            background-color: #f8fafc;
+            border-color: #0f172a;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        /* Dynamic Input Containers */
+        .dynamic-inputs {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: none; /* Hidden by default */
+            animation: fadeInDown 0.3s ease forwards;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .button-group {
             display: flex;
-            flex-direction: row;
-            justify-content: space-between;
+            gap: 10px;
             width: 100%;
+            margin-top: 10px;
         }
+
         .button {
+            flex: 1;
+            height: 48px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .button:active {
+            transform: scale(0.96);
+        }
+
+        .btn-primary { background-color: var(--primary-red); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        .btn-secondary { background-color: #e2e8f0; color: #475569; }
+        .btn-secondary:hover { background-color: #cbd5e1; }
+
+        .footer-text {
             width: 100%;
-            height: 50px;
-            margin-left: 4px;
-            margin-right: 4px;
-			box-shadow:inset 0px 1px 0px 0px #97c4fe;
-			background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
-			background-color:#3d94f6;
-			border-radius:6px;
-			border:1px solid #337fed;
-			display:inline-block;
-			cursor:pointer;
-			color:#ffffff;
-			font-family:Arial;
-			font-size:14px;
-			font-weight:bold;
-			
-			text-decoration:none;
-			text-shadow:0px 1px 0px #1570cd;
-        }
-		.hidden {
-            display: none;
-		width: 40%;
-		max-width: 360px;
-            height: 50px;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-        }
-		.weight-input {
-			display: flex;
-            flex-direction: row;
+            display: flex;
             justify-content: space-between;
-            width: 300px;
-		}
-		.weight {
-			width: 100%;
-            height: 50px;
-            font-size: 15px;
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #C4D1EB;
-			border-radius: 5px;
-			box-shadow: 3px 3px 2px 0px #E2E2E2;
-		}
+            margin-top: 25px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .footer-text span { cursor: pointer; transition: color 0.2s; }
+        .footer-text span:hover { color: var(--primary-red); }
     </style>
 </head>
 <body>
     <div class="container">
-		<h2 style="font-size: 20;text-align:left;margin-bottom: 5px;margin-right: 60px;">📥 บันทึกจ่ายออกท่อเกรดบี</h2>
+        <h2>📤 บันทึกจ่ายออกท่อเกรดบี</h2>
         
-        <select class="dropdown" id="size" aria-label="เลือกขนาดของท่อ" style="">
-	    <option value="" disabled="" selected="">🗜️ เลือกขนาดของท่อ</option>
-	    <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4"</option>
-	    <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2"</option>
-	    <option value="ท่อดำ 1&quot;">ท่อดำ 1"</option>
-	    <option value="ท่อดำ 1 1/4&quot;">ท่อดำ 1 1/4"</option>
-	    <option value="ท่อดำ 1 1/2&quot;">ท่อดำ 1 1/2"</option>
-	    <option value="ท่อดำ 2&quot;">ท่อดำ 2"</option>
-	    <option value="ท่อดำ 2 1/2&quot;">ท่อดำ 2 1/2"</option>
-	    <option value="ท่อดำ 3&quot;">ท่อดำ 3"</option>
-	    <option value="ท่อดำ 3 1/2&quot;">ท่อดำ 3 1/2"</option>
-	    <option value="ท่อดำ 4&quot;">ท่อดำ 4"</option>
-	    <option value="ท่อดำ 5&quot;">ท่อดำ 5"</option>
-	    <option value="ท่อดำ 6&quot;">ท่อดำ 6"</option>
-	    <option value="ท่อดำ 7&quot;">ท่อดำ 7"</option>
-	    <option value="ท่อดำ 8&quot;">ท่อดำ 8"</option>
-	    <option value="ท่อดำ 10&quot;">ท่อดำ 10"</option>
-	    <option value="ท่อดำ 11&quot;">ท่อดำ 11"</option>
-	    
-	    <option value="ท่อเหลี่ยม 19x19">ท่อเหลี่ยม 19x19</option>
-	    <option value="ท่อเหลี่ยม 25x25">ท่อเหลี่ยม 25x25</option>
-	    <option value="ท่อเหลี่ยม 32x32">ท่อเหลี่ยม 32x32</option>
-	    <option value="ท่อเหลี่ยม 38x38">ท่อเหลี่ยม 38x38</option>
-	    <option value="ท่อเหลี่ยม 50x50">ท่อเหลี่ยม 50x50</option>
-	    <option value="ท่อเหลี่ยม 70x65">ท่อเหลี่ยม 70x65</option>
-	    <option value="ท่อเหลี่ยม 75x75">ท่อเหลี่ยม 75x75</option>
-	    <option value="ท่อเหลี่ยม 100x100">ท่อเหลี่ยม 100x100</option>
-	    <option value="ท่อเหลี่ยม 125x125">ท่อเหลี่ยม 125x125</option>
-	    <option value="ท่อเหลี่ยม 150x150">ท่อเหลี่ยม 150x150</option>
-	    <option value="ท่อเหลี่ยม 200x200">ท่อเหลี่ยม 200x200</option>
-		
-	    <option value="แป๊บแบน 50x25">แป๊บแบน 50x25</option>
-	    <option value="แป๊บแบน 60x30">แป๊บแบน 60x30</option>
-	    <option value="แป๊บแบน 70x45">แป๊บแบน 70x45</option>
-	    <option value="แป๊บแบน 75x38">แป๊บแบน 75x38</option>
-	    <option value="แป๊บแบน 75x45">แป๊บแบน 75x45</option>
-	    <option value="แป๊บแบน 75x50">แป๊บแบน 75x50</option>
-	    <option value="แป๊บแบน 100x50">แป๊บแบน 100x50</option>
-	    <option value="แป๊บแบน 100x75">แป๊บแบน 100x75</option>
-	    <option value="แป๊บแบน 125x50">แป๊บแบน 125x50</option>
-	    <option value="แป๊บแบน 125x75">แป๊บแบน 125x75</option>
-	    <option value="แป๊บแบน 125x100">แป๊บแบน 125x100</option>
-	    <option value="แป๊บแบน 150x50">แป๊บแบน 150x50</option>
-	    <option value="แป๊บแบน 150x75">แป๊บแบน 150x75</option>
-	    <option value="แป๊บแบน 150x100">แป๊บแบน 150x100</option>
-	    <option value="แป๊บแบน 200x100">แป๊บแบน 200x100</option>
+        <select class="dropdown" id="size" aria-label="เลือกขนาดของท่อ">
+            <option value="" disabled selected>🗜️ เลือกขนาดของท่อ</option>
+            <optgroup label="ท่อดำ">
+                <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4"</option>
+                <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2"</option>
+                <option value="ท่อดำ 1&quot;">ท่อดำ 1"</option>
+                <option value="ท่อดำ 1 1/4&quot;">ท่อดำ 1 1/4"</option>
+                <option value="ท่อดำ 1 1/2&quot;">ท่อดำ 1 1/2"</option>
+                <option value="ท่อดำ 2&quot;">ท่อดำ 2"</option>
+                <option value="ท่อดำ 2 1/2&quot;">ท่อดำ 2 1/2"</option>
+                <option value="ท่อดำ 3&quot;">ท่อดำ 3"</option>
+                <option value="ท่อดำ 3 1/2&quot;">ท่อดำ 3 1/2"</option>
+                <option value="ท่อดำ 4&quot;">ท่อดำ 4"</option>
+                <option value="ท่อดำ 5&quot;">ท่อดำ 5"</option>
+                <option value="ท่อดำ 6&quot;">ท่อดำ 6"</option>
+                <option value="ท่อดำ 7&quot;">ท่อดำ 7"</option>
+                <option value="ท่อดำ 8&quot;">ท่อดำ 8"</option>
+                <option value="ท่อดำ 10&quot;">ท่อดำ 10"</option>
+                <option value="ท่อดำ 11&quot;">ท่อดำ 11"</option>
+            </optgroup>
+            <optgroup label="ท่อเหลี่ยม">
+                <option value="ท่อเหลี่ยม 19x19">ท่อเหลี่ยม 19x19</option>
+                <option value="ท่อเหลี่ยม 25x25">ท่อเหลี่ยม 25x25</option>
+                <option value="ท่อเหลี่ยม 32x32">ท่อเหลี่ยม 32x32</option>
+                <option value="ท่อเหลี่ยม 38x38">ท่อเหลี่ยม 38x38</option>
+                <option value="ท่อเหลี่ยม 50x50">ท่อเหลี่ยม 50x50</option>
+                <option value="ท่อเหลี่ยม 70x65">ท่อเหลี่ยม 70x65</option>
+                <option value="ท่อเหลี่ยม 75x75">ท่อเหลี่ยม 75x75</option>
+                <option value="ท่อเหลี่ยม 100x100">ท่อเหลี่ยม 100x100</option>
+                <option value="ท่อเหลี่ยม 125x125">ท่อเหลี่ยม 125x125</option>
+                <option value="ท่อเหลี่ยม 150x150">ท่อเหลี่ยม 150x150</option>
+                <option value="ท่อเหลี่ยม 200x200">ท่อเหลี่ยม 200x200</option>
+            </optgroup>
+            <optgroup label="แป๊บแบน">
+                <option value="แป๊บแบน 50x25">แป๊บแบน 50x25</option>
+                <option value="แป๊บแบน 60x30">แป๊บแบน 60x30</option>
+                <option value="แป๊บแบน 70x45">แป๊บแบน 70x45</option>
+                <option value="แป๊บแบน 75x38">แป๊บแบน 75x38</option>
+                <option value="แป๊บแบน 75x45">แป๊บแบน 75x45</option>
+                <option value="แป๊บแบน 75x50">แป๊บแบน 75x50</option>
+                <option value="แป๊บแบน 100x50">แป๊บแบน 100x50</option>
+                <option value="แป๊บแบน 100x75">แป๊บแบน 100x75</option>
+                <option value="แป๊บแบน 125x50">แป๊บแบน 125x50</option>
+                <option value="แป๊บแบน 125x75">แป๊บแบน 125x75</option>
+                <option value="แป๊บแบน 125x100">แป๊บแบน 125x100</option>
+                <option value="แป๊บแบน 150x50">แป๊บแบน 150x50</option>
+                <option value="แป๊บแบน 150x75">แป๊บแบน 150x75</option>
+                <option value="แป๊บแบน 150x100">แป๊บแบน 150x100</option>
+                <option value="แป๊บแบน 200x100">แป๊บแบน 200x100</option>
+            </optgroup>
         </select>
+
         <div class="radio-group">
-            <label class="radio-label">
-                <input type="radio" class="radio-check" name="option" value="ท่อเหล็กดำ" id="nongi">
-                ท่อเหล็กดำ  🔲
-            </label>
-            <label class="radio-label">
-                <input type="radio" class="radio-check" name="option" value="ท่อGI">
-                ท่อ GI 🔳
-            </label>
+            <input type="radio" id="nongi" class="radio-check" name="option" value="ท่อเหล็กดำ">
+            <label for="nongi" class="radio-label">ท่อเหล็กดำ 🔲</label>
+
+            <input type="radio" id="gi" class="radio-check" name="option" value="ท่อGI">
+            <label for="gi" class="radio-label">ท่อ GI 🔳</label>
         </div>
+
         <div class="radio-group">
-            <label class="radio-label" style="
-    margin-left: 0px;
-    margin-right: 60px;
-">
-                <input type="checkbox" class="radio-check" name="option2" value="BJ" id="bj-checkbox">
-                ท่อ BJ 🟡
-            </label>
-            <label class="radio-label">
-                <input type="checkbox" class="radio-check" name="option2" value="BN" id="bn-checkbox">
-                ท่อ BN 🔴
-            </label>
+            <input type="checkbox" id="bj-checkbox" class="radio-check" name="option2" value="BJ">
+            <label for="bj-checkbox" class="radio-label">ท่อ BJ 🟡</label>
+
+            <input type="checkbox" id="bn-checkbox" class="radio-check" name="option2" value="BN">
+            <label for="bn-checkbox" class="radio-label">ท่อ BN 🔴</label>
         </div>
-		<div id="bj-content" class="hidden">
-    Content related to ท่อ BJ 🟡
-</div>
-<div id="bn-content" class="hidden">
-    Content related to ท่อ BN 🔴
-</div>
-        <div class="quantity-input" style="display: flex; align-items: center; justify-content: center;">
-    <div>
-        <input type="number" class="hidden" placeholder="📝 จำนวน BJ" id="bjamount" style="position: fixed; display: none; top: 210px; right: 51%;">
-    </div>
-    <div>
-        <input type="number" class="hidden" placeholder="📝 จำนวน BN" id="bnamount" style="position: fixed; display: none; top: 210px;">
-    </div>
-</div>
 
-
-
-
-        <div class="button-group" style="
-    margin-top: 70px;
-">
-            <button onclick="save()" class="button">💾 บันทึก</button>		
-			<button onclick="clearScreen()" class="button">🔄 ล้างจอ</button>
-            <button style="font-size:12px;" onclick="goToReport()" class="button">📊 รายงานสต็อก</button>
+        <div class="dynamic-inputs">
+            <div class="input-wrapper" id="bj-wrapper">
+                <input type="number" class="text-input" style="margin-bottom: 0;" placeholder="📝 จำนวน BJ" id="bjamount">
+            </div>
+            <div class="input-wrapper" id="bn-wrapper">
+                <input type="number" class="text-input" style="margin-bottom: 0;" placeholder="📝 จำนวน BN" id="bnamount">
+            </div>
         </div>
-			<p onclick="about()" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 2.0 BETA</p>
-            <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+
+        <div class="button-group">
+            <button onclick="save()" class="button btn-primary">💾 จ่ายออก</button>		
+            <button onclick="clearScreen()" class="button btn-secondary">🔄 ล้างจอ</button>
+            <button onclick="goToReport()" class="button btn-secondary">📊 สต็อก</button>
+        </div>
+
+        <div class="footer-text">
+            <span>Powered by Flatbar Division™️</span>
+            <span onclick="about()">Version 2.0 BETA</span>
+        </div>
     </div>
+
     <script>
+        // Event Listeners for dynamic quantity inputs
         document.getElementById('bj-checkbox').addEventListener('change', function() {
-        document.getElementById('bjamount').style.display = this.checked ? 'block' : 'none';
-    });
+            document.getElementById('bj-wrapper').style.display = this.checked ? 'block' : 'none';
+            if(!this.checked) document.getElementById('bjamount').value = ""; // Clear on uncheck
+        });
 
-    document.getElementById('bn-checkbox').addEventListener('change', function() {
-        document.getElementById('bnamount').style.display = this.checked ? 'block' : 'none';
-    });
+        document.getElementById('bn-checkbox').addEventListener('change', function() {
+            document.getElementById('bn-wrapper').style.display = this.checked ? 'block' : 'none';
+            if(!this.checked) document.getElementById('bnamount').value = ""; // Clear on uncheck
+        });
 
+        function clearScreen() {
+            document.getElementById('size').selectedIndex = 0;
+            document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+                // Trigger change event to hide wrappers
+                checkbox.dispatchEvent(new Event('change'));
+            });
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'สำเร็จ',
+                text: 'ล้างหน้าจอสำเร็จ',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+        
+        function save() {
+            var url = "https://docs.google.com/forms/d/e/1FAIpQLSf4OqAabdM32leCV0UbLyqG-rmGZQNnxBBcm-ZlP5HLrYh4Fw/formResponse?entry.1362014552=";
+            var entrynongi = "&entry.1472257121="
+            var entrygi = "&entry.1655074373=";
+            
+            var sizeElement = document.getElementById('size');
+            var size = sizeElement.value;
+            var sizeid = sizeElement.selectedIndex;
+            
+            var nongi = document.getElementById('nongi').checked;
+            var gi = document.getElementById('gi').checked;
+            
+            var bj = document.getElementById('bj-checkbox').checked;
+            var bn = document.getElementById('bn-checkbox').checked;
+            
+            var bjamount = document.getElementById('bjamount').value || 0;
+            var bnamount = document.getElementById('bnamount').value || 0;
+            var parsebjamount = parseInt(bjamount);
+            var parsebnamount = parseInt(bnamount);
+            
+            var alertMessage = size;
+            
+            // Validation
+            if (sizeid === 0) {
+                Swal.fire('แจ้งเตือน', 'กรุณาเลือกไซส์ของท่อ', 'warning'); return;
+            }
+            if (!nongi && !gi) {
+                Swal.fire('แจ้งเตือน', 'กรุณาเลือกชนิดเหล็กดำ หรือ GI', 'warning'); return;
+            }
+            if (!bj && !bn) {
+                Swal.fire('แจ้งเตือน', 'กรุณาเลือกประเภท BJ หรือ BN', 'warning'); return;
+            }
+            if (parsebjamount === 0 && parsebnamount === 0) {
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุจำนวนเส้นที่ต้องการจ่ายออก', 'warning'); return;
+            }
 
-	function clearScreen(){
-		document.getElementById('size').selectedIndex = 0;
-		document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
-		document.querySelectorAll('input[type="checkbox"]').forEach(radio => radio.checked = false);
-		document.getElementById('bjamount').value = "";
-		document.getElementById('bnamount').value = "";
-		document.getElementById('bjamount').style.display = 'none';
-		document.getElementById('bnamount').style.display = 'none';
-	}
-	
-	function save() {
-    // Get values from the form
-	var url = "https://docs.google.com/forms/d/e/1FAIpQLSf4OqAabdM32leCV0UbLyqG-rmGZQNnxBBcm-ZlP5HLrYh4Fw/formResponse?entry.1362014552=";
-	var entrynongi = "&entry.1472257121="
-	var entrygi = "&entry.1655074373=";
-	var sizeElement = document.getElementById('size');
-    var size = sizeElement.value;
-    var sizeid = sizeElement.selectedIndex;
-    var nongi = document.getElementById('nongi').checked;
-    var bj = document.getElementById('bj-checkbox').checked;
-	var bn = document.getElementById('bn-checkbox').checked;
-	var bjamount = document.getElementById('bjamount').value || 0;
-	var bnamount = document.getElementById('bnamount').value || 0;
-	var parsebjamount = parseInt(bjamount);
-	var parsebnamount = parseInt(bnamount);
-	var alertMessage = size;
-	
-	// Check if size are selected
-    if (sizeid === 0) {
-        alert("กรุณาเลือกไซส์ของท่อ");
-        return;
-    }
-	
-	if (nongi) {
-		var amount = parsebjamount + parsebnamount;
-		amount = -amount;
-		alertMessage += " เหล็กดำ จำนวน " + amount + " เส้น";
-		url += size + entrynongi + amount + entrygi + 0;
-	} else {
-		var amount = parsebjamount + parsebnamount;
-		amount = -amount;
-		alertMessage += " GI จำนวน " + amount + " เส้น"
-		url += size + entrygi + amount + entrynongi + 0;
-	}
-    // Send data to Google Sheets
-    var img = document.createElement("img");
-    img.src = url;
-    
-    // Display alert
-    alert(alertMessage);
+            // Calculations
+            var totalAmount = parsebjamount + parsebnamount;
+            var negativeAmount = -Math.abs(totalAmount); // Ensure it's negative
+            
+            if (nongi) {
+                alertMessage += " เหล็กดำถูกหักออก " + totalAmount + " เส้น";
+                url += size + entrynongi + negativeAmount + entrygi + 0;
+            } else if (gi) {
+                alertMessage += " GI ถูกหักออก " + totalAmount + " เส้น";
+                url += size + entrygi + negativeAmount + entrynongi + 0;
+            }
 
-    // Clear the form
-    document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
-	document.querySelectorAll('input[type="checkbox"]').forEach(radio => radio.checked = false);
-	document.getElementById('bjamount').style.display = 'none';
-	document.getElementById('bnamount').style.display = 'none';
-	document.getElementById('bjamount').value = "";
-	document.getElementById('bnamount').value = "";
-}
-	function goToReport() {
-		//เปิดหน้าเว็บไปที่ลิงค์ตารางข้อมูลที่บันทึก
-      		window.open("https://chai2686.github.io/flatbar_projects.github.io/typeb_stock_report.html", "_blank");
-    	}
-	
-	function about() {
-		//เปิดหน้าเว็บไปที่ลิงค์เกี่ยวกับโปรแกรม
-      		window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
-    	}
+            // Send data to Google Sheets
+            var img = document.createElement("img");
+            img.src = url;
+            
+            // Success Alert
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกจ่ายออกสำเร็จ!',
+                text: alertMessage,
+                confirmButtonColor: '#ef4444'
+            }).then(() => {
+                // Clear the form silently after user clicks OK
+                document.getElementById('size').selectedIndex = 0;
+                document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+                    input.checked = false;
+                    if(input.type === 'checkbox') input.dispatchEvent(new Event('change'));
+                });
+            });
+        }
+
+        function goToReport() {
+            window.open("https://chai2686.github.io/flatbar_projects.github.io/typeb_stock_report.html", "_blank");
+        }
+        
+        function about() {
+            window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
+        }
     </script>
-
-</body></html>
+</body>
+</html>
