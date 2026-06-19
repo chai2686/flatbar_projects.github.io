@@ -78,3 +78,22 @@ Invoke-WebRequest -UseBasicParsing -Uri "http://192.168.2.22/wms/api/Dropdown/Mo
   "Referer"="http://192.168.2.22/wms/Mobile/MainMenu"
 } `
 -ContentType "text/plain"
+
+
+
+
+
+
+curl 'http://192.168.2.22/wms/user/login' \
+  -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
+  -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  -H 'Cache-Control: max-age=0' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -b 'ASP.NET_SessionId=y0rywsdpzz4rnobvt1ziv4st' \
+  -H 'Origin: http://192.168.2.22' \
+  -H 'Referer: http://192.168.2.22/wms/user/login' \
+  -H 'Upgrade-Insecure-Requests: 1' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
+  --data-raw 'txtUserName=51021430&txtPassword=51021430' \
+  --insecure
