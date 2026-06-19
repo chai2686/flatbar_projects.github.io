@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# --- Version 2.0
 # --- Configuration ---
 OUTPUT_FILE="/tmp/WMS_Response.txt"
 COOKIE_FILE="/tmp/wms_cookies.txt" # Where curl will store the session IDs
@@ -13,19 +14,25 @@ DATA_URL="http://192.168.2.22/wms/api/PrepareTaskUser/QueryUnclaimPreparedTrans"
 # --- Function to Handle Login ---
 do_login() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') Attempting to log in and capture session..."
-    
-    # Construct the JSON payload for login
-    LOGIN_BODY="{\"username\":\"$USERNAME\",\"password\":\"$PASSWORD\"}"
 
     # -c saves the cookies returned by the server into our cookie file
     RESPONSE=$(curl -s -X POST "$LOGIN_URL" \
-        -H "Content-Type: application/json" \
-        -d "$LOGIN_BODY" \
+		-H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'\
+		-H 'Accept-Language: en-US,en;q=0.9,th;q=0.8'\
+		-H 'Cache-Control: max-age=0'\
+		-H 'connection: keep-alive'\
+		-H 'Content-Type: application/x-www-form-urlencoded'\
+		-H 'Origin: http://192.168.2.22'\
+		-H 'Referer: http://192.168.2.22/wms/user/login'\
+		-H 'Upgrade-Insecure-Requests: 1'\
+		-H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 edg/137.0.0.0'\
+        --data-raw "txtUserName=$USERNAME&txtPassword=$PASSWORD"\
+        --insecure \
         -c "$COOKIE_FILE" \
         -w "%{http_code}" \
         -o /dev/null)
 
-    if [ "$RESPONSE" -eq 200 ] || [ "$RESPONSE" -eq 201 ]; then
+    if [ "$RESPONSE" -eq 200 ] || [ "$RESPONSE" -eq 201 ] || [ "$RESPONSE" -eq 302 ]; then
         echo "Login successful! Cookies saved to $COOKIE_FILE"
         return 0
     else
@@ -46,10 +53,12 @@ echo "Starting API polling. Press Ctrl+C to stop."
 
 while true; do
     TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+	DATA_DATE=$(date '+%Y-%m-%d')
+	GATE_ID="38"
     echo "[$TIMESTAMP] Fetching data..."
 
     # Define the exact JSON payload matching your PowerShell request
-    DATA_BODY='{"deliveryDate":"2026-06-13T15:51:02.158Z","doItemDesc":"","companyName":"","materialCode":"","materialName":"","batch":"","storageSAP":"","workStyle":"","loadOptions":{"requireTotalCount":true,"searchOperation":"contains","searchValue":null,"skip":0,"take":20,"userData":{},"sort":null,"group":null}}'
+    DATA_BODY="{`"deliveryDate`":`"${DATA_DATE}T22:54:18.965Z`",`"doItemDesc`":`"`",`"companyName`":`"`",`"materialCode`":`"`",`"materialName`":`"`",`"batch`":`"`",`"storageSAP`":`"`",`"workStyle`":`"`",`"gateId`":`"${GATE_ID}`",`"loadOptions`":{`"requireTotalCount`":true,`"searchOperation`":`"contains`",`"searchValue`":null,`"skip`":0,`"take`":20,`"userData`":{},`"sort`":null,`"group`":null}}"
 
     # Execute request using the stored cookies (-b reads the cookies)
     # -w "%{http_code}" captures the HTTP status code at the end
