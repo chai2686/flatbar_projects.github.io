@@ -70,7 +70,6 @@ while true; do
   		-H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
   		-H 'Connection: keep-alive' \
   		-H 'Content-Type: application/json' \
-  		-b 'ASP.NET_SessionId=sm23fbheuzfltvq435q2gruo' \
   		-H 'Origin: http://192.168.2.22' \
   		-H 'Referer: http://192.168.2.22/wms/Mobile/Preparing' \
   		-H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
