@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# --- Version 2.1
+# --- Version 2.2
 # --- Configuration ---
 OUTPUT_FILE="/tmp/WMS_Response.txt"
 COOKIE_FILE="/tmp/wms_cookies.txt" # Where curl will store the session IDs
@@ -58,7 +58,7 @@ while true; do
     echo "[$TIMESTAMP] Fetching data..."
 
     # Define the exact JSON payload matching your PowerShell request
-    DATA_BODY="{`"deliveryDate`":`"${DATA_DATE}T00:00:18.965Z`",`"doItemDesc`":`"`",`"companyName`":`"`",`"materialCode`":`"`",`"materialName`":`"`",`"batch`":`"`",`"storageSAP`":`"`",`"workStyle`":`"`",`"gateId`":`"${GATE_ID}`",`"loadOptions`":{`"requireTotalCount`":true,`"searchOperation`":`"contains`",`"searchValue`":null,`"skip`":0,`"take`":20,`"userData`":{},`"sort`":null,`"group`":null}}"
+    DATA_BODY="{"deliveryDate":"${DATA_DATE}T00:00:18.965Z","doItemDesc":"","companyName":"","materialCode":"","materialName":"","batch":"","storageSAP":"","workStyle":"","gateId":"${GATE_ID}","loadOptions":{"requireTotalCount":true,"searchOperation":"contains","searchValue":null,"skip":0,"take":20,"userData":{},"sort":null,"group":null}}"
 
     # Execute request using the stored cookies (-b reads the cookies)
     # -w "%{http_code}" captures the HTTP status code at the end
