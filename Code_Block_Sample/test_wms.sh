@@ -58,7 +58,7 @@ while true; do
     echo "[$TIMESTAMP] Fetching data..."
 
     # Define the exact JSON payload matching your PowerShell request
-    DATA_BODY="{"deliveryDate":"${DATA_DATE}T00:00:18.965Z","doItemDesc":"","companyName":"","materialCode":"","materialName":"","batch":"","storageSAP":"","workStyle":"","gateId":"${GATE_ID}","loadOptions":{"requireTotalCount":true,"searchOperation":"contains","searchValue":null,"skip":0,"take":20,"userData":{},"sort":null,"group":null}}"
+    DATA_BODY='{"deliveryDate":"2026-06-22T09:50:58.371Z","doItemDesc":"","companyName":"","materialCode":"","materialName":"","batch":"","storageSAP":"","workStyle":"","gateId":"38","loadOptions":{"sort":null,"group":null,"requireTotalCount":true,"searchOperation":"contains","searchValue":null,"skip":0,"take":20,"userData":{}}}'
 
     # Execute request using the stored cookies (-b reads the cookies)
     # -w "%{http_code}" captures the HTTP status code at the end
@@ -66,12 +66,14 @@ while true; do
     HTTP_STATUS=$(curl -s -X POST "$DATA_URL" \
         -b "$COOKIE_FILE" \
         -c "$COOKIE_FILE" \
-        -H "Accept: application/json, text/plain, */*" \
-        -H "Accept-Encoding: gzip, deflate" \
-        -H "Accept-Language: en-US,en;q=0.9,th;q=0.8" \
-        -H "Origin: http://192.168.2.22" \
-        -H "Referer: http://192.168.2.22/wms/Mobile/Preparing" \
-        -H "Content-Type: application/json" \
+        -H 'Accept: application/json, text/plain, */*' \
+  		-H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  		-H 'Connection: keep-alive' \
+  		-H 'Content-Type: application/json' \
+  		-b 'ASP.NET_SessionId=sm23fbheuzfltvq435q2gruo' \
+  		-H 'Origin: http://192.168.2.22' \
+  		-H 'Referer: http://192.168.2.22/wms/Mobile/Preparing' \
+  		-H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
         --data-raw "$DATA_BODY" \
 		--insecure \
         -w "%{http_code}" \
