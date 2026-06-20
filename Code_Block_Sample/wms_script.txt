@@ -97,3 +97,20 @@ curl 'http://192.168.2.22/wms/user/login' \
   -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
   --data-raw 'txtUserName=51021430&txtPassword=51021430' \
   --insecure
+
+
+
+
+curl 'http://192.168.2.22/WMS/Report/GetRptTrackingScheduleList' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  -b 'ASP.NET_SessionId=sm23fbheuzfltvq435q2gruo' \
+  -H 'Origin: http://192.168.2.22' \
+  -H 'Referer: http://192.168.2.22/wms/Report/Tracking' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
+  --data-raw '{"date":"2026-06-20T09:59:22.311Z","gateId":34,"type":"WG","workType":"","workStyle":"","wheelType":0}' \
+  --insecure
+
+[{"CompanyName":"บริษัท เชียงใหม่มายโฮม จำกัด","GateName":"02","ShipmentCode":"2612908847","Plate":"R4-709340","Weight":550.800,"Tracking":"\u003cdiv class=\"btn-toolbar\"\u003e\u003cdiv class=\"btn-group\"\u003e\u003cbutton class=\"btn btn-mini btn-success\"\u003eO\u003c/button\u003e\u003cbutton class=\"btn btn-mini btn-danger\"\u003e02\u003c/button\u003e\u003c/div\u003e\u003c/div\u003e","TruckMember":"รถลูกค้ารับเอง"},{"CompanyName":"บริษัท อาทิตย์ สตีล จำกัด","GateName":"02","ShipmentCode":"2612908848","Plate":"R4-707895","Weight":2983.080,"Tracking":"\u003cdiv class=\"btn-toolbar\"\u003e\u003cdiv class=\"btn-group\"\u003e\u003cbutton class=\"btn btn-mini btn-warning\"\u003eO\u003c/button\u003e\u003cbutton class=\"btn btn-mini btn-danger\"\u003e01\u003c/button\u003e\u003cbutton class=\"btn btn-mini btn-danger\"\u003e02\u003c/button\u003e\u003c/div\u003e\u003c/div\u003e","TruckMember":"รถลูกค้ารับเอง"}]
