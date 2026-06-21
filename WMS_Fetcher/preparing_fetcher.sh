@@ -2,7 +2,7 @@
 
 # --- Version 2.4
 # --- Configuration ---
-  OUTPUT_FILE="/tmp/k8_preparing_data.txt"
+  OUTPUT_FILE="/tmp/preparing_data"
   COOKIE_FILE="/tmp/wms_cookies.txt" # Where curl will store the session IDs
 
   DATA_URL="http://192.168.2.22/wms/api/PrepareTaskUser/QueryUnclaimPreparedTrans"
@@ -36,7 +36,7 @@
     # Check the result
     if [ "$HTTP_STATUS" -eq 200 ]; then
         # Move temporary file to final output location (overwriting old data)
-        mv "$OUTPUT_FILE.tmp" "$OUTPUT_FILE"
+        mv "$OUTPUT_FILE.tmp" "$OUTPUT_FILE"$GATE_ID".txt"
         echo "[$TIMESTAMP] Successfully saved to $OUTPUT_FILE"
     elif [ "$HTTP_STATUS" -eq 401 ] || [ "$HTTP_STATUS" -eq 403 ]; then
         echo "[$TIMESTAMP] Session expired (Status $HTTP_STATUS). Re-authenticating..."
