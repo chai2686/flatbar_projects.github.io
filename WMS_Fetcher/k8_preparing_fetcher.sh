@@ -5,6 +5,8 @@
   OUTPUT_FILE="/tmp/k8_preparing_data.txt"
   COOKIE_FILE="/tmp/wms_cookies.txt" # Where curl will store the session IDs
 
+  DATA_URL="http://192.168.2.22/wms/api/PrepareTaskUser/QueryUnclaimPreparedTrans"
+
   TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 	DATA_DATE=$(date '+%Y-%m-%d')
 	GATE_ID="38"
