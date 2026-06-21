@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- Configuration ---
-FILE_PATH="/tmp/preparing_data38.txt"  # Change this to the path of your actual text file
+FILE_PATH="/tmp/preparing_data"$1".txt"  # Change this to the path of your actual text file
 TARGET_URL="https://docs.google.com/forms/d/e/1FAIpQLSc2iBPJXs8BxcD2uVVmNeNOMMyZRWQ141AieWt9QjL8CTlMcA/formResponse"
 RESPONSE_FILE="/tmp/execute_response.txt"
 
