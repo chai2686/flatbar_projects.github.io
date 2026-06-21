@@ -11,6 +11,8 @@ PASSWORD="51021430"
 LOGIN_URL="http://192.168.2.22/wms/user/login"
 DATA_URL="http://192.168.2.22/wms/api/PrepareTaskUser/QueryUnclaimPreparedTrans"
 
+K8_GATE_ID="38"
+
 # --- Function to Handle Login ---
 do_login() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') Attempting to log in and capture session..."
@@ -52,7 +54,7 @@ fi
 echo "Starting API polling. Press Ctrl+C to stop."
 
 while true; do
-    ./k8_preparing_fetch.sh
+    ./preparing_fetch.sh $K8_GATE_ID
     # Wait for 60 seconds
     sleep 60
 done
