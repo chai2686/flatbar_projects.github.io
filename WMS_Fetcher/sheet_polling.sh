@@ -24,8 +24,11 @@ echo "Reading content from '$FILE_PATH' and submitting to WMS..."
 # -d "@$FILE_PATH": The '@' tells curl to read the content directly from the file
 
 HTTP_STATUS=$(curl -s -X POST "$TARGET_URL" \
-    -H "Content-Type: application/json" \
-    -H "Accept: application/json, text/plain, */*" \
+    -H 'Accept: application/json, text/plain, */*' \
+  	-H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  	-H 'Connection: keep-alive' \
+  	-H 'Content-Type: application/json' \
+    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
     -d 'entry.1744730708=PREPARING_K8&entry.69501207='"@$FILE_PATH" \
     -w "%{http_code}" \
     -o "$RESPONSE_FILE")
