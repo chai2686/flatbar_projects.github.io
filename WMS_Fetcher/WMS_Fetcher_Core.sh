@@ -55,6 +55,7 @@ echo "Starting API polling. Press Ctrl+C to stop."
 
 while true; do
     ./preparing_fetch.sh $K8_GATE_ID
+	./sheet_polling.sh $K8_GATE_ID
     # Wait for 60 seconds
     sleep 60
 done
