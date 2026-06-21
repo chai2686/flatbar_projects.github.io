@@ -9,7 +9,7 @@
 
   TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 	DATA_DATE=$(date '+%Y-%m-%d')
-	GATE_ID="38"
+	GATE_ID=$1
     echo "[$TIMESTAMP] Fetching data..."
 
     # Define the exact JSON payload matching your PowerShell request
