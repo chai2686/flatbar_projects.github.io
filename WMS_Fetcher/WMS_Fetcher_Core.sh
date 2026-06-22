@@ -2,7 +2,6 @@
 
 # --- Version 2.5
 # --- Configuration ---
-OUTPUT_FILE="/tmp/WMS_Response.txt"
 COOKIE_FILE="/tmp/wms_cookies.txt" # Where curl will store the session IDs
 
 USERNAME="51021430"
