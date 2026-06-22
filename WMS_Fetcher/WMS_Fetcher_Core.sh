@@ -9,9 +9,13 @@ USERNAME="51021430"
 PASSWORD="51021430"
 
 LOGIN_URL="http://192.168.2.22/wms/user/login"
-DATA_URL="http://192.168.2.22/wms/api/PrepareTaskUser/QueryUnclaimPreparedTrans"
 
 K8_GATE_ID="38"
+K6_GATE_ID="36"
+K4_GATE_ID="34"
+K2_GATE_ID="32"
+
+GATE_IDS=("$K8_GATE_ID" "$K6_GATE_ID" "$K4_GATE_ID" "$K2_GATE_ID")
 
 # --- Function to Handle Login ---
 do_login() {
@@ -54,14 +58,12 @@ fi
 echo "Starting API polling. Press Ctrl+C to stop."
 
 while true; do
-    ./preparing_fetch.sh $K8_GATE_ID
-	./sheet_polling.sh $K8_GATE_ID
-	./preparing_fetch.sh $K6_GATE_ID
-	./sheet_polling.sh $K6_GATE_ID
-	./preparing_fetch.sh $K4_GATE_ID
-	./sheet_polling.sh $K4_GATE_ID
-	./preparing_fetch.sh $K2_GATE_ID
-	./sheet_polling.sh $K2_GATE_ID
-    # Wait for 60 seconds
+    # Loop through the array instead of writing the same commands 4 times
+    for GATE in "${GATE_IDS[@]}"; do
+        ./preparing_fetch.sh "$GATE"
+        ./sheet_polling.sh "$GATE"
+    done
+    
+    # Wait for 60 seconds before the next cycle
     sleep 60
 done
