@@ -2,25 +2,19 @@
 # --- Version 2.5
 # --- Configuration ---
 
-GATE_ID=""
-GATE_NAME=""
+case "$1" in
+    38) GATE_NAME="K8" ;;
+    36) GATE_NAME="K6" ;;
+    34) GATE_NAME="K4" ;;
+    32) GATE_NAME="K2" ;;
+    *)
+        echo "❌ Error: Invalid or missing Gate ID." >&2
+        echo "Usage: $0 {32|34|36|38}" >&2
+        exit 1
+        ;;
+esac
 
-if [ "$1" = "38" ]; then
-    GATE_ID="$1"
-    GATE_NAME="K8"
-elif [ "$1" = "36" ]; then
-    GATE_ID="$1"
-    GATE_NAME="K6"
-elif [ "$1" = "34" ]; then
-    GATE_ID="$1"
-    GATE_NAME="K4"
-elif [ "$1" = "32" ]; then
-    GATE_ID="$1"
-    GATE_NAME="K2"
-else
-    echo "Nothing Gate"
-    exit 1
-fi
+GATE_ID="$1"
 
 FILE_PATH="/tmp/preparing_data"$GATE_ID".txt"  # Change this to the path of your actual text file
 TARGET_URL="https://docs.google.com/forms/d/e/1FAIpQLSc2iBPJXs8BxcD2uVVmNeNOMMyZRWQ141AieWt9QjL8CTlMcA/formResponse"
