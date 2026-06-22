@@ -1,3 +1,7 @@
+Version 2.5 Technical Review
+ปรับโครงสร้างระบบใหม่
+- เพิ่มระบบดูงานเตรียม โดยใช้ข้อมูลจาก WMS
+
 Version 2.0 BETA
 Mature Refactor
 - แก้ไข UI ให้ทันสมัยและใช้งานง่าย
