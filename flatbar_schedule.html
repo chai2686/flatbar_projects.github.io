@@ -130,11 +130,13 @@
         </div>
 
     </div>
-	<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 10px;margin-bottom: 5px;">Version 2.5 Technical Review</p>
+	<p id="version" style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 10px;margin-bottom: 5px;">Version</p>
     <p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
 	
 	<script>
     document.addEventListener("DOMContentLoaded", fetchSheetData);
+
+	loadVersion();
 
     async function fetchSheetData() {
         console.log("Fetching sheet data...");
@@ -185,6 +187,20 @@
             console.error("Failed to fetch sheet data:", error);
         }
     }
+
+async function loadVersion() {
+    try {
+        const response = await fetch(
+            'https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/refs/heads/main/version_history.log'
+        );
+        const text = await response.text();
+        const firstLine = text.split(/\r?\n/)[0];
+        document.getElementById('version').textContent = firstLine;
+    } catch (error) {
+        console.error(error);
+        document.getElementById('version').textContent = 'Failed to load version';
+    }
+  }
 </script>
 	
 </body>
