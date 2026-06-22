@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title>📦 งานเตรียมเหล็กแบน</title>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 0px;
+        background-color: #f4f7f6;
+        color: #333;
+      }
+      .container {
+        padding: 10px;
+        max-width: 600px;
+        margin: auto;
+      }
+      
+      /* ปรับปรุง Wrapper ส่วนหัวให้ยืดหยุ่นไม่เบียดกันบนจอมือถือ */
+      .header-wrapper {
+        display: flex; 
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      
+      h2 {
+        background: white;
+        padding: 12px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin: 0;
+        font-size: 1.3em;
+        flex: 1;
+        min-width: 200px;
+      }
+      
+      /* สไตล์ Dropdown */
+      .filter-container {
+        background: white;
+        padding: 10px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        min-width: 200px;
+      }
+      .filter-container label {
+        font-weight: bold;
+        font-size: 14px;
+        color: #555;
+        white-space: nowrap;
+      }
+      .filter-container select {
+        width: 100%;
+        padding: 6px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        outline: none;
+      }
+
+      /* Container และ Card ขนาดเล็ก */
+      .card-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .card {
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        padding: 8px 12px;
+        border-left: 4px solid #4CAF50; 
+        transition: transform 0.2s ease;
+      }
+      .card:hover {
+        transform: translateY(-1px);
+      }
+      .card-row {
+        display: flex;
+        padding: 3px 0;
+        border-bottom: 1px dashed #f0f0f0;
+        font-size: 0.9em;
+      }
+      .card-row:last-child {
+        border-bottom: none;
+      }
+      .card-label {
+        font-weight: bold;
+        color: #666;
+        width: 30%;
+        flex-shrink: 0;
+      }
+      .card-value {
+        width: 70%;
+        color: #222;
+        word-break: break-word;
+      }
+      
+      /* สไตล์พิเศษสำหรับแถวที่แบ่งครึ่งแสดงสองข้อมูล (Material Code & Batch) */
+      .split-row {
+        display: flex;
+        gap: 15px;
+      }
+      .split-col {
+        display: flex;
+        flex: 1;
+        min-width: 0;
+      }
+      .split-col .card-label {
+        width: auto;
+        margin-right: 8px;
+        white-space: nowrap;
+      }
+      .split-col .card-value {
+        width: auto;
+        flex: 1;
+      }
+
+      /* Footer */
+      .footer-text {
+        font-size: 11px;
+        text-align: right;
+        margin-bottom: 3px;
+        color: #777;
+      }
+      .footer-version {
+        padding-top: 30px;
+      }
+
+      /* 🌟 เพิ่มสไตล์ของ Custom Alert Box Overlay & Modal 🌟 */
+      .alert-overlay {
+        display: none; /* ซ่อนไว้เริ่มต้น */
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(2px);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+      }
+      .alert-box {
+        background-color: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        text-align: center;
+        max-width: 340px;
+        width: 85%;
+        animation: popup 0.3s ease-out;
+      }
+      .alert-box h3 {
+        margin-top: 0;
+        color: #d9534f;
+        font-size: 1.4em;
+      }
+      .alert-box p {
+        color: #555;
+        font-size: 15px;
+        margin-bottom: 20px;
+      }
+      .alert-btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 30px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: background-color 0.2s;
+      }
+      .alert-btn:hover {
+        background-color: #45a049;
+      }
+      @keyframes popup {
+        from { transform: scale(0.8); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="custom-alert-modal" class="alert-overlay">
+      <div class="alert-box">
+        <h3>⚠️ แจ้งเตือนรายการงาน! ⚠️</h3>
+        <p>ตรวจพบข้อมูลงานเตรียมเหล็กแบนในระบบ</p>
+        <button class="alert-btn" onclick="closeCustomAlert()">รับทราบ</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="header-wrapper">
+        <h2>📦 งานเตรียมเหล็กแบน</h2>
+        
+        <div class="filter-container">
+          <label for="gate-filter">🚪 เลือกประตู:</label>
+          <select id="gate-filter">
+            <option value="all">กำลังโหลดตัวเลือก...</option>
+          </select>
+        </div>
+		<div class="filter-container" style="min-width: 60px;max-width: 10%;">
+          <input type="checkbox" id="autoalarm" name="autoalarm">
+		  <label for="autoalarm" style="color: red; cursor: pointer;">เตือน!</label><br>
+        </div>
+      </div>
+
+      <div id="data-output">กำลังโหลดข้อมูล...</div>
+      
+      <p id="version" class="footer-text footer-version">Version</p>
+      <p class="footer-text" style="margin-top: 0px;">Powered by Flatbar Division™️</p>
+    </div>
+
+    <script>
+	loadVersion(); // เรียกรันดึงเวอร์ชันประวัติจาก GitHub ทันทีตามปกติ
+  let globalHeaders = [];
+  let globalRows = [];
+  let gateColumnIndex = -1;
+  
+  let matCodeIndex = -1;
+  let batchIndex = -1;
+  let firstCombinedIndex = -1;
+  let secondCombinedIndex = -1;
+
+  window.onload = function() {
+    // เรียกดึงข้อมูลครั้งแรกเมื่อเปิดหน้าเว็บ
+    fetchData();
+
+    // ตั้งเวลาให้ฟังก์ชัน fetchData ทำงานซ้ำอัตโนมัติทุกๆ 60 วินาที (60000 ms)
+    setInterval(fetchData, 60000);
+  };
+
+  // แยก Logic การ Fetch ข้อมูลออกมาเป็นฟังก์ชันหลักเพื่อให้เรียกซ้ำได้
+  function fetchData() {
+    const part0 = "AIzaSyAFnyXSAki4Licz";
+  	const part1 = "KNhyEzbhHsvTC-abfAo";
+  	const apiKey = part0 + part1;
+	const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
+	const range = "รายการงานเตรียม!A:H";
+
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        // ตรวจสอบเงื่อนไข: ถ้า data.values มีอยู่จริง และมีจำนวนแถวตั้งแต่ 2 แถวขึ้นไป (Headers + Data อย่างน้อย 1 แถว)
+        // และ มีการกดเลือก Checkbox 'autoalarm' ไว้ ให้ทำการแสดง Alert Box ทันทีหลังดึงข้อมูลสำเร็จ
+        const isAlarmChecked = document.getElementById('autoalarm').checked;
+        if (data.values && data.values.length >= 2 && isAlarmChecked) {
+          showCustomAlert();
+        }
+
+        if (!data.values || data.values.length <= 1) {
+          document.getElementById('data-output').innerHTML = "<p>ไม่พบข้อมูลรายการ.</p>";
+          return;
+        }
+
+        globalHeaders = data.values[0];
+        globalRows = data.values.slice(1); 
+
+        gateColumnIndex = globalHeaders.findIndex(header => header && header.includes("ประตู"));
+        matCodeIndex = globalHeaders.findIndex(header => header && header.trim() === "Material Code");
+        batchIndex = globalHeaders.findIndex(header => header && header.trim() === "Batch");
+
+        if (matCodeIndex !== -1 && batchIndex !== -1) {
+          firstCombinedIndex = Math.min(matCodeIndex, batchIndex);
+          secondCombinedIndex = Math.max(matCodeIndex, batchIndex);
+        }
+
+        // ประมวลผล Dropdown และวาด Card
+        setupFilterDropdown();
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        if (globalRows.length === 0) {
+          document.getElementById('data-output').innerHTML = "<p style='color:red;'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>";
+        }
+    });
+  }
+
+  /* 🌟 ฟังก์ชันจัดการเปิด-ปิด Custom Alert Box และควบคุมการเล่นเสียงมอร์ส 🌟 */
+  function showCustomAlert() {
+    document.getElementById('custom-alert-modal').style.display = 'flex';
+    playMorse(); // เล่นสัญญาณเตือนควบคู่ไปด้วยเพื่อความชัดเจนหน้างาน
+  }
+
+  function closeCustomAlert() {
+    document.getElementById('custom-alert-modal').style.display = 'none';
+    stopMorse(); // หยุดเสียงสัญญาณทันทีเมื่อกดปุ่ม Accept
+  }
+
+  function setupFilterDropdown() {
+    const select = document.getElementById('gate-filter');
+    if (gateColumnIndex === -1) {
+      select.innerHTML = '<option value="all">ไม่พบคอลัมน์ "ประตู"</option>';
+      renderFilteredCards('all');
+      return;
+    }
+
+    const currentSelection = select.value || 'all';
+
+    let gateValues = globalRows.map(row => row[gateColumnIndex]).filter(Boolean);
+    let uniqueGates = [...new Set(gateValues)];
+    uniqueGates.sort();
+
+    let optionsHtml = '<option value="all">ทั้งหมด</option>';
+    uniqueGates.forEach(gate => {
+      optionsHtml += `<option value="${gate}">${gate}</option>`;
+    });
+    select.innerHTML = optionsHtml;
+
+    if (uniqueGates.includes(currentSelection)) {
+      select.value = currentSelection;
+    } else {
+      select.value = 'all';
+    }
+
+    select.onchange = function(e) {
+      renderFilteredCards(e.target.value);
+    };
+
+    renderFilteredCards(select.value);
+  }
+
+  function renderFilteredCards(selectedValue) {
+    if (selectedValue === 'all') {
+      renderCards(globalRows);
+    } else {
+      const filteredRows = globalRows.filter(row => row[gateColumnIndex] === selectedValue);
+      renderCards(filteredRows);
+    }
+  }
+
+  function renderCards(rows) {
+    const container = document.getElementById('data-output');
+    if (!rows || rows.length === 0) {
+      container.innerHTML = "<p style='text-align:center; color:#999; padding:20px;'>ไม่พบข้อมูลสำหรับประตูนี้</p>";
+      return;
+    }
+
+    let html = '<div class="card-container">';
+
+    for (let i = 0; i < rows.length; i++) {
+      html += '<div class="card">';
+      
+      for (let j = 0; j < globalHeaders.length; j++) {
+        
+        if (j === secondCombinedIndex) {
+          continue;
+        }
+
+        if (j === firstCombinedIndex) {
+          let matValue = rows[i][matCodeIndex] !== undefined ? rows[i][matCodeIndex] : '-';
+          let batchValue = rows[i][batchIndex] !== undefined ? rows[i][batchIndex] : '-';
+
+          let matLabelStyle = (globalHeaders[matCodeIndex] && globalHeaders[matCodeIndex].trim() === "จำนวนมัดเศษ") ? ' style="color: mediumblue;"' : '';
+          let batchLabelStyle = (globalHeaders[batchIndex] && globalHeaders[batchIndex].trim() === "จำนวนมัดเศษ") ? ' style="color: mediumblue;"' : '';
+
+          html += '<div class="card-row split-row">';
+          html += '  <div class="split-col">';
+          html += '    <div class="card-label"' + matLabelStyle + '>' + globalHeaders[matCodeIndex] + '</div>';
+          html += '    <div class="card-value">' + matValue + '</div>';
+          html += '  </div>';
+          html += '  <div class="split-col">';
+          html += '    <div class="card-label"' + batchLabelStyle + '>' + globalHeaders[batchIndex] + '</div>';
+          html += '    <div class="card-value">' + batchValue + '</div>';
+          html += '  </div>';
+          html += '</div>';
+          continue;
+        }
+
+        let cellValue = rows[i][j] !== undefined ? rows[i][j] : '-';
+        let labelStyle = (globalHeaders[j] && globalHeaders[j].trim() === "จำนวนมัดเศษ") ? ' style="color: mediumblue;"' : '';
+
+        html += '<div class="card-row">';
+        html += '  <div class="card-label"' + labelStyle + '>' + globalHeaders[j] + '</div>';
+        html += '  <div class="card-value">' + cellValue + '</div>';
+        html += '</div>';
+      }
+      
+      html += '</div>'; 
+    }
+
+    html += '</div>'; 
+    container.innerHTML = html;
+  }
+  
+async function loadVersion() {
+    try {
+        const response = await fetch(
+            'https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/refs/heads/main/version_history.log'
+        );
+        const text = await response.text();
+        const firstLine = text.split(/\r?\n/)[0];
+        document.getElementById('version').textContent = firstLine;
+    } catch (error) {
+        console.error(error);
+        document.getElementById('version').textContent = 'Failed to load version';
+    }
+  }
+	
+	let audioCtx = null;
+  let activeOscillators = [];
+
+  const DOT_TIME = 0.06; 
+  const FREQUENCY = 1800; 
+
+  function playMorse() {
+      if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      stopMorse();
+
+      const text = "111111111111";
+      let currentTime = audioCtx.currentTime;
+
+      for (const char of text) {
+          const code = "..........";
+          if (!code) continue;
+
+          for (const symbol of code) {
+              const duration = symbol === '.' ? DOT_TIME : DOT_TIME * 3;
+              
+              const osc = audioCtx.createOscillator();
+              const gain = audioCtx.createGain();
+
+              osc.type = 'sine';
+              osc.frequency.value = FREQUENCY;
+
+              osc.connect(gain);
+              gain.connect(audioCtx.destination);
+
+              osc.start(currentTime);
+              osc.stop(currentTime + duration);
+
+              activeOscillators.push(osc);
+              currentTime += duration + DOT_TIME; 
+          }
+          currentTime += DOT_TIME * 3; 
+      }
+  }
+
+  function stopMorse() {
+      activeOscillators.forEach(osc => {
+          try {
+              osc.stop(); 
+          } catch (error) {}
+      });
+      activeOscillators = [];
+  }
+</script>
+  </body>
+</html>
