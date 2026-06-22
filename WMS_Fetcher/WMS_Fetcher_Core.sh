@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# --- Version 2.4
+# --- Version 2.5
 # --- Configuration ---
 OUTPUT_FILE="/tmp/WMS_Response.txt"
 COOKIE_FILE="/tmp/wms_cookies.txt" # Where curl will store the session IDs
@@ -56,6 +56,12 @@ echo "Starting API polling. Press Ctrl+C to stop."
 while true; do
     ./preparing_fetch.sh $K8_GATE_ID
 	./sheet_polling.sh $K8_GATE_ID
+	./preparing_fetch.sh $K6_GATE_ID
+	./sheet_polling.sh $K6_GATE_ID
+	./preparing_fetch.sh $K4_GATE_ID
+	./sheet_polling.sh $K4_GATE_ID
+	./preparing_fetch.sh $K2_GATE_ID
+	./sheet_polling.sh $K2_GATE_ID
     # Wait for 60 seconds
     sleep 60
 done
