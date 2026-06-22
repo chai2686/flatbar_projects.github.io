@@ -1,7 +1,28 @@
 #!/bin/bash
-
+# --- Version 2.5
 # --- Configuration ---
-FILE_PATH="/tmp/preparing_data"$1".txt"  # Change this to the path of your actual text file
+
+GATE_ID=""
+GATE_NAME=""
+
+if [ "$1" = "38" ]; then
+    GATE_ID="$1"
+    GATE_NAME="K8"
+elif [ "$1" = "36" ]; then
+    GATE_ID="$1"
+    GATE_NAME="K6"
+elif [ "$1" = "34" ]; then
+    GATE_ID="$1"
+    GATE_NAME="K4"
+elif [ "$1" = "32" ]; then
+    GATE_ID="$1"
+    GATE_NAME="K2"
+else
+    echo "Nothing Gate"
+    exit 1
+fi
+
+FILE_PATH="/tmp/preparing_data"$GATE_ID".txt"  # Change this to the path of your actual text file
 TARGET_URL="https://docs.google.com/forms/d/e/1FAIpQLSc2iBPJXs8BxcD2uVVmNeNOMMyZRWQ141AieWt9QjL8CTlMcA/formResponse"
 RESPONSE_FILE="/tmp/execute_response.txt"
 
@@ -24,7 +45,7 @@ HTTP_STATUS=$(curl -s -X POST "$TARGET_URL" \
     -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
     -H 'Connection: keep-alive' \
     -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
-    --data-urlencode "entry.1744730708=PREPARING_K8" \
+    --data-urlencode "entry.1744730708=PREPARING_"$GATE_NAME \
     --data-urlencode "entry.69501207@$FILE_PATH" \
     --insecure \
     -w "%{http_code}" \
