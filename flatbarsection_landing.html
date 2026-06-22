@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="2.0 BETA">
+    <meta name="Version" content="2.5 BETA">
     <title>ส่วนงานเหล็กแบน</title>
     
     <!-- Modern Thai Font -->
@@ -179,16 +179,16 @@
                 </div>
                 <span class="chevron">›</span>
             </button>
-
-            <button onclick="goToStockCheck()" class="menu-button">
+//disabled
+            <button style="display: none;" onclick="goToStockCheck()" class="menu-button">
                 <div class="menu-button-content">
                     <span class="menu-icon">📦</span>
                     <span>เช็คสต็อกประจำวัน</span>
                 </div>
                 <span class="chevron">›</span>
             </button>
-
-            <button onclick="goToBundleCheck()" class="menu-button">
+//disabled
+            <button style="display: none;" onclick="goToBundleCheck()" class="menu-button">
                 <div class="menu-button-content">
                     <span class="menu-icon">📟</span>
                     <span>เช็คบันเดิ้ลเหล็กแบน</span>
@@ -214,11 +214,12 @@
 
         <div class="footer-text">
             <span>Powered by Flatbar Division™️</span>
-            <span onclick="about()">Version 2.0 BETA</span>
+            <span id="version" onclick="about()">Version</span>
         </div>
     </div>
 
     <script>
+        loadVersion();
         function goBack() {
             window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/main_landing.html";
         }
@@ -243,6 +244,20 @@
         function about() {
             window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
         }
+        
+        async function loadVersion() {
+    try {
+        const response = await fetch(
+            'https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/refs/heads/main/version_history.log'
+        );
+        const text = await response.text();
+        const firstLine = text.split(/\r?\n/)[0];
+        document.getElementById('version').textContent = firstLine;
+    } catch (error) {
+        console.error(error);
+        document.getElementById('version').textContent = 'Failed to load version';
+    }
+  }
     </script>
 </body>
 </html>
