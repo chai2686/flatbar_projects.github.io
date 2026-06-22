@@ -179,7 +179,7 @@
                 </div>
                 <span class="chevron">›</span>
             </button>
-//disabled
+<!-- This is disabled -->
             <button style="display: none;" onclick="goToStockCheck()" class="menu-button">
                 <div class="menu-button-content">
                     <span class="menu-icon">📦</span>
@@ -187,7 +187,7 @@
                 </div>
                 <span class="chevron">›</span>
             </button>
-//disabled
+<!-- This is disabled -->
             <button style="display: none;" onclick="goToBundleCheck()" class="menu-button">
                 <div class="menu-button-content">
                     <span class="menu-icon">📟</span>
@@ -196,6 +196,14 @@
                 <span class="chevron">›</span>
             </button>
 
+            <button onclick="goToPreparing()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">📦</span>
+                    <span>เช็คงานเตรียม</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+            
             <button onclick="goToWoodReport()" class="menu-button">
                 <div class="menu-button-content">
                     <span class="menu-icon">🪓</span>
@@ -224,19 +232,22 @@
             window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/main_landing.html";
         }
         function goToShipment() {
-            window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_shipment.html", "_blank");
+            window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_shipment.html");
         }
         function goToCalc() {
             window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_calculator.html";
         }
         function goToHistory() {
-            window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_report.html", "_blank");
+            window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_report.html");
         }
         function goToStockCheck() {
             window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/fbstock_input.html";
         }
         function goToBundleCheck() {
             window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_bundle_check.html";
+        }
+        function goToPreparing() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_preparing.html";
         }
         function goToWoodReport() {
             window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/wood_memo.html";
