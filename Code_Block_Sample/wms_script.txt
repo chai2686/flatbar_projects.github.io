@@ -160,3 +160,113 @@ curl 'http://192.168.2.22/wms/api/PrepareTaskUser/QueryUnclaimPreparedTrans' \
   --insecure
 
   {"data":[{"hasReminder":false,"canAccept":true,"canCancel":false,"canSubmit":false,"rowNum":1,"totalCount":1,"id":2079036,"do":"2301078633","doItem":"000050","doItemDesc":"2301078633 000050","companyId":6562,"companyName":"ส.จิตตคาม","materialId":2474,"materialCode":"2FB045-0750-016","materialName":"เหล็กแบน 4.50mm X 75mm X 6000mm SS400","batch":"SL","netWeight":64.0,"actualQuantity":4,"packageSize":75,"pack":0,"unpackQuantity":4,"strorageSAP":"2K04","workStyle":null,"preparedBy":null,"preparedByName":null,"status":"Waiting","reminderNote":null,"isRequireScan":true,"deliveryDate":"2026-06-22T00:00:00","loadingDate":"2026-06-22T00:00:00","printText":"","thickness":"","tmtWeight":"","materialText":"","soDocumentText":"PO + Mill's Cert","isUrgent":null,"canPrint":true,"shipToName":"one-time ship-to","isRequireHeatFix":null,"isHasHeatNo":false,"matAmount":1,"isHasMillCert":true,"isAlreadyPrint":false}],"totalCount":1}
+
+
+{"data":[{"hasReminder":false,"canAccept":true,"canCancel":false,"canSubmit":false,"rowNum":1,"totalCount":1,"id":2084283,"do":"2301080695","doItem":"000080","doItemDesc":"2301080695 000080","companyId":6157,"companyName":"ชโลธร สตีล","materialId":2413,"materialCode":"2FB090-0500-021","materialName":"เหล็กแบน 9.00mm X 50mm X 6000mm SS400","batch":"SL","netWeight":3562.0,"actualQuantity":168,"packageSize":56,"pack":3,"unpackQuantity":0,"strorageSAP":"2K04","workStyle":null,"preparedBy":null,"preparedByName":null,"status":"Waiting","reminderNote":null,"isRequireScan":false,"deliveryDate":"2026-06-26T00:00:00","loadingDate":"2026-06-25T00:00:00","printText":"","thickness":"","tmtWeight":"","materialText":"8.8 เน้นเรียบสวยไม่สนิม","soDocumentText":"Mill's Cert + มอก.","isUrgent":null,"canPrint":false,"shipToName":"บริษัท ชโลธร สตีล จำกัด","isRequireHeatFix":null,"isHasHeatNo":false,"matAmount":1,"isHasMillCert":true,"isAlreadyPrint":false}],"totalCount":1}
+
+
+
+curl 'http://192.168.2.22/wms/api/PrepareTaskUser/AcceptPreparedTrans' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -b 'ASP.NET_SessionId=0mht5zvvb4et0kl0mxje0qun' \
+  -H 'Origin: http://192.168.2.22' \
+  -H 'Referer: http://192.168.2.22/wms/Mobile/Preparing' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
+  --data-raw '{"gateId":34,"id":2084283}' \
+  --insecure
+
+
+$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+$session.Cookies.Add((New-Object System.Net.Cookie("ASP.NET_SessionId", "0mht5zvvb4et0kl0mxje0qun", "/", "192.168.2.22")))
+Invoke-WebRequest -UseBasicParsing -Uri "http://192.168.2.22/wms/api/PrepareTaskUser/AcceptPreparedTrans" `
+-Method "POST" `
+-WebSession $session `
+-Headers @{
+"Accept"="application/json, text/plain, */*"
+  "Accept-Encoding"="gzip, deflate"
+  "Accept-Language"="en-US,en;q=0.9,th;q=0.8"
+  "Origin"="http://192.168.2.22"
+  "Referer"="http://192.168.2.22/wms/Mobile/Preparing"
+} `
+-ContentType "application/json" `
+-Body "{`"gateId`":34,`"id`":2084283}"
+
+
+
+curl 'http://192.168.2.22/wms/api/PrepareTaskUser/SubmitPreparedTrans' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -b 'ASP.NET_SessionId=0mht5zvvb4et0kl0mxje0qun' \
+  -H 'Origin: http://192.168.2.22' \
+  -H 'Referer: http://192.168.2.22/wms/Mobile/Preparing' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
+  --data-raw '{"id":2084283}' \
+  --insecure
+
+curl 'http://192.168.2.22/wms/api/Dropdown/QueryPrinter' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -b 'ASP.NET_SessionId=0mht5zvvb4et0kl0mxje0qun' \
+  -H 'Origin: http://192.168.2.22' \
+  -H 'Referer: http://192.168.2.22/wms/Mobile/Preparing' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
+  --data-raw '{"placeHolder":"","Value":0}' \
+  --insecure
+
+
+curl 'http://192.168.2.22/wms/api/PrepareTaskUser/PrintPrepareTrans' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -b 'ASP.NET_SessionId=0mht5zvvb4et0kl0mxje0qun' \
+  -H 'Origin: http://192.168.2.22' \
+  -H 'Referer: http://192.168.2.22/wms/Mobile/Preparing' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
+  --data-raw '{"printID":"17","transId":2084384}' \
+  --insecure
+
+curl 'http://192.168.2.22/wms/api/PrepareTaskUser/ValidateUnpackBarcode' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -b 'ASP.NET_SessionId=0mht5zvvb4et0kl0mxje0qun' \
+  -H 'Origin: http://192.168.2.22' \
+  -H 'Referer: http://192.168.2.22/wms/Mobile/Scan-Select?dummy=0&id=2084384' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
+  --data-raw '{"id":"2084384","bundleDummyScan":"1010326154"}' \
+  --insecure
+
+curl 'http://192.168.2.22/wms/api/PrepareTaskUser/GetBundleInfo' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -b 'ASP.NET_SessionId=0mht5zvvb4et0kl0mxje0qun' \
+  -H 'Origin: http://192.168.2.22' \
+  -H 'Referer: http://192.168.2.22/wms/Mobile/Scan-Select?dummy=0&id=2084384' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
+  --data-raw '{"Bundle":"1010326154*เหล็กแบน 9.00MM X 100MM X 6000MM SS400*SL*4*170"}' \
+  --insecure
+
+
+curl 'http://192.168.2.22/wms/api/PrepareTaskUser/ValidateUnpackBarcode' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -b 'ASP.NET_SessionId=0mht5zvvb4et0kl0mxje0qun' \
+  -H 'Origin: http://192.168.2.22' \
+  -H 'Referer: http://192.168.2.22/wms/Mobile/Scan-Select?dummy=0&id=2084384' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
+  --data-raw '{"id":"2084384","bundleDummyScan":"1010326154"}' \
+  --insecure
