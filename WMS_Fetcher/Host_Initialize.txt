@@ -1,0 +1,5 @@
+Option 2: Ngrok (Fastest for Quick Public Access)If you need to give a public URL to someone else (or a webhook) right now, Ngrok creates an instant, temporary public tunnel directly to that internal IP.  How to set it up:Sign up for a free account at ngrok.com and install it on your Ubuntu PC.Connect your account using the auth token they give you:Bash
+ngrok config add-authtoken YOUR_NGROK_AUTH_TOKEN
+Route traffic directly to your web server's IP:Bash
+ngrok http http://192.168.2.20:80
+(Change :80 if your web server uses a different port)Result: Ngrok will spit out a random public URL (like https://xyz123.ngrok-free.app). Anyone who visits that URL will be directed through your Ubuntu PC straight to your isolated web server.
