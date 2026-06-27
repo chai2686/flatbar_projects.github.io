@@ -287,8 +287,23 @@
         <div class="toggle-container">
             <select id="extra-dropdown" class="dropdown-select">
                 <option value="" disabled>โซนที่แสกน</option>
-                <option value="zone 1">โซน 1</option>
-                <option value="zone 2">โซน 2</option>
+				<optgroup label="โซน K2">
+                <option value="K2 A">K2 A</option>
+				<option value="K2 B">K2 B</option>
+				<option value="K2 C">K2 C</option>
+				<optgroup label="โซน K4">
+                <option value="K4 A">K4 A</option>
+				<option value="K4 B">K4 B</option>
+				<option value="K4 C">K4 C</option>
+				<optgroup label="โซน K6">
+                <option value="K6 A">K6 A</option>
+				<option value="K6 B">K6 B</option>
+				<option value="K6 C">K6 C</option>
+				<optgroup label="โซน K8">
+                <option value="K8 A">K2 8</option>
+				<option value="K8 B">K2 8</option>
+				<option value="K8 C">K2 8</option>
+				<option value="K8 D">K2 D</option>
             </select>
             <div class="toggle-group">
                 <span class="toggle-label">สแกนต่อเนื่อง</span>
@@ -320,7 +335,6 @@
         const qtyContainer = document.getElementById('qty-container');
         const qtyInput = document.getElementById('qty-input');
         const extraDropdown = document.getElementById('extra-dropdown');
-		const zonename = extraDropdown.value;
         let html5QrCode;
 
         // Modern Toast Notification Config
@@ -328,7 +342,7 @@
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
-            timer: 1000,
+            timer: 700,
             timerProgressBar: true
         });
 
@@ -369,7 +383,7 @@
                             if (continuousscan.checked) {
                                 save();
                                 // Add slight delay before reopening to prevent stutter
-                                setTimeout(openScanner, 500);
+                                setTimeout(openScanner, 300);
                             }
                         },
                         errorMessage => { /* Optional logging */ }
@@ -392,6 +406,7 @@
         }
         
         function save() {
+			const zonename = extraDropdown.value;
             let qrinputtext = document.getElementById('qr-input01').value.trim();
             if (!qrinputtext) {
                 Swal.fire('แจ้งเตือน', 'กรุณาสแกนหรือกรอกเลขบันเดิ้ล', 'warning');
@@ -481,7 +496,7 @@
         }
         
         function goToReport() {
-            window.open("https://docs.google.com/spreadsheets/d/1Pt-i1x8uGM3Czue4mdV9yh0wdOVrit7a63ln1AEps_Y/htmlview?gid=1117717488#gid=1117717488", "_blank");
+            window.open("https://docs.google.com/spreadsheets/d/1sVl3k9jBvtDFlzkOUDjIEMjWHi9YEi3c_H7ynZ-jVi4/edit", "_blank");
         }
             
         function beep() {
