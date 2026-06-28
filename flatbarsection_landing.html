@@ -203,6 +203,22 @@
                 </div>
                 <span class="chevron">›</span>
             </button>
+			
+			<button onclick="goToStockInput()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">🏷️</span>
+                    <span>สแกนนับสต็อกเหล็กแบน</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+			
+			<button onclick="goToWMS()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">📡</span>
+                    <span>เข้าระบบ WMS</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
             
             <button onclick="goToWoodReport()" class="menu-button">
                 <div class="menu-button-content">
@@ -251,6 +267,12 @@
         }
         function goToWoodReport() {
             window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/wood_memo.html";
+        }
+		function goToStockInput() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbar_stock_input.html";
+        }
+		function goToWMS() {
+            window.location.href = "https://psychic-driveway-starboard.ngrok-free.dev/wms/user/login";
         }
         function about() {
             window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
