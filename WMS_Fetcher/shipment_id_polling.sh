@@ -1,35 +1,41 @@
 #!/bin/bash
 
+# --- Version 2.6 (Optimized & Robust)
+# --- Configuration ---
+
 # Define the input file containing the extracted data
 INPUT_FILE="/tmp/shipment_id.txt"
 COOKIE_FILE="/tmp/wms_cookiesK0.txt" # Where curl will store the session IDs
 
 # --- PLACEHOLDER FUNCTION FOR LOGIN ---
-# Define your login logic here so the script can recover when a session expires
 do_login() {
     echo "Attempting to re-authenticate..."
     # Example: curl -s -c "$COOKIE_FILE" -d "username=X&password=Y" https://.../login
 }
 
-# 1. Define your custom function here
+# 1. Process Shipment Function
 process_shipment() {
     local shipment_id="$1"
     local external_id="$2"
+    local worktype="$3"
 
     echo "--------------------------------------------"
     echo "Processing Shipment ID : $shipment_id"
     echo "Associated External ID : $external_id"
+    echo "Associated WorkTypeDesc : $worktype"
     
     TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
     echo "[$TIMESTAMP] Fetching data..."
 
     # Define the exact JSON payload matching your request
     TARGET_URL="https://docs.google.com/forms/d/e/1FAIpQLSc2iBPJXs8BxcD2uVVmNeNOMMyZRWQ141AieWt9QjL8CTlMcA/formResponse"
-    DATA_BODY='{"shipmentId":'$shipment_id'}'
+    
+    # ปรับปรุง: ครอบตัวแปรด้วย "" เพื่อความปลอดภัยของโครงสร้าง JSON
+    DATA_BODY="{\"shipmentId\": $shipment_id}"
     
     TMPFILE=$(mktemp)
 
-    # Execute request using the stored cookies (-b reads the cookies)
+    # Execute request using the stored cookies
     HTTP_STATUS=$(curl -s -X POST "https://psychic-driveway-starboard.ngrok-free.dev/WMS/Center/GetExplainInfo" \
         -b "$COOKIE_FILE" \
         -c "$COOKIE_FILE" \
@@ -47,15 +53,19 @@ process_shipment() {
 	  
     # Check the initial server response
     if [ "$HTTP_STATUS" -eq 200 ]; then
-        echo "[$TIMESTAMP] Successfully fetched API data. Injecting ExternalID..."
+        echo "[$TIMESTAMP] Successfully fetched API data. Injecting ExternalID & WorkTypeDesc..."
         
-        # Safely pass external_id into jq using --arg. 
-        # Handles both JSON arrays and single JSON objects natively.
-        jq --arg ext "$external_id" 'if type == "array" then map(.ExternalID = $ext) else .ExternalID = $ext end' "$TMPFILE" > "${TMPFILE}.xxx" && mv "${TMPFILE}.xxx" "$TMPFILE"
+        # ปรับปรุง: ยุบรวมการทำ jq เหลือรอบเดียว เพื่อลดการอ่าน/เขียนไฟล์ (Disk I/O) ลงครึ่งหนึ่ง
+        jq --arg ext "$external_id" --arg wt "$worktype" '
+            if type == "array" then 
+                map(.ExternalID = $ext | .WorkTypeDesc = $wt) 
+            else 
+                .ExternalID = $ext | .WorkTypeDesc = $wt 
+            end
+        ' "$TMPFILE" > "${TMPFILE}.xxx" && mv "${TMPFILE}.xxx" "$TMPFILE"
 
         echo "[$TIMESTAMP] Submitting modified payload to Google Forms..."
         
-        # FIXED: Removed trailing syntax error " -o "/dev/null)" \ "
         FORM_STATUS=$(curl -s -X POST "$TARGET_URL" \
             -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
             -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
@@ -75,13 +85,13 @@ process_shipment() {
 
     elif [ "$HTTP_STATUS" -eq 401 ] || [ "$HTTP_STATUS" -eq 403 ]; then
         echo "[$TIMESTAMP] Session expired (Status $HTTP_STATUS). Re-authenticating..."
-        rm -f "$COOKIE_FILE"  # Clear old cookie file
+        rm -f "$COOKIE_FILE"
         do_login
     else
         echo "[$TIMESTAMP] Server error or connection issue (Status Code: $HTTP_STATUS)"
     fi
 
-    # Always clean up the temporary file at the end of the function loop
+    # Clean up
     rm -f "$TMPFILE" "${TMPFILE}.xxx"
 }
 
@@ -95,15 +105,20 @@ fi
 echo "Starting batch processing..."
 
 # 3. Read the file row-by-row
-while read -r shipment_id external_id || [ -n "$shipment_id" ]; do
+while read -r shipment_id external_id worktype || [ -n "$shipment_id" ]; do
     
+    # ปรับปรุง: ป้องกันปัญหา Windows Line Endings (\r) ที่อาจติดมากับปลายบรรทัด
+    shipment_id="${shipment_id//$'\r'/}"
+    external_id="${external_id//$'\r'/}"
+    worktype="${worktype//$'\r'/}"
+
     # Skip empty lines if they exist in the file
-    if [ -z "$shipment_id" ] || [ -z "$external_id" ]; then
+    if [ -z "$shipment_id" ] || [ -z "$external_id" ] || [ -z "$worktype" ]; then
         continue
     fi
 
     # 4. Trigger the function for each row
-    process_shipment "$shipment_id" "$external_id"
+    process_shipment "$shipment_id" "$external_id" "$worktype"
 
 done < "$INPUT_FILE"
 
