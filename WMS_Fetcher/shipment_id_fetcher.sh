@@ -35,7 +35,7 @@ TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
   # Check the result
   if [ "$HTTP_STATUS" -eq 200 ]; then
       # Move temporary file to final output location (overwriting old data)
-      mv "$OUTPUT_FILE.tmp" "$OUTPUT_FILE.txt"
+      mv "$OUTPUT_FILE.tmp" "$OUTPUT_FILE"
       echo "[$TIMESTAMP] Successfully saved to $OUTPUT_FILE"
   elif [ "$HTTP_STATUS" -eq 401 ] || [ "$HTTP_STATUS" -eq 403 ]; then
       echo "[$TIMESTAMP] Session expired (Status $HTTP_STATUS). Re-authenticating..."
