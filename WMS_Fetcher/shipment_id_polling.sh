@@ -18,6 +18,7 @@ process_shipment() {
   echo "[$TIMESTAMP] Fetching data..."
 
   # Define the exact JSON payload matching your PowerShell request
+  TARGET_URL="https://docs.google.com/forms/d/e/1FAIpQLSc2iBPJXs8BxcD2uVVmNeNOMMyZRWQ141AieWt9QjL8CTlMcA/formResponse"
   DATA_BODY='{"shipmentId":'$shipment_id'}'
   
   TMPFILE=$(mktemp)
@@ -42,7 +43,7 @@ process_shipment() {
   NEW_KEY="External ID"
   NEW_VAL="$external_id"
   
-  jq --arg key "$NEW_KEY" --arg val "$NEW_VAL" '.[$key] = $val' $TMPFILE > $TMPFILE".xxx" && mv $TMPFILE".xxx" $TMPFILE
+  jq 'map(.ExternalID = "'$NEW_VAL'")' $TMPFILE > $TMPFILE".xxx" && mv $TMPFILE".xxx" $TMPFILE
 
   # Check the result
   if [ "$HTTP_STATUS" -eq 200 ]; then
@@ -56,7 +57,7 @@ process_shipment() {
     --data-urlencode "entry.69501207@$TMPFILE" \
     --insecure \
     -w "%{http_code}" \
-    -o /dev/null) \
+    -o "/dev/null)" \
 	
 	if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
     echo "✅ Success! (HTTP Status: $HTTP_STATUS)"
