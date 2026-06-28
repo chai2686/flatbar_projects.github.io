@@ -5,17 +5,14 @@ RESPONSE_FILE="/tmp/execute_response_test.txt"
 
 TARGET_URL="https://script.google.com/macros/s/AKfycbwFC017VjXqTtng6NGslhs4qoglvLvWuR0GxGQy-tGB54Ht0x-Nm8zoxfZ1Avb2hv6GaA/exec"
 
-curl -s -X POST "$TARGET_URL" \
+HTTP_STATUS=$(curl -s -X POST "$TARGET_URL" \
     -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
     -H 'Accept-Language: en-US,en;q=0.9,th;q=0.8' \
     -H 'Connection: keep-alive' \
-    -H "Content-Type: application/json" \
     -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0' \
-    -d '{
-        "action":"apiprocess",
-        "api":"PREPARING_K8",
-        "apicontent":@$FILE_PATH
-      }' \
+    --data-urlencode "action=apiprocess" \
+    --data-urlencode "api=PREPARING_K8" \
+    --data-urlencode "apicontent=@$FILE_PATH" \
     --insecure \
     -w "%{http_code}" \
-    -o "$RESPONSE_FILE" \
+    -o "$RESPONSE_FILE")
