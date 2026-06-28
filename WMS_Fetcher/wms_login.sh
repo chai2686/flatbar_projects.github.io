@@ -4,7 +4,7 @@
 # --- Configuration ---
 
 COOKIE_FILE="/tmp/wms_cookies" # Base path for cookie files
-LOGIN_URL="http://psychic-driveway-starboard.ngrok-free.dev/wms/user/login"
+LOGIN_URL="https://psychic-driveway-starboard.ngrok-free.dev/wms/user/login"
 
 # Define credentials using an associative array (Key -> Username:Password)
 declare -A ACCOUNTS=(
