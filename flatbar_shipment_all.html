@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Data Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* Sidebar Styles */
+        #sidebar {
+            width: 280px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, margin-left 0.3s ease;
+            overflow-y: auto;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        #sidebar.hidden {
+            transform: translateX(-100%);
+            margin-left: -280px;
+        }
+
+        #sidebar h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: none;
+            box-sizing: border-box;
+            background-color: #fff;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .filter-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .filter-group button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Main Content Styles */
+        #main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #header {
+            background-color: #fff;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        #toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-color);
+            margin-right: 20px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+        }
+
+        /* Table Container Styles */
+        #table-container {
+            flex-grow: 1;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            font-weight: 500;
+        }
+
+        .group-header {
+            background-color: #e8f4f8;
+            font-weight: bold;
+        }
+
+        .group-header td {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        tbody tr:not(.group-header):hover {
+            background-color: #f9f9f9;
+        }
+
+        .empty-state, .loading-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            background: white;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>Filters</h2>
+        
+        <div class="filter-group">
+            <label for="filter-ext-id">External ID</label>
+            <input type="text" class="searchBox" id="filter-ext-id" placeholder="ค้นหาทะเบียน">
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-work-type">WorkTypeDesc</label>
+            <select id="filter-work-type">
+                <option value="All">All Work Types</option>
+            </select>
+        </div>
+
+        <div class="filter-group" style="margin-top: 30px;">
+            <button onclick="resetFilters()">Reset Filters</button>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div id="header">
+            <button id="toggle-btn" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+            <h1>Order Data Overview</h1>
+        </div>
+        
+        <div id="table-container">
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th>Sold To Name</th>
+                        <th>Ship To Name</th>
+                        <th>Material Description</th>
+                        <th>Quantity</th>
+                        <th>Gate</th>
+                        <th>WorkTypeDesc</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr><td colspan="6" class="loading-state">Loading data from Google Sheets...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const part0 = "AIzaSyAFnyXSAki4Licz";
+        const part1 = "KNhyEzbhHsvTC-abfAo";
+        const apiKey = part0 + part1;
+        const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
+        const range = "ข้อมูลรายการจัดส่ง!A:L";
+        let rawData = [];
+        
+        async function loadData() {
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data from Google Sheets");
+                }
+
+                const json = await response.json();
+                
+                if (!json.values || json.values.length === 0) {
+                    throw new Error("No data found in the specified range");
+                }
+
+                const rows = json.values;
+                const headers = rows[0];
+
+                // Parse rows into objects
+                rawData = rows.slice(1).map(row => {
+                    const obj = {};
+                    headers.forEach((header, index) => {
+                        obj[header] = row[index] || "";
+                    });
+                    return obj;
+                });
+            } catch (error) {
+                console.error("Error loading data:", error);
+                document.getElementById('table-body').innerHTML = `<tr><td colspan="6" class="empty-state">Error loading data. Check console for details.</td></tr>`;
+            }
+        }
+
+        // Sidebar Toggle Logic
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        }
+
+        // Initialize Dropdowns and Inputs
+        function populateFilters() {
+            const extIdInput = document.getElementById('filter-ext-id');
+            const workTypeSelect = document.getElementById('filter-work-type');
+            
+            // Get unique work types, filter out blanks, and sort alphabetically
+            const workTypes = [...new Set(rawData.map(item => item['WorkTypeDesc']).filter(Boolean))].sort();
+
+            // Populate the select dropdown
+            workTypes.forEach(wt => {
+                const option = document.createElement('option');
+                option.value = wt; 
+                option.textContent = wt;
+                workTypeSelect.appendChild(option);
+            });
+
+            // Add event listeners (use 'input' for typing, 'change' for select)
+            extIdInput.addEventListener("input", renderTable);
+            workTypeSelect.addEventListener('change', renderTable);
+        }
+
+        // Reset Filters
+        function resetFilters() {
+            document.getElementById('filter-ext-id').value = '';
+            document.getElementById('filter-work-type').value = 'All';
+            renderTable();
+        }
+
+        // Render Table with Grouping and Filtering
+        function renderTable() {
+            // Check if data is empty before rendering
+            if (rawData.length === 0) return;
+
+            const extFilter = document.getElementById('filter-ext-id').value.trim().toLowerCase();
+            const workTypeFilter = document.getElementById('filter-work-type').value;
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            // Apply Filters
+            const filteredData = rawData.filter(item => {
+                const extIdVal = item["External ID"] ? item["External ID"].toLowerCase() : "";
+                const matchExtId = extFilter === "" || extIdVal.includes(extFilter);
+                const matchWorkType = (workTypeFilter === 'All' || item['WorkTypeDesc'] === workTypeFilter);
+                return matchExtId && matchWorkType;
+            });
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No records found matching your filters.</td></tr>`;
+                return;
+            }
+
+            // Group by External ID
+            const groupedData = filteredData.reduce((acc, item) => {
+                const key = item['External ID'] || "Unknown ID";
+                if (!acc[key]) acc[key] = [];
+                acc[key].push(item);
+                return acc;
+            }, {});
+
+            // Generate Table Rows
+            for (const [extId, items] of Object.entries(groupedData)) {
+                // Group Header (colspan changed from 11 to 7 to match visible columns)
+                const groupRow = document.createElement('tr');
+                groupRow.className = 'group-header';
+                groupRow.innerHTML = `<td colspan="6">External ID: ${extId} <span style="font-weight:normal; font-size:0.85rem; margin-left:10px; color:#555;">(${items.length} items)</span></td>`;
+                tbody.appendChild(groupRow);
+
+                // Group Items
+                items.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item['Sold To Name'] || ''}</td>
+                        <td>${item['Ship To Name'] || ''}</td>
+                        <td>${item['Material Description'] || ''}</td>
+                        <td>${item['Quantity'] || ''}</td>
+                        <td>${item['Gate'] || ''}</td>
+                        <td>${item['WorkTypeDesc'] || ''}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+
+        // Initialize on load - AWAIT loadData before building filters/tables
+        window.onload = async () => {
+            await loadData();
+            if (rawData.length > 0) {
+                populateFilters();
+                renderTable();
+            }
+        };
+    </script>
+</body>
+</html>
