@@ -271,4 +271,89 @@ curl 'http://192.168.2.22/wms/api/PrepareTaskUser/ValidateUnpackBarcode' \
   --data-raw '{"id":"2084384","bundleDummyScan":"1010326154"}' \
   --insecure
 
+$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
+$session.Cookies.Add((New-Object System.Net.Cookie("HSID", "AURXEjleYC4Y1FNDx", "/", ".google.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("SSID", "AHhf7mw1nBlwn0u5l", "/", ".google.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("APISID", "ND15jXX291kxgY_8/AlFwbNmRftE-mFzJF", "/", ".google.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("SAPISID", "-xGUWtkwTw0zqRV8/AqsMMyzR1rVLsZide", "/", ".google.com")))
 
+$session.Cookies.Add((New-Object System.Net.Cookie("OTZ", "8644902_28_28__28_", "/", "script.google.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("__Secure-BUCKET", "CLMC", "/", ".google.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("SEARCH_SAMESITE", "CgQIlaEB", "/", ".google.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("AEC", "AdJVEav-d2-kfJmaWpsx5DfAiBvsKSdBYEc_yxsV19_GPiO9PFERaL6NJIM", "/", ".google.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("_gid", "GA1.3.1156573781.1783007196", "/", ".script.google.com")))
+
+$session.Cookies.Add((New-Object System.Net.Cookie("_ga", "GA1.1.1072892437.1736261586", "/", ".script.google.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("_ga_60Q1X42Z2X", "GS2.1.s1783015687`$o49`$g1`$t1783016656`$j50`$l0`$h0", "/", ".script.google.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("_ga_S6TL92G5N1", "GS2.1.s1783015687`$o49`$g1`$t1783016656`$j51`$l0`$h0", "/", ".script.google.com")))
+
+Invoke-WebRequest -UseBasicParsing -Uri "https://script.google.com/macros/s/AKfycbwOkfPtojqCsirn7kfiquRGc4jr-P8IK9bIjIKDBVc2UkOgO4escS94fKlsTSNTZcSW/callback?nocache_id=7" `
+-Method "POST" `
+-WebSession $session `
+-Headers @{
+"authority"="script.google.com"
+  "method"="POST"
+  "path"="/macros/s/AKfycbwOkfPtojqCsirn7kfiquRGc4jr-P8IK9bIjIKDBVc2UkOgO4escS94fKlsTSNTZcSW/callback?nocache_id=7"
+  "scheme"="https"
+  "accept"="*/*"
+  "accept-encoding"="gzip, deflate, br, zstd"
+  "accept-language"="en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7"
+  "origin"="https://script.google.com"
+  "priority"="u=1, i"
+  "referer"="https://script.google.com/macros/s/AKfycbwOkfPtojqCsirn7kfiquRGc4jr-P8IK9bIjIKDBVc2UkOgO4escS94fKlsTSNTZcSW/exec"
+  "sec-ch-ua"="`"Google Chrome`";v=`"149`", `"Chromium`";v=`"149`", `"Not)A;Brand`";v=`"24`""
+  "sec-ch-ua-arch"="`"x86`""
+  "sec-ch-ua-bitness"="`"64`""
+  "sec-ch-ua-form-factors"="`"Desktop`""
+  "sec-ch-ua-full-version"="`"149.0.7827.199`""
+  "sec-ch-ua-full-version-list"="`"Google Chrome`";v=`"149.0.7827.199`", `"Chromium`";v=`"149.0.7827.199`", `"Not)A;Brand`";v=`"24.0.0.0`""
+  "sec-ch-ua-mobile"="?0"
+  "sec-ch-ua-model"="`"`""
+  "sec-ch-ua-platform"="`"Windows`""
+  "sec-ch-ua-platform-version"="`"10.0.0`""
+  "sec-ch-ua-wow64"="?0"
+  "sec-fetch-dest"="empty"
+  "sec-fetch-mode"="cors"
+  "sec-fetch-site"="same-origin"
+  "x-browser-channel"="stable"
+  "x-browser-copyright"="Copyright 2026 Google LLC. All Rights Reserved."
+  "x-browser-validation"="hayoRz7wQ2xHSTAHPNLVijXb2JU="
+  "x-browser-year"="2026"
+  "x-client-data"="CKmdygEIlKHLAQiFoM0BCP7PlDAI89KUMAjL05QwCObTlDA="
+  "x-same-domain"="1"
+} `
+-ContentType "application/x-www-form-urlencoded;charset=UTF-8" `
+-Body "request=%5B%22confirmShipOperator%22%2C%22%5B%5B%5C%22Flatbar-DB-2612909553-2301082698-80%5C%22%5D%5D%22%2Cnull%2C%5B0%5D%2Cnull%2Cnull%2C1%2C0%5D"
+
+
+curl 'https://script.google.com/macros/s/AKfycbwOkfPtojqCsirn7kfiquRGc4jr-P8IK9bIjIKDBVc2UkOgO4escS94fKlsTSNTZcSW/callback?nocache_id=7&token=ACHNxQwVeVHKfsN5v_oag_ndR-eZ%3A1783016757403' \
+  -H 'accept: */*' \
+  -H 'accept-language: en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7' \
+  -H 'content-type: application/x-www-form-urlencoded;charset=UTF-8' \
+  -b 'HSID=AURXEjleYC4Y1FNDx; SSID=AHhf7mw1nBlwn0u5l; APISID=ND15jXX291kxgY_8/AlFwbNmRftE-mFzJF; SAPISID=-xGUWtkwTw0zqRV8/AqsMMyzR1rVLsZide; __Secure-1PAPISID=-xGUWtkwTw0zqRV8/AqsMMyzR1rVLsZide; __Secure-3PAPISID=-xGUWtkwTw0zqRV8/AqsMMyzR1rVLsZide; OSID=g.a000zwi4Y1FHwMrU65v6_ZcFU4CjP12uPBHJTxH_XijTXOabVxklXOSljxk9fvXiwvD363PvUgACgYKAaASARcSFQHGX2MihkThc_qXTSalVck9ZusOtBoVAUF8yKo3CB6wKNK8CpTff69UqF-k0076; __Secure-OSID=g.a000zwi4Y1FHwMrU65v6_ZcFU4CjP12uPBHJTxH_XijTXOabVxklV97RifIj3BgIkbpMwUGaBgACgYKAZoSARcSFQHGX2MiZK-mykUwegvRxZwzKh3zXhoVAUF8yKqBXT_T84-E-N3vht02JF1a0076; SID=g.a000-wi4Ywy6Q2osWFIXlP9flAu14S91b95UC4Dooy60_Am7w20bZywgcp9iYNUHicjleAmunwACgYKAVsSARcSFQHGX2MiyqSyV_madU6qccJxE7LnGhoVAUF8yKppvk05W8AX630dmwyhR98_0076; __Secure-1PSID=g.a000-wi4Ywy6Q2osWFIXlP9flAu14S91b95UC4Dooy60_Am7w20bV5ysIEeEoDVv6L8-pk6xkAACgYKAe8SARcSFQHGX2MiCY4bv52j_2-iahEeAI6wqxoVAUF8yKqI-HjFNnMZJ4velb_qMxcF0076; __Secure-3PSID=g.a000-wi4Ywy6Q2osWFIXlP9flAu14S91b95UC4Dooy60_Am7w20bnmCqldfclH0DJF5avgF1cwACgYKAfcSARcSFQHGX2Mi8HV1yugDZh3xzaQGvnWQLRoVAUF8yKo9v105W4Tm9qPAwXBLBBfg0076; OTZ=8644902_28_28__28_; __Secure-BUCKET=CLMC; SEARCH_SAMESITE=CgQIlaEB; AEC=AdJVEav-d2-kfJmaWpsx5DfAiBvsKSdBYEc_yxsV19_GPiO9PFERaL6NJIM; _gid=GA1.3.1156573781.1783007196; COMPASS=appsdev-apps-platform-console-ui=CgAQsuma0gYafQAJa4lXYGtDLlOKmPVhUTUM_T8wNAPfQAOiYWskj8hjedvfqqWkItH6bzr43plinPLjtOH7b1zaTU55aDb0BT4T479r8kRMdQWcpMJQm8TRv6twPCOHd37oTtLc__qDFvUmzVWwZmNSieQAM1n4_g9-xMSGro0Z-3IOqZuvIAEwAQ; NID=532=pHIOMGgKblx99lNlioaIe3CdteH07EeSR1cctkOPc7Vy3Tb1N5vYi-ASy7Bb9-j9rmT_yBJePlfXGrvLPLdcc9AJlDusHCZ1iJnGFMl09qoM1FJApTxYW9Ilev4B5T0ky3wPPF0uubcScaXCUohQtEgbCzfkK5wiwU7UD8PUf9tNKRpCALNZWxP_px6hsVLOAmyFvz3ejBXFy0-c3o-MkwBMWZFtSr5rzOWm4SD4et-czrAAn2iYFzZg09YEUXLnlpQOB9UngGjDoCCVlxZBjCYZocW90YQCqwsN_Jzq_9NbJzSdo5Wea8Bj0kDmbh5-AoUxAnXPkOQO-zbyQ2892J7sbpZ0potxVvuyqTl50JIl4jfbvYsYk6HLXH28xRSrrPd3NAjgn1LTW_5UWaKvPhApiA2CLAusJ4a5mwaeknHY4LwTAPkFXu_GmzLz-T6QgfIl-kLvAyN_SY7tiQ36Bl5MwbeDWiFZuDVlFE-17BBjTgGlkdx-vJT9RP9cuccLPGC-uUjfNyulYyFVNuCA-528vsutpwq45fZprL11oMZnUM3cKjRJmNE0IQJjmCeUJnMwZd5RX3eM0lerXiZoxlr31ny8yAxihFqKtEdLuAPTI3vJYtCRl87_GBZsBr0Bo5J_lzERdFrXFF1OxPhW6Cp4OXCg3DpVsdtZE4LnKl-QDUBTZWT1C_nxlOQ_TehajPe4Ea-i1BuD5cGFKorp2Hggsf4Zw0-hJYmnzDtmHSpQbirz0hmgAyXWzLO4HJg1pF8IyMLhTcrNxIvCY4lR893YzQ2BcZLK4EnQv4Xfpu85pExcWOdtqHpjH9AhdxKlhhA_VYkF4o5EGcQdwrlQTjKMQt0M_ZzTOShIMJLEVcWnhBWqxYZIUZWJZKiiga7evruu-62iPrhigLZ1IyuabKtFndCzHdytA4Q2FPGsW2DtdHA; __Secure-1PSIDTS=sidts-CjIByojQU1lEwMVhrsUryTMfAbyDYwLM_DvhKlCIkoXU-EAyTzGVz2jwQuZjsxhxtAzRXhAA; __Secure-3PSIDTS=sidts-CjIByojQU1lEwMVhrsUryTMfAbyDYwLM_DvhKlCIkoXU-EAyTzGVz2jwQuZjsxhxtAzRXhAA; _ga=GA1.1.1072892437.1736261586; _ga_60Q1X42Z2X=GS2.1.s1783015687$o49$g1$t1783016656$j50$l0$h0; _ga_S6TL92G5N1=GS2.1.s1783015687$o49$g1$t1783016656$j51$l0$h0; SIDCC=AKEyXzVThppfvIXFYf33fwOlyaWZyonhd5IXhzu680zHAWBJc4q4sLFO94UVHkY6uGexkOosPfg; __Secure-1PSIDCC=AKEyXzVzdbaAgzT0q_9LQGzCmGtvk54dJBU9sntQA0hJKLEGifbnSJ_rf7cj56KPN8SYb1CZq6U; __Secure-3PSIDCC=AKEyXzWkCn6z8WyuKyopn8yLBaraWeDtpe6GcVTy41g5IbdGyoaD587Shbsacy2XIMpS-0WqE6Q' \
+  -H 'origin: https://script.google.com' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://script.google.com/macros/s/AKfycbwOkfPtojqCsirn7kfiquRGc4jr-P8IK9bIjIKDBVc2UkOgO4escS94fKlsTSNTZcSW/exec' \
+  -H 'sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"' \
+  -H 'sec-ch-ua-arch: "x86"' \
+  -H 'sec-ch-ua-bitness: "64"' \
+  -H 'sec-ch-ua-form-factors: "Desktop"' \
+  -H 'sec-ch-ua-full-version: "149.0.7827.199"' \
+  -H 'sec-ch-ua-full-version-list: "Google Chrome";v="149.0.7827.199", "Chromium";v="149.0.7827.199", "Not)A;Brand";v="24.0.0.0"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-model: ""' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-ch-ua-platform-version: "10.0.0"' \
+  -H 'sec-ch-ua-wow64: ?0' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36' \
+  -H 'x-browser-channel: stable' \
+  -H 'x-browser-copyright: Copyright 2026 Google LLC. All Rights Reserved.' \
+  -H 'x-browser-validation: hayoRz7wQ2xHSTAHPNLVijXb2JU=' \
+  -H 'x-browser-year: 2026' \
+  -H 'x-client-data: CKmdygEIlKHLAQiFoM0BCP7PlDAI89KUMAjL05QwCObTlDA=' \
+  -H 'x-same-domain: 1' \
+  --data-raw 'request=%5B%22confirmShipOperator%22%2C%22%5B%5B%5C%22Flatbar-DB-2611920601-2301083462-900001%5C%22%5D%5D%22%2Cnull%2C%5B0%5D%2Cnull%2Cnull%2C1%2C0%5D'
