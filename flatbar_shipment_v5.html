@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายการรถขนส่ง</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Segoe UI, Arial, sans-serif;
+        }
+
+        body {
+            background: #eef2f7;
+            padding: 0px;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 10px;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.15);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .title {
+            font-size: 28px;
+            color: #2c5282;
+            font-weight: bold;
+        }
+
+        .searchBox {
+            padding: 8px;
+            width: 300px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .data-container {
+            overflow: auto;
+            max-height: 700px;
+            padding-right: 5px; /* Scrollbar breathing room */
+        }
+
+        /* Individual Truck Cards */
+        .truck-card {
+            margin-bottom: 5px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 5px rgba(0,0,0,.05);
+            overflow: hidden;
+        }
+
+        .truck-header {
+            margin: 0;
+            padding: 4px;
+            background: #f1f5f9;
+            color: #1e293b;
+            font-size: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        th {
+            background: #2c5282;
+            color: white;
+            padding: 4px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 4px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        tr:nth-child(even) { background: #f8f8f8; }
+        tr:hover { background: #d9ebff; }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: gray;
+            font-size: 16px;
+        }
+
+        .qty { color: #006600; }
+
+        .footer-text {
+            font-size: 12px;
+            text-align: right;
+            padding-right: 15px;
+            color: #64748b;
+        }
+
+        /* Custom Modal Alert Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 95%;
+            max-width: 800px; /* Increased to fit the tables */
+            max-height: 90vh; /* Prevents modal from overflowing the screen */
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .modal-title {
+            color: #2c5282;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .modal-content {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 20px;
+            word-wrap: break-word;
+            text-align: left; /* Better for reading tables */
+            overflow-y: auto; /* Scroll inside the modal if content is long */
+            padding-right: 5px;
+        }
+
+        .close-btn {
+            background: #2c5282;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+            margin-top: auto;
+            align-self: center;
+        }
+
+        .close-btn:hover {
+            background: #1a365d;
+        }
+
+        @media(max-width: 700px) {
+            .title { font-size: 22px; }
+            .searchBox { width: 40%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Alert Modal -->
+<div class="modal-overlay" id="alertModal">
+    <div class="modal-box">
+        <div class="modal-title">แจ้งเตือนข้อมูลรถที่พร้อมดำเนินการ (Ready to Move)</div>
+        <div class="modal-content" id="alertModalText"></div>
+        <button class="close-btn" onclick="closeModal()">Close / ปิด</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="main-card">
+        <div class="header">
+            <div class="title">🚚 รายการรถขนส่ง</div>
+            <input type="text" class="searchBox" id="search" placeholder="ค้นหาทะเบียน">
+        </div>
+
+        <div class="data-container" id="data-container">
+            <div class="loading">กำลังโหลดข้อมูล...</div>
+        </div>
+    </div>
+    
+    <div class="footer-text" style="margin-top: 15px;">Version 2.7 Beta</div>
+    <div class="footer-text">Powered by Flatbar Division™️</div>
+</div>
+
+<script>
+    const part0 = "AIzaSyAFnyXSAki4Licz";
+    const part1 = "KNhyEzbhHsvTC-abfAo";
+    const apiKey = part0 + part1;
+    const spreadsheetId = "1X_bUE98FYNBRGjVuvyTo8GTXPP9x8LHj6k-iaRJ9TBA";
+	//const spreadsheetId = "10EKJRsYvDJokCUjTxHnMbm_a5VDYvnw-YQmwI19J18U";
+    const range = "Database!A:T";
+
+    // Global variable to hold the fetched data in memory
+    let sheetData = [];
+
+    // FIXED: Added 'async' back to this function
+    async function loadData() {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+        const container = document.getElementById("data-container");
+
+        try {
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status}`);
+            }
+
+            const json = await response.json();
+
+            if (!json.values || json.values.length === 0) {
+                container.innerHTML = "<div class='loading'>No data found.</div>";
+                return;
+            }
+
+            // Save data globally to memory for checkMove to use
+            sheetData = json.values;
+
+            const groups = {};
+
+            // Group by Truck No.
+            json.values.forEach((row, index) => {
+                if (index === 0 ) return; 
+
+                const truck = row[4] || "Unknown";
+                if (!groups[truck]) {
+                    groups[truck] = [];
+                }
+                groups[truck].push(row);
+            });
+
+            let html = "";
+
+            for (const truck in groups) {
+                html += `
+                    <div class="truck-card">
+                        <h4 class="truck-header">🚚 ทะเบียน ${truck}</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ชื่อผลิตภัณฑ์</th>
+                                    <th>Batch</th>
+                                    <th>จำนวน</th>
+                                    <th>ชื่อลูกค้า</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                groups[truck].forEach(r => {
+                    const searchData = `${truck} ${r[6] || ""} ${r[7] || ""} ${r[8] || ""} ${r[10] || ""}`.toLowerCase();
+                    
+                    html += `
+                                <tr data-search="${searchData}">
+                                    <td>${r[6] || "-"}</td>
+                                    <td>${r[7] || "-"}</td>
+                                    <td class="qty"><b>${r[8] || "-"}</b></td>
+                                    <td>${r[10] || "-"}</td>
+                                </tr>
+                    `;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            applySearchFilter();
+
+        } catch (e) {
+            container.innerHTML = `<div class='loading' style='color:red;'>Cannot load data. Error: ${e.message}</div>`;
+            console.error("Data fetch error:", e);
+        }
+    }
+
+    function applySearchFilter() {
+        const keyword = document.getElementById('search').value.toLowerCase();
+        
+        // FIXED: Only search for truck-cards inside the main data-container, NOT the modal!
+        const cards = document.querySelectorAll("#data-container .truck-card");
+
+        cards.forEach(card => {
+            let hasVisibleRow = false;
+            const rows = card.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                const text = row.getAttribute('data-search');
+                
+                // FIXED: Safety check to ensure 'text' is not null before checking '.includes()'
+                if (text) {
+                    if (text.includes(keyword)) {
+                        row.style.display = "";
+                        hasVisibleRow = true;
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            });
+
+            card.style.display = hasVisibleRow ? "" : "none";
+        });
+    }
+
+    let typingTimer; 
+    const delay = 250; 
+
+    document.getElementById("search").addEventListener("keyup", function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(applySearchFilter, delay);
+    });
+
+    function closeModal() {
+        document.getElementById("alertModal").style.display = "none";
+        
+        // Refresh data manually ONLY after the alert box is closed
+        document.getElementById("data-container").innerHTML = "<div class='loading'>กำลังโหลดข้อมูลใหม่...</div>";
+        loadData();
+    }
+
+    // Initial load on page start
+    loadData();
+
+    // Use only ONE interval loop that handles both fetching and checking
+    setInterval(checkMove, 60000);
+	
+    // FIXED: Make checkMove async so it waits for data to load into memory
+    async function checkMove() {
+        // If the modal is already open, do not fetch or check anything
+        if (document.getElementById("alertModal").style.display === "flex") return;
+
+        // Force fresh data into memory BEFORE checking
+        await loadData();
+
+        // Now read from the newly updated memory
+        if (!sheetData || sheetData.length === 0) return;
+
+        const markedGroups = {};
+        let hasData = false;
+
+        sheetData.forEach((r, index) => {
+            if (index === 0) return; 
+
+            const truck = r[4] || "Unknown";
+            const customerData = r[10] || ""; 
+
+            if (customerData.trim() !== "") {
+                if (!markedGroups[truck]) {
+                    markedGroups[truck] = [];
+                }
+                markedGroups[truck].push(r);
+                hasData = true;
+            }
+        });
+
+        if (hasData) {
+            let html = "";
+
+            for (const truck in markedGroups) {
+                html += `
+                    <div class="truck-card">
+                        <h4 class="truck-header">🚚 ทะเบียน ${truck}</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ชื่อผลิตภัณฑ์</th>
+                                    <th>Batch</th>
+                                    <th>จำนวน</th>
+                                    <th>ชื่อลูกค้า</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                markedGroups[truck].forEach(r => {
+                    html += `
+                                <tr>
+                                    <td>${r[6] || "-"}</td>
+                                    <td>${r[7] || "-"}</td>
+                                    <td class="qty"><b>${r[8] || "-"}</b></td>
+                                    <td>${r[10] || "-"}</td>
+                                </tr>
+                    `;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            document.getElementById("alertModalText").innerHTML = html;
+            document.getElementById("alertModal").style.display = "flex";
+        }
+    }
+
+</script>
+
+</body>
+</html>
