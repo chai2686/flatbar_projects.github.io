@@ -1,0 +1,156 @@
+ค้นหางานยังไม่เตรียม
+
+curl 'https://psychic-driveway-starboard.ngrok-free.dev/wms/api/PrepareTaskUser/QueryUnclaimPreparedTrans' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -b 'abuse_interstitial=psychic-driveway-starboard.ngrok-free.dev; ASP.NET_SessionId=qaaexwcfbabebpfpygxxxtaw' \
+  -H 'origin: https://psychic-driveway-starboard.ngrok-free.dev' \
+  -H 'pragma: no-cache' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://psychic-driveway-starboard.ngrok-free.dev/wms/Mobile/Preparing' \
+  -H 'sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: "Android"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36' \
+  --data-raw '{"deliveryDate":"2026-07-03T16:50:22.417Z","doItemDesc":"","companyName":"","materialCode":"","materialName":"","batch":"","storageSAP":"","workStyle":"","loadOptions":{"requireTotalCount":true,"searchOperation":"contains","searchValue":null,"skip":0,"take":20,"userData":{},"sort":null,"group":null}}'
+  
+  {"data":[{"hasReminder":false,"canAccept":true,"canCancel":false,"canSubmit":false,"rowNum":1,"totalCount":1,"id":2094014,"do":"2301084166","doItem":"000010","doItemDesc":"2301084166 000010","companyId":8193,"companyName":"เอโอ สตีล","materialId":2467,"materialCode":"2FB040-0500-009","materialName":"เหล็กแบน 4.00mm X 50mm X 6000mm SS400","batch":"SL","netWeight":295.0,"actualQuantity":33,"packageSize":120,"pack":0,"unpackQuantity":33,"strorageSAP":"2K04","workStyle":null,"preparedBy":null,"preparedByName":null,"status":"Waiting","reminderNote":null,"isRequireScan":true,"deliveryDate":"2026-07-04T00:00:00","loadingDate":"2026-07-03T00:00:00","printText":"","thickness":"","tmtWeight":"","materialText":"ขึ้นรุ่น 3.80mm","soDocumentText":"PO + Mill's Cert","isUrgent":null,"canPrint":true,"shipToName":"หน้างาน AO เฟส 2","isRequireHeatFix":null,"isHasHeatNo":false,"matAmount":1,"isHasMillCert":true,"isAlreadyPrint":false}],"totalCount":1}
+  
+  
+ค้นหางานกำลังเตรียม
+  
+  curl 'https://psychic-driveway-starboard.ngrok-free.dev/wms/api/PrepareTaskUser/QueryUserPreparedTrans' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -b 'abuse_interstitial=psychic-driveway-starboard.ngrok-free.dev; ASP.NET_SessionId=qaaexwcfbabebpfpygxxxtaw' \
+  -H 'origin: https://psychic-driveway-starboard.ngrok-free.dev' \
+  -H 'pragma: no-cache' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://psychic-driveway-starboard.ngrok-free.dev/wms/Mobile/Preparing' \
+  -H 'sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: "Android"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36' \
+  --data-raw '{"deliveryDate":"2026-07-03T16:50:22.417Z","doItemDesc":"","companyName":"","materialCode":"","materialName":"","batch":"","storageSAP":"","workStyle":"","loadOptions":{"requireTotalCount":true,"searchOperation":"contains","searchValue":null,"skip":0,"take":20,"userData":{},"sort":null,"group":null}}'
+
+
+ค้นหาเครื่องพิมพ์สติ้กเกอร์
+  
+curl 'https://psychic-driveway-starboard.ngrok-free.dev/wms/api/Dropdown/QueryPrinter' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -b 'abuse_interstitial=psychic-driveway-starboard.ngrok-free.dev; ASP.NET_SessionId=qaaexwcfbabebpfpygxxxtaw' \
+  -H 'origin: https://psychic-driveway-starboard.ngrok-free.dev' \
+  -H 'pragma: no-cache' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://psychic-driveway-starboard.ngrok-free.dev/wms/Mobile/Preparing' \
+  -H 'sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: "Android"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36' \
+  --data-raw '{"placeHolder":"","Value":0}'
+
+[{"showText":"Printer PPB1","value":1},{"showText":"Printer PPB2","value":2},{"showText":"Printer PPB3","value":3},{"showText":"Printer PPC1","value":4},{"showText":"Printer PPC2","value":5},{"showText":"Printer PPC3","value":6},{"showText":"Printer PPC4","value":7},{"showText":"Printer PPC5","value":8},{"showText":"Printer PPC6","value":9},{"showText":"Printer PPC7","value":10},{"showText":"Printer PPG1","value":11},{"showText":"Printer PPG2","value":12},{"showText":"Printer PPG3","value":13},{"showText":"Printer PPM1","value":14},{"showText":"Printer PPP1","value":15},{"showText":"Printer PWA1","value":16},{"showText":"Printer PWA2","value":17},{"showText":"Printer PWB1","value":18},{"showText":"Printer PWB3","value":19},{"showText":"Printer PWD1","value":20},{"showText":"Printer PWD2","value":21},{"showText":"Printer PWD3","value":22},{"showText":"Printer PWD4","value":23},{"showText":"Printer PWE1","value":24},{"showText":"Printer PWE2","value":25},{"showText":"Printer PWE3","value":26},{"showText":"Printer PWF1","value":27},{"showText":"Printer PWF2","value":28},{"showText":"Printer PWF3","value":29},{"showText":"Printer PWF4","value":30},{"showText":"Printer PWK1","value":31},{"showText":"Printer PWK2","value":32},{"showText":"Printer PWK3","value":33},{"showText":"Printer PWL1","value":34},{"showText":"Printer PWL2","value":35},{"showText":"Printer PWL3","value":36},{"showText":"Printer PWP1","value":37},{"showText":"Printer R3P1","value":38},{"showText":"Printer R3P2","value":39},{"showText":"Printer PPE1","value":40},{"showText":"Printer PPE2","value":41},{"showText":"Printer PWE4","value":42},{"showText":"Printer PWH1","value":43},{"showText":"Printer PWO1","value":44},{"showText":"Printer PWO2","value":45},{"showText":"Printer PWO3","value":46},{"showText":"Printer PWO4","value":47},{"showText":"Printer PWO5","value":48},{"showText":"Printer PWO6","value":49}]  
+  
+คำสั่งพิมพ์สติ้กเกอร์
+
+curl 'https://psychic-driveway-starboard.ngrok-free.dev/wms/api/PrepareTaskUser/PrintPrepareTrans' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -b 'abuse_interstitial=psychic-driveway-starboard.ngrok-free.dev; ASP.NET_SessionId=qaaexwcfbabebpfpygxxxtaw' \
+  -H 'origin: https://psychic-driveway-starboard.ngrok-free.dev' \
+  -H 'pragma: no-cache' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://psychic-driveway-starboard.ngrok-free.dev/wms/Mobile/Preparing' \
+  -H 'sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: "Android"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36' \
+  --data-raw '{"printID":"17","transId":2094014}'  
+  
+คำสั่งรับงาน
+ 
+curl 'https://psychic-driveway-starboard.ngrok-free.dev/wms/api/PrepareTaskUser/AcceptPreparedTrans' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -b 'abuse_interstitial=psychic-driveway-starboard.ngrok-free.dev; ASP.NET_SessionId=qaaexwcfbabebpfpygxxxtaw' \
+  -H 'origin: https://psychic-driveway-starboard.ngrok-free.dev' \
+  -H 'pragma: no-cache' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://psychic-driveway-starboard.ngrok-free.dev/wms/Mobile/Preparing' \
+  -H 'sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: "Android"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36' \
+  --data-raw '{"gateId":36,"id":2094014}'
+
+คำสังเรียกข้อมูลสติ้กเกอร์งานเตรียม
+  
+  curl 'https://psychic-driveway-starboard.ngrok-free.dev/wms/api/PrepareTaskUser/GetBundleFromPrepare' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -b 'abuse_interstitial=psychic-driveway-starboard.ngrok-free.dev; ASP.NET_SessionId=qaaexwcfbabebpfpygxxxtaw' \
+  -H 'origin: https://psychic-driveway-starboard.ngrok-free.dev' \
+  -H 'pragma: no-cache' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://psychic-driveway-starboard.ngrok-free.dev/wms/Mobile/Scan-Select?dummy=0&id=2094014' \
+  -H 'sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: "Android"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36' \
+  --data-raw '{"Id":"2094014"}'
+  
+{"bundleShowText":"1010345483","bundle":"1010345483*เหล็กแบน 4.00MM X 50MM X 6000MM SS400*SL*33*295"}
+
+คำสั่งจับคู่แสกนงานเตรียม
+
+curl 'https://psychic-driveway-starboard.ngrok-free.dev/wms/api/PrepareTaskUser/SubmitScanBundleTrans' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -b 'abuse_interstitial=psychic-driveway-starboard.ngrok-free.dev; ASP.NET_SessionId=qaaexwcfbabebpfpygxxxtaw' \
+  -H 'origin: https://psychic-driveway-starboard.ngrok-free.dev' \
+  -H 'pragma: no-cache' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://psychic-driveway-starboard.ngrok-free.dev/wms/Mobile/Scan-Select?dummy=0&realScan=1010333615*%E0%B9%80%E0%B8%AB%E0%B8%A5%E0%B9%87%E0%B8%81%E0%B9%81%E0%B8%9A%E0%B8%99%204.00MM%20X%2050MM%20X%206000MM%20SS400*SL*120*1130.40&dummyScan=1010345483*%E0%B9%80%E0%B8%AB%E0%B8%A5%E0%B9%87%E0%B8%81%E0%B9%81%E0%B8%9A%E0%B8%99%204.00MM%20X%2050MM%20X%206000MM%20SS400*SL*33*295&id=2094014' \
+  -H 'sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: "Android"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36' \
+  --data-raw '{"id":"2094014","fullBundleScan":"1010333615*เหล็กแบน 4.00MM X 50MM X 6000MM SS400*SL*120*1130.40","bundleDummyScan":"1010345483","fullBundleDummyScan":"1010345483*เหล็กแบน 4.00MM X 50MM X 6000MM SS400*SL*33*295","newUnpackValue":30,"bundleScan":"1010333615"}'
+  
+  
