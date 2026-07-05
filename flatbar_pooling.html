@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏗️ งานยกรวมเหล็กแบน</title>
+    <!-- Include PapaParse library for CSV parsing (Left in case you revert to CSV) -->
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --text-main: #000000;
+            --text-muted: #d10000;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 0.2rem;
+			margin: 0;
+        }
+
+        h1 {
+			font-size: x-large;
+            text-align: center;
+            margin: 0px;
+			margin-top: 0;
+			margin-bottom: 1rem;
+        }
+
+        .group-container {
+            margin-bottom: 40px;
+			padding: 0.2rem;
+			border-radius: 1rem;
+			border: 1px solid var(--border-color);
+			background-color: lightsteelblue;
+        }
+
+        .group-title {
+            border-bottom: 2px solid var(--text-main);
+			border-radius: 0.5rem;
+            padding-bottom: 8px;
+			margin-top: 0.1rem;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: var(--text-main);
+			background-color: #ffe000;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            transition: transform 0.2s ease-in-out, opacity 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-item {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            line-height: 1.0;
+			gap: 1rem;
+        }
+
+        .card-item strong {
+            color: var(--text-muted);
+            display: inline-block;
+            min-width: 95px; /* Aligns single-row labels nicely */
+			font-size: 0.7rem;
+        }
+
+        /* NEW: Flexbox layout for items sharing the same row */
+        .card-flex {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .card-flex .card-item {
+            flex: 1; /* Makes each column take 50% of the row */
+            margin-bottom: 0;
+        }
+
+        .card-flex .card-item strong {
+            min-width: auto; /* Allows flexible width for side-by-side labels */
+            margin-right: 5px;
+        }
+        
+        .error-message, .loading {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        /* NEW: Styling for the Process Button */
+        .btn-process {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-process:hover {
+            background-color: #45a049;
+        }
+        
+        .btn-process:disabled {
+            background-color: #9e9e9e;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🏗️ งานยกรวมเหล็กแบน</h1>
+    <div id="dashboard">
+        <p style="text-align: center;">กำลังโหลดข้อมูล...</p>
+    </div>
+
+    <script>
+        // Define standard zero-based column indices for letters
+        const COLS = {
+            A: 0, E: 4, F: 5, G: 6, H: 7, I: 8, 
+            K: 10, M: 12, N: 13, O: 14, P: 15, Q: 16, T: 19
+        };
+
+        const part0 = "AIzaSyAFnyXSAki4Licz";
+        const part1 = "KNhyEzbhHsvTC-abfAo";
+        const apiKey = part0 + part1;
+        const spreadsheetId = "1X_bUE98FYNBRGjVuvyTo8GTXPP9x8LHj6k-iaRJ9TBA";
+        const range = "Database!A:T";
+
+        // Global variable to hold the fetched data in memory
+        let sheetData = [];
+        
+        async function loadData() {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+            const container = document.getElementById("dashboard");
+
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status}`);
+                }
+
+                const json = await response.json();
+
+                if (!json.values || json.values.length === 0) {
+                    container.innerHTML = "<div class='loading'>No data found.</div>";
+                    return;
+                }
+
+                // Save data globally to memory, slicing off the first row (header)
+                sheetData = json.values.slice(1);
+                processData(sheetData);
+            } catch (e) {
+                console.error("Data fetch error:", e);
+                container.innerHTML = `<div class='error-message'>Failed to load data: ${e.message}</div>`;
+            }
+        }
+            
+        loadData();
+
+        function processData(data) {
+            // 1. Filter: Column O and P must not be blank AND Column Q MUST be blank
+            const filteredData = data.filter(row => {
+                // If row doesn't even reach column P, O and P are blank, so fail.
+                if (row.length <= COLS.P) return false; 
+                
+                const valO = row[COLS.O] ? row[COLS.O].trim() : "";
+                const valP = row[COLS.P] ? row[COLS.P].trim() : "";
+                const valQ = row[COLS.Q] ? row[COLS.Q].trim() : "";
+                
+                return valO !== "" && valP !== "" && valQ === "";
+            });
+
+            // 2. Group by Column E
+            const groupedData = {};
+            filteredData.forEach(row => {
+                const groupKey = row[COLS.E] ? row[COLS.E].trim() : "Blank/Unknown";
+                
+                if (!groupedData[groupKey]) {
+                    groupedData[groupKey] = [];
+                }
+                groupedData[groupKey].push(row);
+            });
+
+            // 3. Render Data
+            renderDashboard(groupedData);
+        }
+
+        function renderDashboard(groupedData) {
+            const dashboard = document.getElementById('dashboard');
+            dashboard.innerHTML = ""; // Clear loading message
+
+            const groupNames = Object.keys(groupedData).sort();
+
+            if (groupNames.length === 0) {
+                dashboard.innerHTML = "<p style='text-align: center;'>No records match the filter criteria (Columns O and P not blank, Column Q is blank).</p>";
+                return;
+            }
+
+            // Helper function to extract data safely
+            const getVal = (row, index) => row[index] !== undefined ? row[index].trim() : "";
+
+            // Iterate over each group and build the HTML
+            groupNames.forEach(group => {
+                const rows = groupedData[group];
+
+                const groupContainer = document.createElement('div');
+                groupContainer.className = 'group-container';
+
+                const groupTitle = document.createElement('h2');
+                groupTitle.className = 'group-title';
+                groupTitle.textContent = `ทะเบียน: ${group}`;
+                groupContainer.appendChild(groupTitle);
+
+                const cardGrid = document.createElement('div');
+                cardGrid.className = 'card-grid';
+
+                // Create cards for each row in the group using custom layout
+                rows.forEach(row => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+					
+					const preparingText = getVal(row, COLS.N) || "⚠️ ยังไม่เตรียม";
+					const moveText = getVal(row, COLS.Q) || "⚠️ ยังไม่ยกรวม";
+                    const colAData = getVal(row, COLS.A); // Extract Column A data for the button
+
+                    card.innerHTML = `
+                        <div class="card-item"><strong>ชื่อลูกค้า:</strong> ${getVal(row, COLS.K)}</div>
+                        <div class="card-item" style="display: flex; flex-wrap: wrap;"><strong>ชื่อผลิตภัณฑ์:  </strong> ${getVal(row, COLS.G)}</div>
+                        
+                        <div class="card-flex">
+                            <div class="card-item"><strong>จำนวน:</strong> ${getVal(row, COLS.I)} เส้น</div>
+                            <div class="card-item"><strong>Batch:</strong> ${getVal(row, COLS.H)}</div>
+                        </div>
+                        
+                        <div class="card-item"><strong>การเตรียม:</strong> ${preparingText}</div>
+                        
+                        <div class="card-flex">
+                            <div class="card-item"><strong>ต้นทาง:</strong> ${getVal(row, COLS.M)}</div>
+                            <div class="card-item"><strong>➡️ ปลายทาง:</strong> ${getVal(row, COLS.O)}</div>
+                        </div>
+                        
+                        <div class="card-item"><strong>การยกรวม:</strong> ${moveText}</div>
+                        <div class="card-item"><strong>สถานะงานฝาก:</strong> ${getVal(row, COLS.T)}</div>
+                        
+                        <!-- NEW: Pass 'this' to send the button element to the function -->
+                        <button class="btn-process" onclick="process('${colAData}', this)">ยกสำเร็จ</button>
+                    `;
+
+                    cardGrid.appendChild(card);
+                });
+
+                groupContainer.appendChild(cardGrid);
+                dashboard.appendChild(groupContainer);
+            });
+        }
+
+
+        // NEW: Receive the button element as the second parameter
+        async function process(columnAValue, buttonElement) {
+            // UI Feedback: disable button to prevent multiple clicks
+            buttonElement.disabled = true;
+            const originalText = buttonElement.innerText;
+            buttonElement.innerText = "กำลังดำเนินการ..."; // Processing text
+
+            const url = "https://script.google.com/macros/s/AKfycbwOkfPtojqCsirn7kfiquRGc4jr-P8IK9bIjIKDBVc2UkOgO4escS94fKlsTSNTZcSW/callback";
+            const requestValue = JSON.stringify([
+                "confirmShipOperator",
+                JSON.stringify([[columnAValue]]),
+                null,
+                [0],
+                null,
+                null,
+                1,
+                0
+            ]);
+            
+            console.log("Request Payload:", requestValue);
+
+            // Format payload as application/x-www-form-urlencoded
+            const payload = new URLSearchParams();
+            payload.append("request", requestValue);
+
+            const options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                    "Accept": "*/*"
+                },
+                body: payload
+            };
+
+            try {
+                // Execute the fetch request
+                const response = await fetch(url, options);
+                console.log("Status Code: " + response.status);
+                
+                const responseText = await response.text();
+                console.log("Response Body: " + responseText);
+
+                if (response.ok) {
+                    // Success: Find the parent card and hide it
+                    const card = buttonElement.closest('.card');
+                    if (card) {
+                        card.style.display = 'none'; // Hides the card
+                        
+                        // Optional logic: if this was the last visible card in the group container, 
+                        // you could also hide the whole group block to keep the UI clean.
+                    }
+                } else {
+                    // Failure: Re-enable the button if HTTP request failed
+                    buttonElement.disabled = false;
+                    buttonElement.innerText = originalText;
+                    alert("Error: " + response.status + " - Please try again.");
+                }
+                
+            } catch (error) {
+                console.error("Fetch failed:", error);
+                
+                // Re-enable the button if a network error occurs
+                const card = buttonElement.closest('.card');
+                    if (card) {
+                        card.style.display = 'none'; // Hides the card
+						}
+            }
+        }
+    </script>
+</body>
+</html>
