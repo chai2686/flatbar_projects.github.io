@@ -5,19 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏗️ งานยกรวมเหล็กแบน</title>
     <!-- Include PapaParse library for CSV parsing (Left in case you revert to CSV) -->
-	<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "42f17efb-cdaa-46c5-9ca7-18fd45ea9845",
-      safari_web_id: "web.onesignal.auto.5d451968-8243-4fe2-88cd-3c94a5f2a4fc",
-      notifyButton: {
-        enable: true,
-      },
-    });
-  });
-</script>
     <style>
         :root {
             --bg-color: #f4f7f6;
@@ -52,12 +39,18 @@
         }
 
         .group-title {
+            /* Updated: flex and space-between push the text left and button right */
+            display: flex;
+            align-items: center;
+            justify-content: space-between; 
+            gap: 15px;
+            
             border-bottom: 2px solid var(--text-main);
 			border-radius: 0.5rem;
-            padding-bottom: 8px;
+            padding: 8px 15px; 
 			margin-top: 0.1rem;
             margin-bottom: 20px;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: var(--text-main);
 			background-color: #ffe000;
         }
@@ -92,25 +85,40 @@
         .card-item strong {
             color: var(--text-muted);
             display: inline-block;
-            min-width: 95px; /* Aligns single-row labels nicely */
+            min-width: 95px; 
 			font-size: 0.7rem;
         }
+		
+		.card-item target {
+            color: var(--text-main);
+            display: inline-block;
+            min-width: 95px; 
+			font-size: 1rem;
+			font-weight: bold;
+        }
+		
+		.card-item milkrun {
+            color: var(--text-main);
+            display: inline-block;
+            min-width: 95px; 
+			font-size: 1rem;
+			background-color: #ff008d40;
+        }
 
-        /* NEW: Flexbox layout for items sharing the same row */
         .card-flex {
             display: flex;
             justify-content: space-between;
-            gap: 10px;
+            gap: 0px;
             margin-bottom: 8px;
         }
 
         .card-flex .card-item {
-            flex: 1; /* Makes each column take 50% of the row */
+            flex: 1; 
             margin-bottom: 0;
         }
 
         .card-flex .card-item strong {
-            min-width: auto; /* Allows flexible width for side-by-side labels */
+            min-width: auto; 
             margin-right: 5px;
         }
         
@@ -122,7 +130,31 @@
             text-align: center;
         }
 
-        /* NEW: Styling for the Process Button */
+        /* Styling for the Group Header Process Button */
+        .btn-group-process {
+            background-color: #4CAF50;
+            color: white;
+            border: 2px solid #388E3C;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-group-process:hover {
+            background-color: #45a049;
+        }
+        
+        .btn-group-process:disabled {
+            background-color: #9e9e9e;
+            border-color: #757575;
+            cursor: not-allowed;
+        }
+
+        /* Styling for the Individual Process Button */
         .btn-process {
             background-color: #4CAF50;
             color: white;
@@ -155,7 +187,6 @@
     </div>
 
     <script>
-        // Define standard zero-based column indices for letters
         const COLS = {
             A: 0, E: 4, F: 5, G: 6, H: 7, I: 8, 
             K: 10, M: 12, N: 13, O: 14, P: 15, Q: 16, T: 19
@@ -164,11 +195,11 @@
         const part0 = "AIzaSyAFnyXSAki4Licz";
         const part1 = "KNhyEzbhHsvTC-abfAo";
         const apiKey = part0 + part1;
-        const spreadsheetId = "1X_bUE98FYNBRGjVuvyTo8GTXPP9x8LHj6k-iaRJ9TBA";
-        const range = "Database!A:T";
+		const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
+        const range = "Shipment!A:T";
 
-        // Global variable to hold the fetched data in memory
         let sheetData = [];
+        let pendingJobsCount = 0; // NEW: Track the number of active, unfiltered jobs
         
         async function loadData() {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
@@ -188,7 +219,6 @@
                     return;
                 }
 
-                // Save data globally to memory, slicing off the first row (header)
                 sheetData = json.values.slice(1);
                 processData(sheetData);
             } catch (e) {
@@ -198,11 +228,10 @@
         }
             
         loadData();
+		setInterval(checkMove, 30000);
 
         function processData(data) {
-            // 1. Filter: Column O and P must not be blank AND Column Q MUST be blank
             const filteredData = data.filter(row => {
-                // If row doesn't even reach column P, O and P are blank, so fail.
                 if (row.length <= COLS.P) return false; 
                 
                 const valO = row[COLS.O] ? row[COLS.O].trim() : "";
@@ -212,7 +241,9 @@
                 return valO !== "" && valP !== "" && valQ === "";
             });
 
-            // 2. Group by Column E
+            // Set global variable so checkMove knows exactly how many valid cards are displayed
+            pendingJobsCount = filteredData.length;
+
             const groupedData = {};
             filteredData.forEach(row => {
                 const groupKey = row[COLS.E] ? row[COLS.E].trim() : "Blank/Unknown";
@@ -223,25 +254,22 @@
                 groupedData[groupKey].push(row);
             });
 
-            // 3. Render Data
             renderDashboard(groupedData);
         }
 
         function renderDashboard(groupedData) {
             const dashboard = document.getElementById('dashboard');
-            dashboard.innerHTML = ""; // Clear loading message
+            dashboard.innerHTML = ""; 
 
             const groupNames = Object.keys(groupedData).sort();
 
             if (groupNames.length === 0) {
-                dashboard.innerHTML = "<p style='text-align: center;'>No records match the filter criteria (Columns O and P not blank, Column Q is blank).</p>";
+                dashboard.innerHTML = "<p style='text-align: center;font-size: larger;margin-top: 50px;'>🛑 ไม่พบข้อมูลรายการงานยกรวม. 🛑</p>";
                 return;
             }
 
-            // Helper function to extract data safely
             const getVal = (row, index) => row[index] !== undefined ? row[index].trim() : "";
 
-            // Iterate over each group and build the HTML
             groupNames.forEach(group => {
                 const rows = groupedData[group];
 
@@ -250,20 +278,43 @@
 
                 const groupTitle = document.createElement('h2');
                 groupTitle.className = 'group-title';
-                groupTitle.textContent = `ทะเบียน: ${group}`;
+
+                // Title Text (Now created first to sit on the Left Side)
+                const titleText = document.createElement('span');
+                titleText.textContent = `ทะเบียน: ${group}`;
+
+                // Group Header Button (Now created second to sit on the Right Side)
+                const groupProcessBtn = document.createElement('button');
+                groupProcessBtn.className = 'btn-group-process';
+                groupProcessBtn.textContent = 'ยกสำเร็จ';
+                groupProcessBtn.onclick = function() {
+                    const container = this.closest('.group-container');
+                    const cardButtons = container.querySelectorAll('.btn-process');
+                    
+                    this.disabled = true;
+                    this.textContent = 'กำลังดำเนินการ...';
+                    
+                    cardButtons.forEach(btn => {
+                        if (!btn.disabled) btn.click();
+                    });
+                };
+
+                // Append text first, then button, so flex space-between splits them appropriately
+                groupTitle.appendChild(titleText);
+                groupTitle.appendChild(groupProcessBtn);
+                
                 groupContainer.appendChild(groupTitle);
 
                 const cardGrid = document.createElement('div');
                 cardGrid.className = 'card-grid';
 
-                // Create cards for each row in the group using custom layout
                 rows.forEach(row => {
                     const card = document.createElement('div');
                     card.className = 'card';
 					
 					const preparingText = getVal(row, COLS.N) || "⚠️ ยังไม่เตรียม";
 					const moveText = getVal(row, COLS.Q) || "⚠️ ยังไม่ยกรวม";
-                    const colAData = getVal(row, COLS.A); // Extract Column A data for the button
+                    const colAData = getVal(row, COLS.A); 
 
                     card.innerHTML = `
                         <div class="card-item"><strong>ชื่อลูกค้า:</strong> ${getVal(row, COLS.K)}</div>
@@ -278,13 +329,12 @@
                         
                         <div class="card-flex">
                             <div class="card-item"><strong>ต้นทาง:</strong> ${getVal(row, COLS.M)}</div>
-                            <div class="card-item"><strong>➡️ ปลายทาง:</strong> ${getVal(row, COLS.O)}</div>
+                            <div class="card-item"><strong>ปลายทาง:</strong><target> ➡️ ${getVal(row, COLS.O)}</target></div>
                         </div>
                         
                         <div class="card-item"><strong>การยกรวม:</strong> ${moveText}</div>
-                        <div class="card-item"><strong>สถานะงานฝาก:</strong> ${getVal(row, COLS.T)}</div>
+                        <div class="card-item"><strong>สถานะงานฝาก:</strong><milkrun> ${getVal(row, COLS.T)}</milkrun></div>
                         
-                        <!-- NEW: Pass 'this' to send the button element to the function -->
                         <button class="btn-process" onclick="process('${colAData}', this)">ยกสำเร็จ</button>
                     `;
 
@@ -296,13 +346,10 @@
             });
         }
 
-
-        // NEW: Receive the button element as the second parameter
         async function process(columnAValue, buttonElement) {
-            // UI Feedback: disable button to prevent multiple clicks
             buttonElement.disabled = true;
             const originalText = buttonElement.innerText;
-            buttonElement.innerText = "กำลังดำเนินการ..."; // Processing text
+            buttonElement.innerText = "กำลังดำเนินการ..."; 
 
             const url = "https://script.google.com/macros/s/AKfycbwOkfPtojqCsirn7kfiquRGc4jr-P8IK9bIjIKDBVc2UkOgO4escS94fKlsTSNTZcSW/callback";
             const requestValue = JSON.stringify([
@@ -318,7 +365,6 @@
             
             console.log("Request Payload:", requestValue);
 
-            // Format payload as application/x-www-form-urlencoded
             const payload = new URLSearchParams();
             payload.append("request", requestValue);
 
@@ -330,9 +376,18 @@
                 },
                 body: payload
             };
+            
+            const checkAndHideGroup = (cardElem) => {
+                const groupContainer = cardElem.closest('.group-container');
+                if (groupContainer) {
+                    const visibleCards = Array.from(groupContainer.querySelectorAll('.card')).filter(c => c.style.display !== 'none');
+                    if (visibleCards.length === 0) {
+                        groupContainer.style.display = 'none';
+                    }
+                }
+            };
 
             try {
-                // Execute the fetch request
                 const response = await fetch(url, options);
                 console.log("Status Code: " + response.status);
                 
@@ -340,16 +395,14 @@
                 console.log("Response Body: " + responseText);
 
                 if (response.ok) {
-                    // Success: Find the parent card and hide it
                     const card = buttonElement.closest('.card');
                     if (card) {
-                        card.style.display = 'none'; // Hides the card
-                        
-                        // Optional logic: if this was the last visible card in the group container, 
-                        // you could also hide the whole group block to keep the UI clean.
+                        card.style.display = 'none'; 
+                        checkAndHideGroup(card); 
+                        // Decrement the active jobs count locally
+                        pendingJobsCount = Math.max(0, pendingJobsCount - 1); 
                     }
                 } else {
-                    // Failure: Re-enable the button if HTTP request failed
                     buttonElement.disabled = false;
                     buttonElement.innerText = originalText;
                     alert("Error: " + response.status + " - Please try again.");
@@ -358,12 +411,81 @@
             } catch (error) {
                 console.error("Fetch failed:", error);
                 
-                // Re-enable the button if a network error occurs
                 const card = buttonElement.closest('.card');
-                    if (card) {
-                        card.style.display = 'none'; // Hides the card
-						}
+                if (card) {
+                    card.style.display = 'none'; 
+                    checkAndHideGroup(card); 
+                    pendingJobsCount = Math.max(0, pendingJobsCount - 1); 
+                }
             }
+        }
+		
+        // UPDATED: Now checks 'pendingJobsCount' to ensure actual work is on the screen
+        function checkMove() {
+            if (pendingJobsCount > 0) {
+                playMorse();
+                
+                // SetTimeout allows the Morse Code to begin playing before the alert completely freezes the browser thread
+                setTimeout(() => {
+                    alert("มีงานต้องยกรวม !");
+                    stopMorse();
+                }, 100);
+                
+            } else {
+                console.log("ไม่มีงาน (test00)");
+            }
+            
+            loadData();
+        }
+
+        let audioCtx = null;
+        let activeOscillators = [];
+
+        const DOT_TIME = 0.06; 
+        const FREQUENCY = 1800; 
+
+        function playMorse() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            stopMorse();
+
+            const text = "111111111111";
+            let currentTime = audioCtx.currentTime;
+
+            for (const char of text) {
+                const code = "..........";
+                if (!code) continue;
+
+                for (const symbol of code) {
+                    const duration = symbol === '.' ? DOT_TIME : DOT_TIME * 3;
+                    
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.value = FREQUENCY;
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start(currentTime);
+                    osc.stop(currentTime + duration);
+
+                    activeOscillators.push(osc);
+                    currentTime += duration + DOT_TIME; 
+                }
+                currentTime += DOT_TIME * 3; 
+            }
+        }
+
+        function stopMorse() {
+            activeOscillators.forEach(osc => {
+                try {
+                    osc.stop(); 
+                } catch (error) {}
+            });
+            activeOscillators = [];
         }
     </script>
 </body>
