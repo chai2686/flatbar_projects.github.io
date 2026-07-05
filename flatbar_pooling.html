@@ -177,6 +177,18 @@
             background-color: #9e9e9e;
             cursor: not-allowed;
         }
+		
+		/* Footer */
+      .footer-text {
+        font-size: 11px;
+        text-align: right;
+        margin-bottom: 3px;
+        color: #777;
+      }
+      .footer-version {
+        padding-top: 0px;
+      }
+	  
     </style>
 </head>
 <body>
@@ -185,8 +197,11 @@
     <div id="dashboard">
         <p style="text-align: center;">กำลังโหลดข้อมูล...</p>
     </div>
+	<p id="version" class="footer-text footer-version">Version</p>
+    <p class="footer-text" style="margin-top: 0px;">Powered by Flatbar Division™️</p>
 
     <script>
+	loadVersion();
         const COLS = {
             A: 0, E: 4, F: 5, G: 6, H: 7, I: 8, 
             K: 10, M: 12, N: 13, O: 14, P: 15, Q: 16, T: 19
@@ -195,8 +210,8 @@
         const part0 = "AIzaSyAFnyXSAki4Licz";
         const part1 = "KNhyEzbhHsvTC-abfAo";
         const apiKey = part0 + part1;
-		const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
-        const range = "Shipment!A:T";
+		const spreadsheetId = "1X_bUE98FYNBRGjVuvyTo8GTXPP9x8LHj6k-iaRJ9TBA";
+        const range = "Database!A:T";
 
         let sheetData = [];
         let pendingJobsCount = 0; // NEW: Track the number of active, unfiltered jobs
@@ -228,7 +243,7 @@
         }
             
         loadData();
-		setInterval(checkMove, 30000);
+		setInterval(checkMove, 60000);
 
         function processData(data) {
             const filteredData = data.filter(row => {
@@ -422,20 +437,15 @@
 		
         // UPDATED: Now checks 'pendingJobsCount' to ensure actual work is on the screen
         function checkMove() {
+			loadData();
             if (pendingJobsCount > 0) {
                 playMorse();
-                
-                // SetTimeout allows the Morse Code to begin playing before the alert completely freezes the browser thread
-                setTimeout(() => {
-                    alert("มีงานต้องยกรวม !");
-                    stopMorse();
-                }, 100);
+                alert("มีงานต้องยกรวม !");
+                stopMorse();
                 
             } else {
                 console.log("ไม่มีงาน (test00)");
             }
-            
-            loadData();
         }
 
         let audioCtx = null;
@@ -487,6 +497,20 @@
             });
             activeOscillators = [];
         }
+		
+async function loadVersion() {
+    try {
+        const response = await fetch(
+            'https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/refs/heads/main/version_history.log'
+        );
+        const text = await response.text();
+        const firstLine = text.split(/\r?\n/)[0];
+        document.getElementById('version').textContent = firstLine;
+    } catch (error) {
+        console.error(error);
+        document.getElementById('version').textContent = 'Failed to load version';
+    }
+  }
     </script>
 </body>
 </html>
