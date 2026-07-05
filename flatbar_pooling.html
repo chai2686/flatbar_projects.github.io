@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏗️ งานยกรวมเหล็กแบน</title>
     <!-- Include PapaParse library for CSV parsing (Left in case you revert to CSV) -->
+	<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "42f17efb-cdaa-46c5-9ca7-18fd45ea9845",
+      safari_web_id: "web.onesignal.auto.5d451968-8243-4fe2-88cd-3c94a5f2a4fc",
+      notifyButton: {
+        enable: true,
+      },
+    });
+  });
+</script>
     <style>
         :root {
             --bg-color: #f4f7f6;
