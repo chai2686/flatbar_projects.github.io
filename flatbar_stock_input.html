@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานเหล็กแบน">
-    <meta name="Version" content="2.5 TR">
+    <meta name="Version" content="2.7 TR">
     <title>สแกนนับสต็อกเหล็กแบน</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -137,7 +137,7 @@
             gap: 10px;
             width: 100%;
             margin-top: 25px;
-            padding: 15px 20px;
+            padding: 15px 10px;
             background-color: #f8fafc;
             border: 1px solid var(--border-light);
             border-radius: 12px;
@@ -286,25 +286,19 @@
 
         <div class="toggle-container">
             <select id="extra-dropdown" class="dropdown-select">
-                <option value="" disabled>โซนที่แสกน</option>
-				<optgroup label="โซน K2">
-                <option value="K2 A">K2 A</option>
-				<option value="K2 B">K2 B</option>
-				<option value="K2 C">K2 C</option>
-				<optgroup label="โซน K4">
-                <option value="K4 A">K4 A</option>
-				<option value="K4 B">K4 B</option>
-				<option value="K4 C">K4 C</option>
-				<optgroup label="โซน K6">
-                <option value="K6 A">K6 A</option>
-				<option value="K6 B">K6 B</option>
-				<option value="K6 C">K6 C</option>
-				<optgroup label="โซน K8">
-                <option value="K8 A">K8 A</option>
-				<option value="K8 B">K8 B</option>
-				<option value="K8 C">K8 C</option>
-				<option value="K8 D">K8 D</option>
+                <option value="" selected disabled>โซน</option>
+                <option value="K2">K2</option>
+				<option value="K4">K4</option>
+				<option value="K6">K6</option>
+				<option value="K8">K8</option>
             </select>
+			<select id="extra-dropdown2" class="dropdown-select">
+				<option value="" selected disabled>กอง</option>
+				<option value="กองที่ 1">กองที่ 1</option>
+				<option value="กองที่ 2">กองที่ 2</option>
+				<option value="กองที่ 3">กองที่ 3</option>
+				<option value="กองที่ 4">กองที่ 4</option>
+			</select>
             <div class="toggle-group">
                 <span class="toggle-label">สแกนต่อเนื่อง</span>
                 <label class="switch">
@@ -316,7 +310,7 @@
         
         <div class="footer-text">
             <span>Powered by Flatbar Division™️</span>
-            <span onclick="about()">Version 2.5 Technical Review</span>
+            <span onclick="about()">Version 2.7 Technical Review</span>
         </div>
     </div>
 
@@ -335,6 +329,8 @@
         const qtyContainer = document.getElementById('qty-container');
         const qtyInput = document.getElementById('qty-input');
         const extraDropdown = document.getElementById('extra-dropdown');
+		const extraDropdown2 = document.getElementById('extra-dropdown2');
+		
         let html5QrCode;
 
         // Modern Toast Notification Config
@@ -406,10 +402,85 @@
         }
         
         function save() {
+			const k2url = "https://docs.google.com/forms/d/e/1FAIpQLScKV5UVrhNebe7ckFjgMsxELIyqp6qpXxIxpYzm0TaVFmRbmA/formResponse?usp=pp_url";
+			const k2gate = "&entry.1463457027=";
+			const k2location = "&entry.1640542300="
+			const k2bundle = "&entry.171595512="
+			const k2quantity = "&entry.2747554="
+			
+			const k4url = "https://docs.google.com/forms/d/e/1FAIpQLSdO2mvA8jVWC95jIqqR3BHjJvurSpC8VTL6kECgvanANcAYtw/formResponse?usp=pp_url";
+			const k4gate = "&entry.1463457027=";
+			const k4location = "&entry.1640542300="
+			const k4bundle = "&entry.171595512="
+			const k4quantity = "&entry.2747554="
+			
+			const k6url = "https://docs.google.com/forms/d/e/1FAIpQLSeOrvUA_lt2iMJs19S4ccRR7DpkVSOWqZtyp25aNjagRw-nSg/formResponse?usp=pp_url";
+			const k6gate = "&entry.1463457027=";
+			const k6location = "&entry.1640542300="
+			const k6bundle = "&entry.171595512="
+			const k6quantity = "&entry.2747554="
+			
+			const k8url = "https://docs.google.com/forms/d/e/1FAIpQLSdmSMTEp3FqmYmK08vSbpvNC_Q8AIxwEOtisxDAkhZYkGX1pw/formResponse?usp=pp_url";
+			const k8gate = "&entry.1463457027=";
+			const k8location = "&entry.1640542300="
+			const k8bundle = "&entry.171595512="
+			const k8quantity = "&entry.2747554="
+			
+			var url = "";
+			var entrygate = "";
+			var entrylocation = "";
+			var entrybundle = "";
+			var entryquantity = "";
+			
 			const zonename = extraDropdown.value;
+			const pilename = extraDropdown2.value;
+			
+			if (zonename === "K2") {
+				url = k2url;
+				entrygate = k2gate;
+				entrylocation = k2location;
+				entrybundle = k2bundle;
+				entryquantity = k2quantity;
+			} else if (zonename === "K4") {
+				url = k4url;
+				entrygate = k4gate;
+				entrylocation = k4location;
+				entrybundle = k4bundle;
+				entryquantity = k4quantity;
+			} else if (zonename === "K6") {
+				url = k6url;
+				entrygate = k6gate;
+				entrylocation = k6location;
+				entrybundle = k6bundle;
+				entryquantity = k6quantity;
+			} else if (zonename === "K8") {
+				url = k8url;
+				entrygate = k8gate;
+				entrylocation = k8location;
+				entrybundle = k8bundle;
+				entryquantity = k8quantity;
+			}
+			
             let qrinputtext = document.getElementById('qr-input01').value.trim();
+			let qtyinputtext = document.getElementById('qty-input').value.trim();
+			
             if (!qrinputtext) {
                 Swal.fire('แจ้งเตือน', 'กรุณาสแกนหรือกรอกเลขบันเดิ้ล', 'warning');
+                return;
+            }
+			
+			if (!qtyinputtext) {
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุจำนวน', 'warning');
+                return;
+            }
+			
+			if (!zonename) {
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุโซน', 'warning');
+                return;
+            }
+			
+			if (!pilename) {
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุกอง', 'warning');
                 return;
             }
 
@@ -417,15 +488,10 @@
             let starCount = qrinput.length - 1;
             
             if (starCount == 5 || starCount == 4) {
-                var url = "https://docs.google.com/forms/d/e/1FAIpQLScv4TWR7AFuFZ5bbYzCkMUEaD_WRyrc1pNxCByV00d9XHdwUg/formResponse?usp=pp_url";
-                var entrybundle = "&entry.2033344874=";
-                var entryquantity = "&entry.121010151=";
-                var entryzonename = "&entry.840728088="; 
-                
                 var bundle = qrinput[0];
                 var quantity = qrinput[3];
                 
-                url += entrybundle + encodeURIComponent(bundle) + entryquantity + encodeURIComponent(quantity) + entryzonename + encodeURIComponent(zonename);
+                url += entrybundle + encodeURIComponent(bundle) + entryquantity + encodeURIComponent(quantity) + entryzonename + encodeURIComponent(zonename) + entrygate + encodeURIComponent(zonename) + entrylocation + encodeURIComponent(pilename);
                 
                 // Example of attaching the dropdown selection dynamically if needed:
                 // if (extraDropdown.value) { url += entryzonename + encodeURIComponent(extraDropdown.value); }
@@ -455,12 +521,8 @@
 				}
 				
                 if(validate) {
-                    var url = "https://docs.google.com/forms/d/e/1FAIpQLScv4TWR7AFuFZ5bbYzCkMUEaD_WRyrc1pNxCByV00d9XHdwUg/formResponse?usp=pp_url";
-                    var entrybundle = "&entry.2033344874=";
-					var entryquantity = "&entry.121010151=";
-					var entryzonename = "&entry.840728088="; 
                     
-                    url += entrybundle + encodeURIComponent(qrinputtext) + entryquantity + encodeURIComponent(qtyInput.value) + entryzonename + encodeURIComponent(zonename);
+                    url += entrybundle + encodeURIComponent(qrinputtext) + entryquantity + encodeURIComponent(qtyInput.value) + entrygate + encodeURIComponent(zonename) + entrylocation + encodeURIComponent(pilename);
                     
                     // Add manual quantity to the URL payload if it was typed in
                     var manualQty = qtyInput.value.trim();
