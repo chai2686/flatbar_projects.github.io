@@ -362,24 +362,39 @@
 
             html5QrCode = new Html5Qrcode("qr-reader");
 
-            Html5Qrcode.getCameras().then(cameras => {
-                if (cameras && cameras.length) {
-                    html5QrCode.start(
-                        { facingMode: "environment" },
-                        { fps: 10, qrbox: { width: 250, height: 250 } },
-                        qrCodeMessage => {
-                            document.getElementById('qr-input01').value = qrCodeMessage;
-                            beep();
-                            closeScanner();
-                            if (continuousscan.checked) {
-                                save();
-                                setTimeout(openScanner, 300);
-                            }
-                        },
-                        errorMessage => { /* Optional logging */ }
-                    );
+            // Create a responsive QR box (70% of the video size)
+            const qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
+                let minEdgePercentage = 0.7; 
+                let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+                let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+                return {
+                    width: qrboxSize,
+                    height: qrboxSize
+                };
+            };
+
+            // Start the camera directly
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { 
+                    fps: 20, 
+                    qrbox: qrboxFunction,
+                    disableFlip: false // Helps catch mirrored QR codes
+                },
+                qrCodeMessage => {
+                    document.getElementById('qr-input01').value = qrCodeMessage;
+                    beep();
+                    closeScanner();
+                    if (continuousscan.checked) {
+                        save();
+                        // Increased delay slightly to prevent camera hardware lockup
+                        setTimeout(openScanner, 600);
+                    }
+                },
+                errorMessage => { 
+                    // Optional logging: keep this empty so it doesn't spam the console 
                 }
-            }).catch(err => {
+            ).catch(err => {
                 Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเข้าถึงกล้องได้: ' + err, 'error');
                 closeScanner();
             });
