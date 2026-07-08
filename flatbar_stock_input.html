@@ -463,6 +463,9 @@
 			
             let qrinputtext = document.getElementById('qr-input01').value.trim();
 			let qtyinputtext = document.getElementById('qty-input').value.trim();
+
+			let qrinput = qrinputtext.split('*');
+            let starCount = qrinput.length - 1;
 			
             if (!qrinputtext) {
                 Swal.fire('แจ้งเตือน', 'กรุณาสแกนหรือกรอกเลขบันเดิ้ล', 'warning');
@@ -483,9 +486,6 @@
                 Swal.fire('แจ้งเตือน', 'กรุณาระบุกอง', 'warning');
                 return;
             }
-
-            let qrinput = qrinputtext.split('*');
-            let starCount = qrinput.length - 1;
             
             if (starCount == 5 || starCount == 4) {
                 var bundle = qrinput[0];
