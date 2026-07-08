@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานเหล็กแบน">
-    <meta name="Version" content="2.7 TR">
+    <meta name="Version" content="2.7 TR (Corrected)">
     <title>สแกนนับสต็อกเหล็กแบน</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
 
     <style>
         :root {
-            --primary-color: #10b981; /* Emerald Green for scanning */
+            --primary-color: #10b981; 
             --primary-hover: #059669;
             --surface: #ffffff;
             --background: #f1f5f9;
@@ -86,7 +86,6 @@
             background-color: #fff;
         }
 
-        /* Container to handle dynamic quantity input animation */
         #qty-container {
             width: 100%;
             display: none;
@@ -129,7 +128,6 @@
         .btn-secondary { background-color: #e2e8f0; color: #475569; }
         .btn-secondary:hover { background-color: #cbd5e1; }
 
-        /* Modern Toggle Switch & Dropdown Row */
         .toggle-container {
             display: flex;
             align-items: center;
@@ -208,7 +206,6 @@
         input:checked + .slider { background-color: var(--primary-color); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* Scanner Modal */
         #overlay {
             display: none;
             position: fixed;
@@ -288,17 +285,17 @@
             <select id="extra-dropdown" class="dropdown-select">
                 <option value="" selected disabled>โซน</option>
                 <option value="K2">K2</option>
-				<option value="K4">K4</option>
-				<option value="K6">K6</option>
-				<option value="K8">K8</option>
+                <option value="K4">K4</option>
+                <option value="K6">K6</option>
+                <option value="K8">K8</option>
             </select>
-			<select id="extra-dropdown2" class="dropdown-select">
-				<option value="" selected disabled>กอง</option>
-				<option value="กองที่ 1">กองที่ 1</option>
-				<option value="กองที่ 2">กองที่ 2</option>
-				<option value="กองที่ 3">กองที่ 3</option>
-				<option value="กองที่ 4">กองที่ 4</option>
-			</select>
+            <select id="extra-dropdown2" class="dropdown-select">
+                <option value="" selected disabled>กอง</option>
+                <option value="กองที่ 1">กองที่ 1</option>
+                <option value="กองที่ 2">กองที่ 2</option>
+                <option value="กองที่ 3">กองที่ 3</option>
+                <option value="กองที่ 4">กองที่ 4</option>
+            </select>
             <div class="toggle-group">
                 <span class="toggle-label">สแกนต่อเนื่อง</span>
                 <label class="switch">
@@ -310,7 +307,7 @@
         
         <div class="footer-text">
             <span>Powered by Flatbar Division™️</span>
-            <span onclick="about()">Version 2.7 Technical Review</span>
+            <span onclick="about()">Version 2.8 Technical Review</span>
         </div>
     </div>
 
@@ -329,11 +326,10 @@
         const qtyContainer = document.getElementById('qty-container');
         const qtyInput = document.getElementById('qty-input');
         const extraDropdown = document.getElementById('extra-dropdown');
-		const extraDropdown2 = document.getElementById('extra-dropdown2');
-		
+        const extraDropdown2 = document.getElementById('extra-dropdown2');
+        
         let html5QrCode;
 
-        // Modern Toast Notification Config
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -342,15 +338,14 @@
             timerProgressBar: true
         });
 
-        // Trigger dynamic quantity field on focus or typing
         qrInput.addEventListener('focus', () => {
             qtyContainer.style.display = 'block';
         });
-		
-		qrInput.addEventListener('focusout', () => {
-			if (qrInput.value == "") {
-            qtyContainer.style.display = 'none';
-			}
+        
+        qrInput.addEventListener('focusout', () => {
+            if (qrInput.value === "") {
+                qtyContainer.style.display = 'none';
+            }
         });
 
         qrInput.addEventListener('input', () => {
@@ -378,7 +373,6 @@
                             closeScanner();
                             if (continuousscan.checked) {
                                 save();
-                                // Add slight delay before reopening to prevent stutter
                                 setTimeout(openScanner, 300);
                             }
                         },
@@ -402,154 +396,105 @@
         }
         
         function save() {
-			const k2url = "https://docs.google.com/forms/d/e/1FAIpQLScKV5UVrhNebe7ckFjgMsxELIyqp6qpXxIxpYzm0TaVFmRbmA/formResponse?usp=pp_url";
-			const k2gate = "&entry.1463457027=";
-			const k2location = "&entry.1640542300="
-			const k2bundle = "&entry.171595512="
-			const k2quantity = "&entry.2747554="
-			
-			const k4url = "https://docs.google.com/forms/d/e/1FAIpQLSdO2mvA8jVWC95jIqqR3BHjJvurSpC8VTL6kECgvanANcAYtw/formResponse?usp=pp_url";
-			const k4gate = "&entry.1463457027=";
-			const k4location = "&entry.1640542300="
-			const k4bundle = "&entry.171595512="
-			const k4quantity = "&entry.2747554="
-			
-			const k6url = "https://docs.google.com/forms/d/e/1FAIpQLSeOrvUA_lt2iMJs19S4ccRR7DpkVSOWqZtyp25aNjagRw-nSg/formResponse?usp=pp_url";
-			const k6gate = "&entry.1463457027=";
-			const k6location = "&entry.1640542300="
-			const k6bundle = "&entry.171595512="
-			const k6quantity = "&entry.2747554="
-			
-			const k8url = "https://docs.google.com/forms/d/e/1FAIpQLSdmSMTEp3FqmYmK08vSbpvNC_Q8AIxwEOtisxDAkhZYkGX1pw/formResponse?usp=pp_url";
-			const k8gate = "&entry.1463457027=";
-			const k8location = "&entry.1640542300="
-			const k8bundle = "&entry.171595512="
-			const k8quantity = "&entry.2747554="
-			
-			var url = "";
-			var entrygate = "";
-			var entrylocation = "";
-			var entrybundle = "";
-			var entryquantity = "";
-			
-			const zonename = extraDropdown.value;
-			const pilename = extraDropdown2.value;
-			
-			if (zonename === "K2") {
-				url = k2url;
-				entrygate = k2gate;
-				entrylocation = k2location;
-				entrybundle = k2bundle;
-				entryquantity = k2quantity;
-			} else if (zonename === "K4") {
-				url = k4url;
-				entrygate = k4gate;
-				entrylocation = k4location;
-				entrybundle = k4bundle;
-				entryquantity = k4quantity;
-			} else if (zonename === "K6") {
-				url = k6url;
-				entrygate = k6gate;
-				entrylocation = k6location;
-				entrybundle = k6bundle;
-				entryquantity = k6quantity;
-			} else if (zonename === "K8") {
-				url = k8url;
-				entrygate = k8gate;
-				entrylocation = k8location;
-				entrybundle = k8bundle;
-				entryquantity = k8quantity;
-			}
-			
-            let qrinputtext = document.getElementById('qr-input01').value.trim();
-			let qtyinputtext = document.getElementById('qty-input').value.trim();
-
-			let qrinput = qrinputtext.split('*');
-            let starCount = qrinput.length - 1;
-			
-            if (!qrinputtext) {
-                Swal.fire('แจ้งเตือน', 'กรุณาสแกนหรือกรอกเลขบันเดิ้ล', 'warning');
-                return;
-            }
-			
-			if (starCount !== 5 & starCount !== 4 & !qtyinputtext) {
-                Swal.fire('แจ้งเตือน', 'กรุณาระบุจำนวน', 'warning');
-                return;
-            }
-			
-			if (!zonename) {
+            // Google Form URLs per zone
+            const k2url = "https://docs.google.com/forms/d/e/1FAIpQLScKV5UVrhNebe7ckFjgMsxELIyqp6qpXxIxpYzm0TaVFmRbmA/formResponse?usp=pp_url";
+            const k4url = "https://docs.google.com/forms/d/e/1FAIpQLSdO2mvA8jVWC95jIqqR3BHjJvurSpC8VTL6kECgvanANcAYtw/formResponse?usp=pp_url";
+            const k6url = "https://docs.google.com/forms/d/e/1FAIpQLSeOrvUA_lt2iMJs19S4ccRR7DpkVSOWqZtyp25aNjagRw-nSg/formResponse?usp=pp_url";
+            const k8url = "https://docs.google.com/forms/d/e/1FAIpQLSdmSMTEp3FqmYmK08vSbpvNC_Q8AIxwEOtisxDAkhZYkGX1pw/formResponse?usp=pp_url";
+            
+            // Shared Form Field IDs
+            const entrygate = "&entry.1463457027=";
+            const entrylocation = "&entry.1640542300=";
+            const entrybundle = "&entry.171595512=";
+            const entryquantity = "&entry.2747554=";
+            
+            var url = "";
+            const zonename = extraDropdown.value;
+            const pilename = extraDropdown2.value;
+            
+            // 1. Initial Validation
+            if (!zonename) {
                 Swal.fire('แจ้งเตือน', 'กรุณาระบุโซน', 'warning');
                 return;
             }
-			
-			if (!pilename) {
+            if (!pilename) {
                 Swal.fire('แจ้งเตือน', 'กรุณาระบุกอง', 'warning');
                 return;
             }
             
-            if (starCount == 5 || starCount == 4) {
+            // 2. Set the base URL depending on Zone
+            if (zonename === "K2") url = k2url;
+            else if (zonename === "K4") url = k4url;
+            else if (zonename === "K6") url = k6url;
+            else if (zonename === "K8") url = k8url;
+            
+            let qrinputtext = document.getElementById('qr-input01').value.trim();
+            let qtyinputtext = document.getElementById('qty-input').value.trim();
+
+            if (!qrinputtext) {
+                Swal.fire('แจ้งเตือน', 'กรุณาสแกนหรือกรอกเลขบันเดิ้ล', 'warning');
+                return;
+            }
+            
+            let qrinput = qrinputtext.split('*');
+            let starCount = qrinput.length - 1;
+            
+            if (starCount !== 5 && starCount !== 4 && !qtyinputtext) {
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุจำนวน', 'warning');
+                return;
+            }
+            
+            // 3. Process the Data
+            if (starCount === 5 || starCount === 4) {
                 var bundle = qrinput[0];
                 var quantity = qrinput[3];
                 
-                url += entrybundle + encodeURIComponent(bundle) + entryquantity + encodeURIComponent(quantity) + entryzonename + encodeURIComponent(zonename) + entrygate + encodeURIComponent(zonename) + entrylocation + encodeURIComponent(pilename);
+                url += entrybundle + encodeURIComponent(bundle) + 
+                       entryquantity + encodeURIComponent(quantity) + 
+                       entrygate + encodeURIComponent(zonename) + 
+                       entrylocation + encodeURIComponent(pilename);
                 
-                // Example of attaching the dropdown selection dynamically if needed:
-                // if (extraDropdown.value) { url += entryzonename + encodeURIComponent(extraDropdown.value); }
-
-                var img = document.createElement("img");
-                img.src = url;
-                
-                resetInputs();
-                showSuccessToast(bundle);
-            }
-            else {
+                submitViaImage(url, bundle);
+            } else {
                 var filter = /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/;
-                var validate = false;
-
-                if (filter.test(qrinputtext)) {
-                    if(qrinputtext.length == 10){
-                        validate = true;
-                    } else {
-                        Swal.fire('ข้อผิดพลาด', 'กรุณาใส่เลขบันเดิ้ล 10 หลัก', 'error');
-                    }
-                } else {
+                
+                if (!filter.test(qrinputtext)) {
                     Swal.fire('ข้อผิดพลาด', 'รูปแบบเลขบันเดิ้ลไม่ถูกต้อง', 'error');
+                    return;
                 }
-                if(qtyInput.value =="") {
-					validate = false;
-					Swal.fire('ข้อผิดพลาด', 'กรุณาระบุจำนวน', 'error');
-				}
-				
-                if(validate) {
-                    
-                    url += entrybundle + encodeURIComponent(qrinputtext) + entryquantity + encodeURIComponent(qtyInput.value) + entrygate + encodeURIComponent(zonename) + entrylocation + encodeURIComponent(pilename);
-                    
-                    // Add manual quantity to the URL payload if it was typed in
-                    var manualQty = qtyInput.value.trim();
-                    if(manualQty) {
-                        var entryquantity = "&entry.2112134701=";
-                        url += entryquantity + encodeURIComponent(manualQty);
-                    }
-                    
-                    // if (extraDropdown.value) { url += "&entry.0000000000=" + encodeURIComponent(extraDropdown.value); }
-
-                    var img = document.createElement("img");
-                    img.src = url;
-                    
-                    resetInputs();
-                    showSuccessToast(qrinputtext);
+                if (qrinputtext.length !== 10) {
+                    Swal.fire('ข้อผิดพลาด', 'กรุณาใส่เลขบันเดิ้ล 10 หลัก', 'error');
+                    return;
                 }
+                if (qtyinputtext === "") {
+                    Swal.fire('ข้อผิดพลาด', 'กรุณาระบุจำนวน', 'error');
+                    return;
+                }
+                
+                url += entrybundle + encodeURIComponent(qrinputtext) + 
+                       entryquantity + encodeURIComponent(qtyinputtext) + 
+                       entrygate + encodeURIComponent(zonename) + 
+                       entrylocation + encodeURIComponent(pilename);
+                
+                submitViaImage(url, qrinputtext);
             }
         }
 
-        // Helper function to reset form states
+        // Extracted submission logic to keep code clean
+        function submitViaImage(url, bundleId) {
+            var img = document.createElement("img");
+            img.src = url;
+            
+            resetInputs();
+            showSuccessToast(bundleId);
+        }
+
         function resetInputs() {
             document.getElementById('qr-input01').value = "";
             document.getElementById('qty-input').value = "";
             document.getElementById('qty-container').style.display = "none";
         }
 
-        // Helper function for silent/non-blocking success notifications
         function showSuccessToast(bundleId) {
             Toast.fire({
                 icon: 'success',
@@ -567,9 +512,8 @@
             const gainNode = audioCtx.createGain();
 
             oscillator.type = "sine";
-            oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime); // High pitch beep
+            oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
             
-            // Short fade out to prevent clicking noise
             gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
 
