@@ -1,0 +1,547 @@
+function myFunction() {
+const ss = SpreadsheetApp.getActiveSpreadsheet();
+const wmssheet = ss.getSheetByName("WMS");
+const wms = wmssheet.getRange("A31").getValue();
+const sapsheet = ss.getSheetByName("SAP");
+const sap = sapsheet.getRange("B2").getValue();
+  if (wms && sap){
+  extractWMSDataFinal2();
+  extractSAPtoShipment2();
+  extractToDatabase2(true);
+  }
+}
+
+function extractWMSDataFinal2() {
+  const ss          = SpreadsheetApp.getActiveSpreadsheet();
+  const wmsSheet    = ss.getSheetByName("WMS");
+  const doItemSheet = ss.getSheetByName("Do_Item");
+
+  // ── 1. อ่าน WMS ────────────────────────────────────────────────────────────
+  const wmsRawData = wmsSheet.getDataRange().getValues();
+
+
+  const { wmsMap, commaIssueCount } = parseWMS(wmsRawData);
+
+  // ── 2. อ่าน Do_Item ทุก column (รวม user cols) ───────────────────────────
+  const lastRowDo = doItemSheet.getLastRow();
+  const lastColDo = doItemSheet.getLastColumn();
+  const totalCols = Math.max(lastColDo, WMS_COLS);
+
+  const seenIds        = new Set();  // ID ที่เจอแล้วใน Do_Item loop
+  const warningRows    = [];         // ID ที่ WMS drop แต่ผู้ใช้กรอกข้อมูลไว้
+  const updateMap      = new Map();  // sheetRow → wmsCols (hoist ออกนอก if)
+  const rowsToDelete   = [];         // sheetRow ที่ต้อง delete (WMS drop + ว่าง)
+  let   addedCount     = 0;
+
+  // ── 3. อัปเดต WMS cols เฉพาะ Row ที่ match — ไม่ขยับ Row เดิม ────────────
+  // Strategy: เขียนทับเฉพาะ col A–O (WMS_COLS) ตามตำแหน่ง Row เดิม
+  // → สี, format, user cols ที่ผู้ใช้ทำ Manual จะไม่หายและไม่ขยับ
+  if (lastRowDo > 1) {
+    const doValues = doItemSheet
+      .getRange(2, 1, lastRowDo - 1, totalCols)
+      .getValues();
+
+    // รวบ batch update: rowIdx → wmsCols ที่ต้องเขียน (declared above)
+    doValues.forEach((row, idx) => {
+      while (row.length < totalCols) row.push("");
+      const id    = row[0] ? String(row[0]).trim() : "";
+      if (!id || !id.startsWith(ID_PREFIX)) return;
+
+      const inWms    = wmsMap.get(id);
+      const userCols = row.slice(USER_COL_START);
+      const statusDo = String(row[11] ?? "").trim();
+      const sheetRow = idx + 2; // แถวจริงใน Sheet (1-based + header)
+
+      if (inWms) {
+        // อัปเดต WMS cols ตำแหน่งเดิม (ไม่แตะ user cols และสี)
+        updateMap.set(sheetRow, inWms.wmsCols);
+        seenIds.add(id);
+
+      } else if (isTerminal(statusDo)) {
+        // Completed / Cancel ที่ WMS drop → ไม่แตะเลย คงไว้ทั้งแถว
+
+      } else if (hasUserData(userCols)) {
+        // WMS drop + ผู้ใช้กรอกไว้ → เก็บไว้ + แจ้งเตือน
+        warningRows.push(id);
+
+      } else {
+        // WMS drop + ว่างทั้งหมด → เก็บ sheetRow ไว้ deleteRow ทีหลัง
+        rowsToDelete.push(sheetRow);
+      }
+    });
+
+    // Batch write: เขียนทีละ Row เฉพาะที่เปลี่ยน (ไม่ clear ทั้งแผ่น)
+    for (const [sheetRow, wmsCols] of updateMap) {
+      doItemSheet.getRange(sheetRow, 1, 1, WMS_COLS).setValues([wmsCols]);
+    }
+
+    // Format ตัวเลข col H–K เฉพาะ Row ที่ update
+    for (const [sheetRow] of updateMap) {
+      doItemSheet.getRange(sheetRow, 8, 1, 4).setNumberFormat("#,##0.00");
+    }
+
+    // Delete Row ที่ WMS drop ออก — ลบจากล่างขึ้นบน Row อื่นไม่ขยับ
+    const sortedToDelete = [...new Set(rowsToDelete)].sort((a, b) => b - a);
+    for (const sheetRow of sortedToDelete) {
+      doItemSheet.deleteRow(sheetRow);
+    }
+  }
+
+  // ── 4. ID ใหม่จาก WMS ที่ไม่เคยมีใน Do_Item → batch append ────────────────
+  // รวบทุก Row ใหม่ก่อน แล้ว setValues ครั้งเดียว (ไม่ loop API call)
+  const emptyUserCols = Array(Math.max(totalCols - WMS_COLS, 0)).fill("");
+  const newRows = [];
+
+  for (const [id, entry] of wmsMap) {
+    if (!seenIds.has(id)) {
+      newRows.push([...entry.wmsCols, ...emptyUserCols]);
+      addedCount++;
+    }
+  }
+
+  if (newRows.length > 0) {
+    const writeCols = newRows[0].length;
+    const startRow  = Math.max(doItemSheet.getLastRow() + 1, 2);
+    const destRange = doItemSheet.getRange(startRow, 1, newRows.length, writeCols);
+    destRange.setNumberFormat("@");
+    destRange.setValues(newRows);
+    // Format ตัวเลข col H–K (col 8–11)
+    doItemSheet.getRange(startRow, 8, newRows.length, 4).setNumberFormat("#,##0.00");
+  }
+
+  // ── 5. ล้าง WMS ยกเว้น A1 ────────────────────────────────────────────────
+  const lRow = wmsSheet.getLastRow();
+  const lCol = wmsSheet.getLastColumn();
+  if (lRow > 1) wmsSheet.getRange(2, 1, lRow - 1, Math.max(lCol, 1)).clear();
+  if (lCol > 1) wmsSheet.getRange(1, 2, 1, lCol - 1).clear();
+
+  // ── 6. แสดงผล ─────────────────────────────────────────────────────────────
+  // updatedCount = จำนวน Row ที่ถูก update (มีใน updateMap และไม่ใช่ Row ที่ถูกล้าง)
+  const updatedCount = updateMap.size;
+  const totalChanged = addedCount + updatedCount;
+  // ── return summary ให้ Menu รวม หรือแสดง dialog ถ้าเรียกแบบ standalone ──
+  const result = {
+    added:    addedCount,
+    updated:  updatedCount,
+    issues:   commaIssueCount,
+    warnings: warningRows
+  };
+  // เรียกโดยตรงจาก Menu standalone → แสดง dialog
+  // เรียกจาก confirmWmsAndSap → return เงียบๆ (caller แสดงเอง)
+  const callerName = (new Error()).stack || '';
+  
+  return result;
+}
+
+function extractSAPtoShipment2() {
+  const ss        = SpreadsheetApp.getActiveSpreadsheet();
+  const sapSheet  = ss.getSheetByName(SAP_SHEET_NAME);
+  const shipSheet = ss.getSheetByName(SHIPMENT_SHEET_NAME);
+  // (dbSheet ไม่จำเป็น)
+
+  const sapLastRow = sapSheet.getLastRow();
+  const sapValues = sapSheet
+    .getRange(SAP_HEADER_ROW + 1, SAP_READ_START, sapLastRow - SAP_HEADER_ROW, SAP_READ_COLS)
+    .getValues();
+
+  // parse SAP rows → group ตาม ShipNo (col B = index 1)
+  // shipGroups: Map<shipNo, [{id, data, customer}, ...]>
+  const shipGroups = new Map();
+  for (const row of sapValues) {
+    while (row.length < SAP_READ_COLS) row.push("");
+    if (!isValidSapRow(row)) continue;
+    const data     = row.slice(SAP_DATA_IDX, SAP_DATA_IDX + SAP_DATA_COLS);
+    data[2]        = parseItemPart(data[2]);
+    const id       = makeSapId(row[SAP_KEY_IDX], data[1], data[2]); // ShipNo+DO+Item
+    const customer = cleanCustomerName(row[SAP_CUST_IDX] || "");
+    const shipNo   = String(row[SAP_KEY_IDX]).trim(); // col B = Shipment Number
+    if (!shipGroups.has(shipNo)) shipGroups.set(shipNo, []);
+    shipGroups.get(shipNo).push({ id, data, customer });
+  }
+
+  // ── 2. อ่าน Shipment ที่มีอยู่ทั้งหมด ────────────────────────────────────
+  const shipLastRow = shipSheet.getLastRow();
+  const shipLastCol = Math.max(shipSheet.getLastColumn(), SHIP_DATA_COL + SAP_DATA_COLS - 1);
+  let shipData = []; // [[...row values], ...]
+  if (shipLastRow > SAP_HEADER_ROW) {
+    shipData = shipSheet
+      .getRange(SAP_HEADER_ROW + 1, 1, shipLastRow - SAP_HEADER_ROW, shipLastCol)
+      .getValues();
+  }
+
+  // ── 3. ตรวจแต่ละ ShipNo ว่าต้อง reset หรือแค่ append ─────────────────────
+  // existingShipNos: Set ของ ShipNo ที่มีอยู่แล้วใน Shipment (col B = index 1)
+  const existingShipNos = new Set(
+    shipData.map(r => String(r[1] || "").trim()).filter(v => v !== "")
+  );
+  // existingIds: Set ของ ID (col A) ทั้งหมด
+  const existingIds = new Set(
+    shipData.map(r => String(r[0] || "").trim()).filter(v => v !== "")
+  );
+
+  // ShipNo ที่มีอยู่แล้วและ SAP ส่งมาใหม่ → ต้อง reset
+  const shipNosToReset = [...shipGroups.keys()].filter(s => existingShipNos.has(s));
+
+  // ── 4. (ไม่ backup — Database ไม่ถูกลบ)
+
+  // ── 5. ลบ rows ของ ShipNo ที่ต้อง reset ออกจาก Shipment + Database ────────
+  let resetCount = 0;
+  if (shipNosToReset.length > 0) {
+    const resetSet = new Set(shipNosToReset);
+
+    // ลบจาก Shipment — กรอง rows ที่ไม่ใช่ ShipNo ที่ reset
+    const keptShip = shipData.filter(r => !resetSet.has(String(r[1] || "").trim()));
+
+    // เขียน Shipment ใหม่ทั้งหมด
+    const shipRange = shipSheet.getRange(2, 1, Math.max(shipLastRow - 1, 1), shipLastCol);
+    shipRange.clearContent();
+    if (keptShip.length > 0) {
+      shipSheet.getRange(2, 1, keptShip.length, shipLastCol).setValues(keptShip);
+    }
+    // อัปเดต shipData + existingIds ให้ตรงกับสิ่งที่เหลือ
+    shipData = keptShip;
+    existingIds.clear();
+    shipData.forEach(r => { const id = String(r[0] || "").trim(); if (id) existingIds.add(id); });
+
+    // (ไม่ลบ Database — ให้ extractToDatabase() Match + update เอง)
+
+    resetCount = shipNosToReset.length;
+  }
+
+  // ── 6. Append rows ใหม่ทั้งหมด (ทุก ShipNo จาก SAP) ──────────────────────
+  const newRows = [];
+  for (const [, entries] of shipGroups) {
+    for (const { id, data, customer } of entries) {
+      if (!existingIds.has(id)) {
+        newRows.push([id, ...data, customer]);
+        existingIds.add(id);
+      }
+    }
+  }
+
+  let addedCount = 0;
+  if (newRows.length > 0) {
+    const startRow   = Math.max(shipSheet.getLastRow() + 1, 2);
+    const writeCols  = Math.max(newRows[0].length, shipLastCol);
+    const paddedRows = newRows.map(r => {
+      const p = r.slice();
+      while (p.length < writeCols) p.push("");
+      return p;
+    });
+    shipSheet.getRange(startRow, SHIP_ID_COL, paddedRows.length, writeCols)
+      .setNumberFormat("@").setValues(paddedRows);
+    shipSheet.getRange(startRow, SHIP_NUM_COL, paddedRows.length, SHIP_NUM_COLS)
+      .setNumberFormat("#,##0.00");
+    shipSheet.getRange(startRow, SHIP_CUST_COL, paddedRows.length, 1)
+      .setNumberFormat("@");
+    addedCount = newRows.length;
+  }
+
+  // ── 7. (ไม่ restore — col M/N ยังอยู่ครบ)
+
+  // ── 8. ล้าง SAP ยกเว้น Header ─────────────────────────────────────────────
+  if (sapLastRow > SAP_HEADER_ROW) {
+    sapSheet.getRange(SAP_HEADER_ROW + 1, 1, sapLastRow - SAP_HEADER_ROW, sapSheet.getLastColumn())
+      .clearContent();
+  }
+
+  // ── 9. แสดงผล ─────────────────────────────────────────────────────────────
+  // ── return summary ─────────────────────────────────────────
+  const result = { added: addedCount, reset: resetCount };
+  const callerName = (new Error()).stack || '';
+  if (!callerName.includes('confirmWmsAndSap')) {
+  }
+  return result;
+}
+
+function extractToDatabase2(silent) {
+  // silent=true → ไม่เรียก getUi() (ใช้เมื่อเรียกจาก WebApp)
+  const ss        = SpreadsheetApp.getActiveSpreadsheet();
+  const doSheet   = ss.getSheetByName(DB_DOITEM_SHEET);
+  const shipSheet = ss.getSheetByName(DB_SHIPMENT_SHEET);
+  const dbSheet   = ss.getSheetByName(DB_SHEET_NAME);
+
+  // ── 1. อ่าน Do_Item col B+C+E → matchSet + doItemMap + doMatMap + doMap ──────
+  // matchSet  : Set<"DO|Item|Mat">              → Match 3 ตัว (exact)
+  // doItemMap : Map<"DO|Item", rawMat[]>        → DO+Item ตรง แต่ Mat อาจต่าง
+  // doMatMap  : Map<"DO|Mat",  rawItem[]>       → DO+Mat ตรง แต่ Item อาจต่าง
+  // doAllMap  : Map<DO, {items:Set, mats:Set}>  → ทุก Item/Mat ของ DO นั้น (สำหรับ hint)
+  // doMap     : Set<DO>                         → เช็คว่า DO นี้มีใน DI เลยไหม
+  const doLastRow  = doSheet.getLastRow();
+  const matchSet   = new Set();
+  const doItemMap  = new Map(); // "DO|Item" → [rawMat, ...]
+  const doMatMap   = new Map(); // "DO|Mat"  → [rawItem, ...]
+  const doAllMap   = new Map(); // DO → { items: Set<rawItem>, mats: Set<rawMat> }
+  const doMap      = new Set(); // normalizedDO
+  const noteMap    = new Map();
+  const locMap     = new Map(); // DO|Item → WMS Location (Do_Item col M=12)
+  const wmsStatMap = new Map(); // DO|Item → WMS Status  (Do_Item col L=11 = DI.STATUS)
+
+  if (doLastRow > DB_HEADER_ROW) {
+    doSheet
+      .getRange(DB_HEADER_ROW + 1, 1, doLastRow - DB_HEADER_ROW, 20) // อ่านถึง col T (index 19)
+      .getValues()
+      .forEach(row => {
+        const doNo    = String(row[DI_DO_IDX]).trim();           // DO: String().trim()
+        const item    = DB_parseItemPart(row[DI_ITEM_IDX]);     // Item: เหมือน SAP
+        const mat     = DB_normalizeKey(row[DI_MAT_IDX]);
+        const rawItem = String(row[DI_ITEM_IDX]).trim();
+        const rawMat  = String(row[DI_MAT_IDX]).trim();
+        const wmsLoc  = String(row[12]||'').trim(); // col M(12) = WMS Location
+        const wmsStat = String(row[11]||'').trim(); // col L(11) = WMS Status (DI.STATUS)
+        const note    = String(row[19]||"").trim(); // col T = Note
+        if (doNo === "" || doNo === "0") return;
+
+        matchSet.add(doNo + "|" + item + "|" + mat);
+        doMap.add(doNo);
+
+        // noteMap: DO+Item+Mat (normalized) → note
+        if (note) noteMap.set(doNo + "|" + item + "|" + mat, note);
+        const locKey = doNo + "|" + item;
+        if (wmsLoc)  locMap.set(locKey, wmsLoc);
+        if (wmsStat) wmsStatMap.set(locKey, wmsStat);
+
+        // doItemMap: DO+Item → Mats
+        const diKey = doNo + "|" + item;
+        if (!doItemMap.has(diKey)) doItemMap.set(diKey, []);
+        if (rawMat) doItemMap.get(diKey).push(rawMat);
+
+        // doMatMap: DO+Mat → Items
+        const dmKey = doNo + "|" + mat;
+        if (!doMatMap.has(dmKey)) doMatMap.set(dmKey, []);
+        if (rawItem) doMatMap.get(dmKey).push(rawItem);
+
+        // doAllMap: DO → all Items + Mats
+        if (!doAllMap.has(doNo)) doAllMap.set(doNo, { items: new Set(), mats: new Set() });
+        const da = doAllMap.get(doNo);
+        if (rawItem) da.items.add(rawItem);
+        if (rawMat)  da.mats.add(rawMat);
+      });
+  }
+
+  // ── 2. อ่าน Shipment ทุก Row ───────────────────────────────────────────────
+  const shipLastRow = shipSheet.getLastRow();
+  const shipLastCol = shipSheet.getLastColumn();
+
+  const shipValues = shipSheet
+    .getRange(DB_HEADER_ROW + 1, 1, shipLastRow - DB_HEADER_ROW, shipLastCol)
+    .getValues();
+
+  // ── 2.5 อ่าน Milk Run sheet → milkRunMap ─────────────────────────────────
+  // Milk Run col D (index 3) = key (= Shipment col B)
+  // Milk Run col R (index 17) = ค่าที่จะเอาไปใส่ Database col S (index 18)
+  const milkRunMap = new Map(); // ShipNo → milkRunValue
+  const mrSheet = ss.getSheetByName("Milk Run");
+  if (mrSheet && mrSheet.getLastRow() > DB_HEADER_ROW) {
+    const mrLastCol = Math.max(mrSheet.getLastColumn(), 19); // ถึง col R
+    mrSheet
+      .getRange(DB_HEADER_ROW + 1, 1, mrSheet.getLastRow() - DB_HEADER_ROW, mrLastCol)
+      .getValues()
+      .forEach(row => {
+        const key    = String(row[3]  || "").trim().replace(/^'+/, ""); // col D — ตัด ' นำหน้าออก
+        const val    = String(row[17] || "").trim(); // col R = index 17
+        if (!key) return;
+        // เก็บ key ทั้งแบบ raw และแบบตัดเลข 0 นำหน้า เพื่อ match ได้ทั้งสอง format
+        milkRunMap.set(key, val);
+        const keyNoZero = key.replace(/^0+/, "") || "0";
+        if (keyNoZero !== key) milkRunMap.set(keyNoZero, val);
+      });
+  }
+
+  // ── 3. อ่าน Database col A + row number → existingMap ─────────────────────
+  // existingMap: Map<dbId, sheetRow> เพื่อ update in-place ถ้า ID ซ้ำ
+  const dbLastRow   = dbSheet.getLastRow();
+  const existingMap = new Map(); // dbId → sheet row number (1-based)
+
+  if (dbLastRow > DB_HEADER_ROW) {
+    dbSheet
+      .getRange(DB_HEADER_ROW + 1, DB_ID_COL, dbLastRow - DB_HEADER_ROW, 1)
+      .getValues()
+      .forEach((row, i) => {
+        const id = String(row[0]).trim();
+        if (id !== "") existingMap.set(id, DB_HEADER_ROW + 1 + i);
+      });
+  }
+
+  // ── 4. วน Shipment → แบ่งเป็น newRows (append) และ updateRows (in-place) ──
+  let matchCount   = 0;
+  let noMatchCount = 0;
+  const newRows    = [];
+  const updateRows = []; // [{sheetRow, status}] อัปเดต col L เท่านั้น
+  const seenIds    = new Set(); // ป้องกัน batch ซ้ำ
+
+  for (const row of shipValues) {
+    const shipId = String(row[SH_ID_IDX]).trim();
+    if (shipId === "") continue;
+
+    const shipmentNo = String(row[SH_SHIP_IDX]).trim();
+    const shipDo     = String(row[SH_DO_IDX]).trim();         // DO: ต้องอยู่ก่อน makeDbId
+    const itemNorm   = DB_parseItemPart(row[SH_ITEM_IDX]);    // Item: เหมือน SAP parseItemPart
+    const dbId       = makeDbId(shipmentNo, shipDo, itemNorm);
+
+    if (seenIds.has(dbId)) continue; // batch ซ้ำ → ข้าม
+    seenIds.add(dbId);
+
+    // คำนวณ status
+    const shipItem = itemNorm;
+    const shipMat  = DB_normalizeKey(row[SH_MAT_IDX]);
+    const isMatch  = matchSet.has(shipDo + "|" + shipItem + "|" + shipMat);
+
+    if (isMatch) matchCount++;
+    else         noMatchCount++;
+
+    let status;
+    if (isMatch) {
+      status = "Match";
+
+    } else if (doItemMap.has(shipDo + "|" + shipItem)) {
+      // Step 2: DO+Item ตรง แต่ Mat ต่าง
+      const diMats = [...new Set(doItemMap.get(shipDo + "|" + shipItem))].join(", ");
+      const sapMat = String(row[SH_MAT_IDX]).trim();
+      status = `No Match (Mat เปลี่ยน: DI:${diMats}→SAP:${sapMat})`;
+
+    } else if (doMap.has(shipDo)) {
+      // Step 3: DO มีใน DI แต่ไม่มี DO+Item ตรง
+      const dmKey   = shipDo + "|" + shipMat;
+      const sapItem = String(row[SH_ITEM_IDX]).trim();
+      const sapMat  = String(row[SH_MAT_IDX]).trim();
+      const da      = doAllMap.get(shipDo);
+
+      if (doMatMap.has(dmKey)) {
+        // Step 3a: DO+Mat ตรง แต่ Item ต่าง → Item เปลี่ยน
+        const diItems = [...new Set(doMatMap.get(dmKey))].join(", ");
+        status = `No Match (Item เปลี่ยน: DI:${diItems}→SAP:${sapItem})`;
+
+      } else {
+        // Step 3b: DO ตรง แต่ทั้ง Item และ Mat ต่าง = SAP มีรายการเพิ่มที่ DI ไม่รู้จัก
+        status = `No Match (รายการเพิ่ม Item:${sapItem})`;
+      }
+
+    } else {
+      // Step 4: DO ไม่มีใน DI เลย
+      status = "No Match";
+    }
+
+    if (existingMap.has(dbId)) {
+      // ID มีอยู่แล้ว → อัปเดต col L (status) + col S (milkRun) in-place
+      const shipNoRaw   = String(row[SH_SHIP_IDX] || "").trim().replace(/^'+/, "");
+      const shipNoStrip = shipNoRaw.replace(/^0+/, "") || "0";
+      const milkRun     = milkRunMap.get(shipNoRaw)
+                       || milkRunMap.get(shipNoStrip)
+                       || "";
+      // Lookup Note: DO+Item+Mat จาก Do_Item col T
+      const noteKey  = DB_normalizeKey(row[SH_DO_IDX]) + "|" +
+                       DB_normalizeKey(row[SH_ITEM_IDX]) + "|" +
+                       DB_normalizeKey(row[SH_MAT_IDX]);
+      const noteVal  = noteMap.get(noteKey) || "";
+      updateRows.push({ sheetRow: existingMap.get(dbId), status, milkRun, noteVal, shipDo, shipItem });
+    } else {
+      // ใหม่ → append
+      // Lookup Milk Run
+      const shipNoRaw    = String(row[SH_SHIP_IDX] || "").trim().replace(/^'+/, "");
+      const shipNoStrip  = shipNoRaw.replace(/^0+/, "") || "0";
+      const milkRun      = milkRunMap.get(shipNoRaw)
+                        || milkRunMap.get(shipNoStrip)
+                        || "";
+      // Lookup Note: DO+Item+Mat จาก Do_Item col T
+      const noteKey2 = DB_normalizeKey(row[SH_DO_IDX]) + "|" +
+                       DB_normalizeKey(row[SH_ITEM_IDX]) + "|" +
+                       DB_normalizeKey(row[SH_MAT_IDX]);
+      const noteVal2 = noteMap.get(noteKey2) || "";
+      const newRow  = [dbId, ...row.slice(1)];
+      while (newRow.length < DB_STATUS_COL) newRow.push("");
+      newRow[DB_STATUS_COL - 1] = status;
+      while (newRow.length < 21) newRow.push("");
+      const diLocKey = shipDo + "|" + shipItem;
+      if (locMap.has(diLocKey))     newRow[12] = locMap.get(diLocKey);     // col M = WMS Location
+      if (wmsStatMap.has(diLocKey)) newRow[13] = wmsStatMap.get(diLocKey); // col N = WMS Status
+      newRow[18] = noteVal2;
+      newRow[19] = milkRun;
+      newRows.push(newRow);
+    }
+  }
+
+  // ── 5. Update in-place ───────────────────────────────────────────────────
+  let updatedCount = 0;
+  if (updateRows.length > 0) {
+    updateRows.sort((a, b) => a.sheetRow - b.sheetRow);
+    const dbLastRowNow = dbSheet.getLastRow();
+    const dbUpdCols    = Math.max(dbSheet.getLastColumn(), 20);
+    const dbUpdRange   = dbSheet.getRange(DB_HEADER_ROW + 1, 1, dbLastRowNow - DB_HEADER_ROW, dbUpdCols);
+    const dbUpdValues  = dbUpdRange.getValues();
+    let   dbUpdChanged = false;
+    for (const { sheetRow, status, milkRun, noteVal, shipDo: uDo, shipItem: uItem } of updateRows) {
+      const ri = sheetRow - DB_HEADER_ROW - 1;
+      if (ri < 0 || ri >= dbUpdValues.length) continue;
+      const row = dbUpdValues[ri];
+      const uLocKey = uDo + "|" + uItem;
+      row[DB_STATUS_COL - 1] = status;                                         // col L
+      if (!String(row[12]||"").trim() && locMap.has(uLocKey))
+        row[12] = locMap.get(uLocKey);                                          // col M = WMS Location
+      // col N: sync เฉพาะถ้าว่าง และไม่ใช่ Completed (ป้องกันทับ No Match Assign)
+      if (String(row[13]||"").trim() !== "Completed" && !String(row[13]||"").trim() && wmsStatMap.has(uLocKey))
+        row[13] = wmsStatMap.get(uLocKey);                                      // col N = WMS Status
+      if (noteVal && !String(row[18]||"").trim()) row[18] = noteVal;            // col S = Note
+      if (milkRun !== undefined) row[19] = milkRun;                             // col T = MilkRun
+      dbUpdChanged = true;
+    }
+    if (dbUpdChanged) dbUpdRange.setValues(dbUpdValues);
+    updatedCount = updateRows.length;
+  }
+
+  // ── 6. Append rows ใหม่ batch เดียว ──────────────────────────────────────
+  let addedCount = 0;
+  if (newRows.length > 0) {
+    const dbLastCol  = Math.max(dbSheet.getLastColumn(), newRows[0].length);
+    const startRow   = Math.max(dbSheet.getLastRow() + 1, 2);
+    const writeCols  = Math.max(newRows[0].length, dbLastCol);
+    const paddedRows = newRows.map(r => {
+      const p = r.slice();
+      while (p.length < writeCols) p.push("");
+      return p;
+    });
+    dbSheet
+      .getRange(startRow, DB_ID_COL, paddedRows.length, writeCols)
+      .setNumberFormat("@")
+      .setValues(paddedRows);
+    addedCount = newRows.length;
+  }
+
+  // ── 7. Restore Gate + Ship By Office จาก SAP reset backup ─────────────────
+  // (ไม่ restore — SAP ไม่ลบ Database แล้ว col M/N ยังอยู่ครบ)
+
+  // ── 8. บันทึกเวลา import ล่าสุดลง Z1 ──────────────────────────────────────
+  try { dbSheet.getRange('Z1').setValue(_nowThai()); } catch(e) {}
+
+  // ── 9. แสดงผล ─────────────────────────────────────────────────────────────
+
+  return { success: true, added: addedCount, updated: updatedCount, matched: matchCount, noMatch: noMatchCount };
+}
+
+function clearAllDataPerDay() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // Array of the sheet names you want to clear
+  const targetSheets = ["Do_Item", "Shipment", "Database"];
+
+  // Loop through each sheet name in the array
+  targetSheets.forEach(sheetName => {
+    const sheet = ss.getSheetByName(sheetName);
+    
+    // Safety check: skip if the sheet doesn't exist
+    if (!sheet) {
+      Logger.log(`Sheet "${sheetName}" not found. Skipping.`);
+      return; 
+    }
+
+    const lastRow = sheet.getLastRow();
+    
+    // If there is data below the header (row 1), clear it
+    if (lastRow > 1) {
+      sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).clearContent();
+      Logger.log(`"${sheetName}" below the first row cleared!`);
+    } else {
+      Logger.log(`"${sheetName}" has only one row or is empty. No content cleared.`);
+    }
+  });
+}
