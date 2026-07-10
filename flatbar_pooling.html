@@ -219,11 +219,10 @@
     <div id="dashboard">
         <p style="text-align: center;">กำลังโหลดข้อมูล...</p>
     </div>
-	<p id="version" class="footer-text footer-version">Version 2.9 Techinal Review</p>
+	<p id="version" class="footer-text footer-version">Version 2.9</p>
     <p class="footer-text" style="margin-top: 0px;">Powered by Flatbar Division™️</p>
 
     <script>
-	    loadVersion();
         const COLS = {
             A: 0, E: 4, F: 5, G: 6, H: 7, I: 8, 
             K: 10, M: 12, N: 13, O: 14, P: 15, Q: 16, T: 19
@@ -367,7 +366,6 @@
 					const preparingText = getVal(row, COLS.N) || "⚠️ ยังไม่เตรียม";
                     const colAData = getVal(row, COLS.A); 
 
-                    // ย้าย "ต้นทาง" ไปมุมขวาบน และเอา "การยกรวม" ออก
                     card.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                             <div class="card-item" style="margin-bottom: 0; padding-right: 10px;"><strong>ชื่อลูกค้า:</strong> ${getVal(row, COLS.K)}</div>
@@ -505,51 +503,43 @@
             document.title = originalTitle;
         }
 
-        let audioCtx = null;
+        // ==========================================
+        // NEW: Load external wave file "ring.wav"
+        // and loop it 10 times.
+        // ==========================================
+        const alertSound = new Audio('ring.wav');
+        let playCount = 0;
+        const MAX_PLAYS = 10;
 
+        // Add event listener to replay the sound until playCount reaches MAX_PLAYS
+        alertSound.addEventListener('ended', function() {
+            playCount++;
+            if (playCount < MAX_PLAYS) {
+                alertSound.currentTime = 0;
+                alertSound.play().catch(e => console.log(e));
+            }
+        });
+
+        // Unlock audio on first user click to bypass browser autoplay restrictions
         document.addEventListener('click', function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            alertSound.play().then(() => {
+                alertSound.pause();
+                alertSound.currentTime = 0; // Reset
+            }).catch(e => console.log("Audio unlock bypassed/prevented:", e));
+            
             document.removeEventListener('click', initAudio);
         }, { once: true });
 
         function playChime() {
-            if (!audioCtx) return; 
-
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime); 
-            osc.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.15); 
-            
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); 
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.5);
+            playCount = 0; // Reset the counter every time playChime is called
+            alertSound.currentTime = 0; 
+            alertSound.play().catch(error => {
+                console.warn("Autoplay blocked. User needs to interact with the page first.", error);
+            });
         }
+        // ==========================================
 
-        async function loadVersion() {
-            try {
-                const response = await fetch(
-                    'https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/refs/heads/main/version_history.log'
-                );
-                const text = await response.text();
-                const firstLine = text.split(/\r?\n/)[0];
-                document.getElementById('version').textContent = firstLine;
-            } catch (error) {
-                console.error(error);
-                document.getElementById('version').textContent = 'Failed to load version';
-            }
-        }
+        
     </script>
 </body>
 </html>
