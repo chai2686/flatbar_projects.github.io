@@ -307,7 +307,7 @@
         
         <div class="footer-text">
             <span>Powered by Flatbar Division™️</span>
-            <span onclick="about()">Version 2.8 Technical Review</span>
+            <span onclick="about()">Version 2.9 Technical Review</span>
         </div>
     </div>
 
@@ -354,6 +354,13 @@
 
         document.getElementById('open-scanner01').addEventListener('click', () => {
             openScanner()
+        });
+
+        qrInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevents page reload
+                save();                 // Triggers the save function
+            }
         });
         
         function openScanner() {
