@@ -220,7 +220,7 @@
     const part0 = "AIzaSyAFnyXSAki4Licz";
     const part1 = "KNhyEzbhHsvTC-abfAo";
     const apiKey = part0 + part1;
-    const spreadsheetId = "1X_bUE98FYNBRGjVuvyTo8GTXPP9x8LHj6k-iaRJ9TBA";
+    const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
 	//const spreadsheetId = "10EKJRsYvDJokCUjTxHnMbm_a5VDYvnw-YQmwI19J18U";
     const range = "Shipment!A:K";
 
@@ -255,7 +255,7 @@
             json.values.forEach((row, index) => {
                 if (index === 0 ) return; 
 
-                const truck = row[4] || "Unknown";
+                const truck = row[2] || "Unknown";
                 if (!groups[truck]) {
                     groups[truck] = [];
                 }
@@ -281,14 +281,14 @@
                 `;
 
                 groups[truck].forEach(r => {
-                    const searchData = `${truck} ${r[6] || ""} ${r[7] || ""} ${r[8] || ""} ${r[10] || ""}`.toLowerCase();
+                    const searchData = `${truck} ${r[11] || ""} ${r[6] || ""} ${r[12] || ""} ${r[9] || ""}`.toLowerCase();
                     
                     html += `
                                 <tr data-search="${searchData}">
+                                    <td>${r[11] || "-"}</td>
                                     <td>${r[6] || "-"}</td>
-                                    <td>${r[7] || "-"}</td>
-                                    <td class="qty"><b>${r[8] || "-"}</b></td>
-                                    <td>${r[10] || "-"}</td>
+                                    <td class="qty"><b>${r[12] || "-"}</b></td>
+                                    <td>${r[9] || "-"}</td>
                                 </tr>
                     `;
                 });
@@ -356,8 +356,6 @@
     // Initial load on page start
     loadData();
 
-    // Use only ONE interval loop that handles both fetching and checking
-    setInterval(checkMove, 60000);
 	
     // FIXED: Make checkMove async so it waits for data to load into memory
     async function checkMove() {
