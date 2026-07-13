@@ -281,14 +281,14 @@
                 `;
 
                 groups[truck].forEach(r => {
-                    const searchData = `${truck} ${r[11] || ""} ${r[6] || ""} ${r[12] || ""} ${r[9] || ""}`.toLowerCase();
+                    const searchData = `${truck} ${r[11] || ""} ${r[6] || ""} ${r[12] || ""} ${r[8] || ""}`.toLowerCase();
                     
                     html += `
                                 <tr data-search="${searchData}">
                                     <td>${r[11] || "-"}</td>
                                     <td>${r[6] || "-"}</td>
                                     <td class="qty"><b>${r[12] || "-"}</b></td>
-                                    <td>${r[9] || "-"}</td>
+                                    <td>${r[8] || "-"}</td>
                                 </tr>
                     `;
                 });
