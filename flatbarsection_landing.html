@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="2.5 BETA">
+    <meta name="Version" content="2.9 BETA">
     <title>ส่วนงานเหล็กแบน</title>
     
     <!-- Modern Thai Font -->
@@ -199,7 +199,7 @@
             <button onclick="goToPooling()" class="menu-button">
                 <div class="menu-button-content">
                     <span class="menu-icon">➡️⬅️</span>
-                    <span> งานยกรวม(ปิยะดา)</span>
+                    <span> งานยกรวม</span>
                 </div>
                 <span class="chevron">›</span>
             </button>
@@ -284,7 +284,7 @@
         async function loadVersion() {
     try {
         const response = await fetch(
-            'https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/refs/heads/main/version_history.log'
+            'https://chai2686.github.io/flatbar_projects.github.io/version_history.log'
         );
         const text = await response.text();
         const firstLine = text.split(/\r?\n/)[0];
