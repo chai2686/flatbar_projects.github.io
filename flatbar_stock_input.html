@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานเหล็กแบน">
-    <meta name="Version" content="2.7 TR (Corrected)">
+    <meta name="Version" content="2.93 TR">
     <title>สแกนนับสต็อกเหล็กแบน</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -307,7 +307,7 @@
         
         <div class="footer-text">
             <span>Powered by Flatbar Division™️</span>
-            <span onclick="about()">Version 2.91 Technical Review</span>
+            <span onclick="about()">Version 2.93 Technical Review</span>
         </div>
     </div>
 
@@ -329,12 +329,15 @@
         const extraDropdown2 = document.getElementById('extra-dropdown2');
         
         let html5QrCode;
+        
+        // 1. ADDED GLOBAL VARIABLE FOR LAST SCANNED BUNDLE
+        let lastScannedBundle = ""; 
 
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
-            timer: 700,
+            timer: 1000,
             timerProgressBar: true
         });
 
@@ -358,8 +361,15 @@
 
         qrInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Prevents page reload
-                save();                 // Triggers the save function
+                event.preventDefault(); 
+                save();                 
+            }
+        });
+		
+		qtyInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+                save();                 
             }
         });
         
@@ -369,7 +379,6 @@
 
             html5QrCode = new Html5Qrcode("qr-reader");
 
-            // Create a responsive QR box (70% of the video size)
             const qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
                 let minEdgePercentage = 0.7; 
                 let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
@@ -380,13 +389,12 @@
                 };
             };
 
-            // Start the camera directly
             html5QrCode.start(
                 { facingMode: "environment" },
                 { 
                     fps: 20, 
                     qrbox: qrboxFunction,
-                    disableFlip: false // Helps catch mirrored QR codes
+                    disableFlip: false 
                 },
                 qrCodeMessage => {
                     document.getElementById('qr-input01').value = qrCodeMessage;
@@ -394,12 +402,10 @@
                     closeScanner();
                     if (continuousscan.checked) {
                         save();
-                        // Increased delay slightly to prevent camera hardware lockup
                         setTimeout(openScanner, 600);
                     }
                 },
                 errorMessage => { 
-                    // Optional logging: keep this empty so it doesn't spam the console 
                 }
             ).catch(err => {
                 Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเข้าถึงกล้องได้: ' + err, 'error');
@@ -418,13 +424,11 @@
         }
         
         function save() {
-            // Google Form URLs per zone
             const k2url = "https://docs.google.com/forms/d/e/1FAIpQLScKV5UVrhNebe7ckFjgMsxELIyqp6qpXxIxpYzm0TaVFmRbmA/formResponse?usp=pp_url";
             const k4url = "https://docs.google.com/forms/d/e/1FAIpQLSdO2mvA8jVWC95jIqqR3BHjJvurSpC8VTL6kECgvanANcAYtw/formResponse?usp=pp_url";
             const k6url = "https://docs.google.com/forms/d/e/1FAIpQLSeOrvUA_lt2iMJs19S4ccRR7DpkVSOWqZtyp25aNjagRw-nSg/formResponse?usp=pp_url";
             const k8url = "https://docs.google.com/forms/d/e/1FAIpQLSdmSMTEp3FqmYmK08vSbpvNC_Q8AIxwEOtisxDAkhZYkGX1pw/formResponse?usp=pp_url";
             
-            // Shared Form Field IDs
             const entrygate = "&entry.1463457027=";
             const entrylocation = "&entry.1640542300=";
             const entrybundle = "&entry.171595512=";
@@ -434,17 +438,15 @@
             const zonename = extraDropdown.value;
             const pilename = extraDropdown2.value;
             
-            // 1. Initial Validation
             if (!zonename) {
-                Swal.fire('แจ้งเตือน', 'กรุณาระบุโซน', 'warning');
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุโซน', 'warning').then(() => qrInput.focus());
                 return;
             }
             if (!pilename) {
-                Swal.fire('แจ้งเตือน', 'กรุณาระบุกอง', 'warning');
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุกอง', 'warning').then(() => qrInput.focus());
                 return;
             }
             
-            // 2. Set the base URL depending on Zone
             if (zonename === "K2") url = k2url;
             else if (zonename === "K4") url = k4url;
             else if (zonename === "K6") url = k6url;
@@ -459,14 +461,37 @@
             }
             
             let qrinput = qrinputtext.split('*');
+
+            // ---------------------------------------------------------
+            // 2. NEW LOGIC: Check for double scan and handle it
+            // ---------------------------------------------------------
+            if (qrinput[0] === lastScannedBundle) {
+                // If it's a double scan, strip out the extra QR data 
+                // so it forces the system to ask for a manual quantity.
+                qrinputtext = qrinput[0];
+                qrinput = [qrinputtext]; // Reconstruct array with just the bundle
+                
+                if (!qtyinputtext) {
+                    Swal.fire('แจ้งเตือน', 'สแกนซ้ำ! กรุณาระบุจำนวน (Qty)', 'warning');
+                    qtyContainer.style.display = 'block';
+                    qtyInput.focus();
+                    return; // Stop the save process until user inputs quantity
+                }
+            } else {
+                // If it's a new bundle, update the global variable
+                lastScannedBundle = qrinput[0];
+            }
+            // ---------------------------------------------------------
+            
             let starCount = qrinput.length - 1;
             
             if (starCount !== 5 && starCount !== 4 && !qtyinputtext) {
                 Swal.fire('แจ้งเตือน', 'กรุณาระบุจำนวน', 'warning');
+                qtyContainer.style.display = 'block';
+                qtyInput.focus();
                 return;
             }
             
-            // 3. Process the Data
             if (starCount === 5 || starCount === 4) {
                 var bundle = qrinput[0];
                 var quantity = qrinput[3];
@@ -502,7 +527,6 @@
             }
         }
 
-        // Extracted submission logic to keep code clean
         function submitViaImage(url, bundleId) {
             var img = document.createElement("img");
             img.src = url;
@@ -515,6 +539,7 @@
             document.getElementById('qr-input01').value = "";
             document.getElementById('qty-input').value = "";
             document.getElementById('qty-container').style.display = "none";
+            qrInput.focus();
         }
 
         function showSuccessToast(bundleId) {
