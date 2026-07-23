@@ -1,458 +1,694 @@
 <!DOCTYPE html>
-<html>
-  <head>
-	<title>📦 งานเตรียมเหล็กแบน</title>
-    <base target="_top">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏷️ งานเตรียมเหล็กแบน</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        padding: 0px;
-        background-color: #f4f7f6;
-        color: #333;
-      }
-      .container {
-        padding: 10px;
-        max-width: 1500px;
-        margin: auto;
-      }
-      
-      /* ปรับปรุง Wrapper ส่วนหัวให้ยืดหยุ่นไม่เบียดกันบนจอมือถือ */
-      .header-wrapper {
-        display: flex; 
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-      
-      h2 {
-        background: white;
-        padding: 12px;
-        border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        margin: 0;
-        font-size: 1.3em;
-        flex: 1;
-        min-width: 200px;
-      }
-      
-      /* สไตล์ Dropdown */
-      .filter-container {
-        background: white;
-        padding: 10px;
-        border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex: 1;
-        min-width: 200px;
-      }
-      .filter-container label {
-        font-weight: bold;
-        font-size: 14px;
-        color: #555;
-        white-space: nowrap;
-      }
-      .filter-container select {
-        width: 100%;
-        padding: 6px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-        outline: none;
-      }
+        :root {
+            --primary-color: #4F46E5;
+            --primary-hover: #4338CA;
+            --success-color: #10B981;
+            --success-hover: #059669;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
+            --status-waiting-bg: #FEF3C7;
+            --status-waiting-text: #92400E;
+			--status-preparing-bg: #FFFFFF;
+            --status-preparing-text: #92400E;
+            --grid-bg: #F9FAFB;
+        }
 
-      /* Container และ Card ขนาดเล็ก */
-      .card-container {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .card {
-        background: white;
-        border-radius: 6px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        padding: 8px 12px;
-        border-left: 4px solid #4CAF50; 
-        transition: transform 0.2s ease;
-      }
-      .card:hover {
-        transform: translateY(-1px);
-      }
-      .card-row {
-        display: flex;
-        padding: 3px 0;
-        border-bottom: 1px dashed #f0f0f0;
-        font-size: 0.9em;
-      }
-      .card-row:last-child {
-        border-bottom: none;
-      }
-      .card-label {
-        font-weight: bold;
-        color: #666;
-        width: 30%;
-        flex-shrink: 0;
-      }
-      .card-value {
-        width: 70%;
-        color: #222;
-        word-break: break-word;
-      }
-      
-      /* สไตล์พิเศษสำหรับแถวที่แบ่งครึ่งแสดงสองข้อมูล (Material Code & Batch) */
-      .split-row {
-        display: flex;
-        gap: 15px;
-      }
-      .split-col {
-        display: flex;
-        flex: 1;
-        min-width: 0;
-      }
-      .split-col .card-label {
-        width: auto;
-        margin-right: 8px;
-        white-space: nowrap;
-      }
-      .split-col .card-value {
-        width: auto;
-        flex: 1;
-      }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0.5rem;
+            line-height: 1;
+        }
 
-      /* Footer */
-      .footer-text {
-        font-size: 11px;
-        text-align: right;
-        margin-bottom: 3px;
-        color: #777;
-      }
-      .footer-version {
-        padding-top: 30px;
-      }
+        .header-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
 
-      /* 🌟 เพิ่มสไตล์ของ Custom Alert Box Overlay & Modal 🌟 */
-      .alert-overlay {
-        display: none; /* ซ่อนไว้เริ่มต้น */
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(2px);
-        z-index: 9999;
-        justify-content: center;
-        align-items: center;
-      }
-      .alert-box {
-        background-color: white;
-        padding: 25px;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        text-align: center;
-        max-width: 340px;
-        width: 85%;
-        animation: popup 0.3s ease-out;
-      }
-      .alert-box h3 {
-        margin-top: 0;
-        color: #d9534f;
-        font-size: 1.4em;
-      }
-      .alert-box p {
-        color: #555;
-        font-size: 15px;
-        margin-bottom: 20px;
-      }
-      .alert-btn {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 10px 30px;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 4px;
-        cursor: pointer;
-        width: 100%;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: background-color 0.2s;
-      }
-      .alert-btn:hover {
-        background-color: #45a049;
-      }
-      @keyframes popup {
-        from { transform: scale(0.8); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-      }
+        /* Updated Action Bar Layout */
+        .action-bar {
+            max-width: 1200px;
+            margin: 0 auto 1.5rem auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-right {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Dropdown Styling */
+        .gate-dropdown {
+            padding: 0.625rem 2rem 0.625rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23111827%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem top 50%;
+            background-size: 0.65rem auto;
+            transition: all 0.2s;
+        }
+
+        .gate-dropdown:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-title {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            color: var(--text-main);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #FAFAFA;
+        }
+
+        .header-blue {
+            background-color: #2180ff !important;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-checkbox {
+            width: 1.125rem;
+            height: 1.125rem;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge.waiting {
+            background-color: var(--status-waiting-bg);
+            color: var(--status-waiting-text);
+        }
+		
+		.badge.preparing {
+            background-color: var(--status-preparing-bg);
+            color: var(--status-preparing-text);
+        }
+
+        .card-body {
+            padding: 0.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-size: 0.875rem;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            font-weight: 500;
+            flex-basis: 40%;
+        }
+
+        .info-value {
+            color: var(--text-main);
+            font-weight: 500;
+            flex-basis: 60%;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .material-name {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background-color: var(--grid-bg);
+            margin: 0.5rem 0;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-footer {
+            padding: 0.5rem;
+            border-top: 1px solid var(--border-color);
+            background-color: #FAFAFA;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-flex {
+            flex: 1;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-success:hover {
+            background-color: var(--success-hover);
+        }
+
+        .btn-outline {
+            background-color: #ffb100;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background-color: #ff9900;
+            border-color: var(--text-muted);
+        }
+        
+        .btn-transparent {
+            background-color: transparent !important;
+        }
+
+        .btn-disabled-transparent {
+            background-color: transparent !important;
+            color: var(--text-muted) !important;
+            border: 1px solid var(--border-color);
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+            opacity: 0.7;
+        }
+        
+        .empty-state {
+            text-align: center;
+            grid-column: 1 / -1;
+            color: var(--text-muted);
+            padding: 3rem;
+        }
+        
+        .loading-state {
+            text-align: center;
+            grid-column: 1 / -1;
+            color: var(--primary-color);
+            padding: 3rem;
+            font-weight: 600;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
 
-    <div id="custom-alert-modal" class="alert-overlay">
-      <div class="alert-box">
-        <h3>⚠️ แจ้งเตือนรายการงาน! ⚠️</h3>
-        <p>ตรวจพบข้อมูลงานเตรียมเหล็กแบนในระบบ</p>
-        <button class="alert-btn" onclick="closeCustomAlert()">รับทราบ</button>
-      </div>
+    <h2 class="header-title">🏷️ งานเตรียมเหล็กแบน</h2>
+    
+    <div class="action-bar">
+        <!-- Dropdown on the left side with onchange event -->
+        <select id="gateFilter" class="gate-dropdown" onchange="refreshData()">
+            <option value="" disabled>เลือกประตู</option>
+            <option value="K2" selected>K2</option>
+            <option value="K4">K4</option>
+            <option value="K6">K6</option>
+            <option value="K8">K8</option>
+        </select>
+        
+        <!-- Buttons on the right side -->
+        <div class="action-right">
+            <button class="btn btn-outline" onclick="printSelected()">🖨️ พิมพ์</button>
+            <button class="btn btn-primary" onclick="runFunctionForSelected()">📥 รับงาน</button>
+        </div>
     </div>
 
-    <div class="container">
-      <div class="header-wrapper">
-        <h2>📦 งานเตรียมเหล็กแบน</h2>
-        
-        <div class="filter-container">
-          <label for="gate-filter">🚪 เลือกประตู:</label>
-          <select id="gate-filter">
-            <option value="all">กำลังโหลดตัวเลือก...</option>
-          </select>
+    <!-- Print Modal Popup -->
+    <div id="printModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">เลือกเครื่องพิมพ์</h3>
+            <select id="printerSelect" class="gate-dropdown" style="width: 100%;">
+                <option value="17">PWA2</option>
+                <option value="19">PWB3</option>
+                <option value="47">PWO4</option>
+            </select>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closePrintModal()">ยกเลิก</button>
+                <button class="btn btn-primary" onclick="confirmPrint()">พิมพ์</button>
+            </div>
         </div>
-		<div class="filter-container" style="min-width: 60px;max-width: 10%;">
-          <input type="checkbox" id="autoalarm" name="autoalarm">
-		  <label for="autoalarm" style="color: red; cursor: pointer;">เตือน!</label><br>
-        </div>
-      </div>
+    </div>
 
-      <div id="data-output">กำลังโหลดข้อมูล...</div>
-      
-      <p id="version" class="footer-text footer-version">Version</p>
-      <p class="footer-text" style="margin-top: 0px;">Powered by Flatbar Division™️</p>
+    <div class="grid-container" id="card-container">
+        <div class="loading-state">Loading data from server...</div>
     </div>
 
     <script>
-	loadVersion(); // เรียกรันดึงเวอร์ชันประวัติจาก GitHub ทันทีตามปกติ
-  let globalHeaders = [];
-  let globalRows = [];
-  let gateColumnIndex = -1;
-  
-  let matCodeIndex = -1;
-  let batchIndex = -1;
-  let firstCombinedIndex = -1;
-  let secondCombinedIndex = -1;
+        const UNCLAIM_URL = "https://script.google.com/macros/s/AKfycbwSn5Em1_GUbQcCQfPvrygdk6zYeCpMduWJlavHq6-XZ0r0RocUVuWknjZLJx_bv4SULA/exec?action=getunclaim&gate_id=";
+        const CLAIMED_URL = "https://script.google.com/macros/s/AKfycbwSn5Em1_GUbQcCQfPvrygdk6zYeCpMduWJlavHq6-XZ0r0RocUVuWknjZLJx_bv4SULA/exec?action=getclaimed&gate_id=";
+		const PRINT_URL = "https://script.google.com/macros/s/AKfycbwSn5Em1_GUbQcCQfPvrygdk6zYeCpMduWJlavHq6-XZ0r0RocUVuWknjZLJx_bv4SULA/exec?action=printbundle";
+		const ACCEPT_URL = "https://script.google.com/macros/s/AKfycbwSn5Em1_GUbQcCQfPvrygdk6zYeCpMduWJlavHq6-XZ0r0RocUVuWknjZLJx_bv4SULA/exec?action=acceptbundle";
+		
+		const gateIDK2 = "32";
+		const gateIDK4 = "34";
+		const gateIDK6 = "36";
+		const gateIDK8 = "38";
 
-  window.onload = function() {
-    // เรียกดึงข้อมูลครั้งแรกเมื่อเปิดหน้าเว็บ
-    fetchData();
+        let pendingPrintIds = [];
+		
+        async function fetchUnclaimData() {
+            const gate = document.getElementById('gateFilter').value;
+			var url = "";
+			if (gate === "K2"){
+				url = UNCLAIM_URL + gateIDK2;
+			} else if (gate === "K4") {
+				url = UNCLAIM_URL + gateIDK4;
+			} else if (gate === "K6") {
+				url = UNCLAIM_URL + gateIDK6;
+			} else if (gate === "K8") {
+				url = UNCLAIM_URL + gateIDK8;
+			}
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    redirect: "follow"
+                });
 
-    // ตั้งเวลาให้ฟังก์ชัน fetchData ทำงานซ้ำอัตโนมัติทุกๆ 60 วินาที (60000 ms)
-    setInterval(fetchData, 60000);
-  };
-
-  // แยก Logic การ Fetch ข้อมูลออกมาเป็นฟังก์ชันหลักเพื่อให้เรียกซ้ำได้
-  function fetchData() {
-    const part0 = "AIzaSyAFnyXSAki4Licz";
-  	const part1 = "KNhyEzbhHsvTC-abfAo";
-  	const apiKey = part0 + part1;
-	const spreadsheetId = "1IkO_AxMnh_yYFDsEV_7MAaGUCrgXptbby6et7Rt-T5w";
-	const range = "รายการงานเตรียม!A:H";
-
-    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
-      .then(response => response.json())
-      .then(data => {
-        // ตรวจสอบเงื่อนไข: ถ้า data.values มีอยู่จริง และมีจำนวนแถวตั้งแต่ 2 แถวขึ้นไป (Headers + Data อย่างน้อย 1 แถว)
-        // และ มีการกดเลือก Checkbox 'autoalarm' ไว้ ให้ทำการแสดง Alert Box ทันทีหลังดึงข้อมูลสำเร็จ
-        const isAlarmChecked = document.getElementById('autoalarm').checked;
-        if (data.values && data.values.length >= 2 && isAlarmChecked) {
-          showCustomAlert();
+                if (!response.ok) throw new Error("Unclaim API returned " + response.status);
+                
+                const returnData = await response.json();
+                return returnData;
+            } catch (error) {
+                console.error("Unclaim error:", error.message);
+                return null;
+            }
         }
-
-        if (!data.values || data.values.length <= 1) {
-          document.getElementById('data-output').innerHTML = "<p>ไม่พบข้อมูลรายการ.</p>";
-          return;
-        }
-
-        globalHeaders = data.values[0];
-        globalRows = data.values.slice(1); 
-
-        gateColumnIndex = globalHeaders.findIndex(header => header && header.includes("ประตู"));
-        matCodeIndex = globalHeaders.findIndex(header => header && header.trim() === "Material Code");
-        batchIndex = globalHeaders.findIndex(header => header && header.trim() === "Batch");
-
-        if (matCodeIndex !== -1 && batchIndex !== -1) {
-          firstCombinedIndex = Math.min(matCodeIndex, batchIndex);
-          secondCombinedIndex = Math.max(matCodeIndex, batchIndex);
-        }
-
-        // ประมวลผล Dropdown และวาด Card
-        setupFilterDropdown();
-    })
-    .catch(error => {
-        console.error('Error fetching data:', error);
-        if (globalRows.length === 0) {
-          document.getElementById('data-output').innerHTML = "<p style='color:red;'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>";
-        }
-    });
-  }
-
-  /* 🌟 ฟังก์ชันจัดการเปิด-ปิด Custom Alert Box และควบคุมการเล่นเสียงมอร์ส 🌟 */
-  function showCustomAlert() {
-    document.getElementById('custom-alert-modal').style.display = 'flex';
-    playMorse(); // เล่นสัญญาณเตือนควบคู่ไปด้วยเพื่อความชัดเจนหน้างาน
-  }
-
-  function closeCustomAlert() {
-    document.getElementById('custom-alert-modal').style.display = 'none';
-    stopMorse(); // หยุดเสียงสัญญาณทันทีเมื่อกดปุ่ม Accept
-  }
-
-  function setupFilterDropdown() {
-    const select = document.getElementById('gate-filter');
-    if (gateColumnIndex === -1) {
-      select.innerHTML = '<option value="all">ไม่พบคอลัมน์ "ประตู"</option>';
-      renderFilteredCards('all');
-      return;
-    }
-
-    const currentSelection = select.value || 'all';
-
-    let gateValues = globalRows.map(row => row[gateColumnIndex]).filter(Boolean);
-    let uniqueGates = [...new Set(gateValues)];
-    uniqueGates.sort();
-
-    let optionsHtml = '<option value="all">ทั้งหมด</option>';
-    uniqueGates.forEach(gate => {
-      optionsHtml += `<option value="${gate}">${gate}</option>`;
-    });
-    select.innerHTML = optionsHtml;
-
-    if (uniqueGates.includes(currentSelection)) {
-      select.value = currentSelection;
-    } else {
-      select.value = 'all';
-    }
-
-    select.onchange = function(e) {
-      renderFilteredCards(e.target.value);
-    };
-
-    renderFilteredCards(select.value);
-  }
-
-  function renderFilteredCards(selectedValue) {
-    if (selectedValue === 'all') {
-      renderCards(globalRows);
-    } else {
-      const filteredRows = globalRows.filter(row => row[gateColumnIndex] === selectedValue);
-      renderCards(filteredRows);
-    }
-  }
-
-  function renderCards(rows) {
-    const container = document.getElementById('data-output');
-    if (!rows || rows.length === 0) {
-      container.innerHTML = "<p style='text-align:center; color:#999; padding:20px;'>ไม่พบข้อมูลสำหรับประตูนี้</p>";
-      return;
-    }
-
-    let html = '<div class="card-container">';
-
-    for (let i = 0; i < rows.length; i++) {
-      html += '<div class="card">';
       
-      for (let j = 0; j < globalHeaders.length; j++) {
-        
-        if (j === secondCombinedIndex) {
-          continue;
+        async function fetchClaimedData() {
+            const gate = document.getElementById('gateFilter').value;
+			var url = "";
+			if (gate === "K2"){
+				url = CLAIMED_URL + gateIDK2;
+			} else if (gate === "K4") {
+				url = CLAIMED_URL + gateIDK4;
+			} else if (gate === "K6") {
+				url = CLAIMED_URL + gateIDK6;
+			} else if (gate === "K8") {
+				url = CLAIMED_URL + gateIDK8;
+			}
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    redirect: "follow"
+                });
+
+                if (!response.ok) throw new Error("Claimed API returned " + response.status);
+
+                const returnData = await response.json();
+                return returnData;
+            } catch (error) {
+                console.error("Claimed error:", error.message);
+                return null; 
+            }
+        }
+		
+		function extractDataArray(apiResponse) {
+            if (!apiResponse) return [];
+            if (Array.isArray(apiResponse)) return apiResponse;
+            if (typeof apiResponse === 'string') {
+                try {
+                    const parsed = JSON.parse(apiResponse);
+                    return Array.isArray(parsed) ? parsed : (parsed.data || []);
+                } catch (e) {
+                    return [];
+                }
+            }
+            if (typeof apiResponse === 'object') {
+                if (Array.isArray(apiResponse.data)) return apiResponse.data;
+                if (Array.isArray(apiResponse.items)) return apiResponse.items;
+                if (Array.isArray(apiResponse.result)) return apiResponse.result;
+                for (let key in apiResponse) {
+                    if (Array.isArray(apiResponse[key])) return apiResponse[key];
+                }
+            }
+            return [];
         }
 
-        if (j === firstCombinedIndex) {
-          let matValue = rows[i][matCodeIndex] !== undefined ? rows[i][matCodeIndex] : '-';
-          let batchValue = rows[i][batchIndex] !== undefined ? rows[i][batchIndex] : '-';
+        async function initDashboard() {
+            const container = document.getElementById('card-container');
+            try {
+                const [unclaimResult, claimedResult] = await Promise.all([
+                    fetchUnclaimData(),
+                    fetchClaimedData()
+                ]);
 
-          let matLabelStyle = (globalHeaders[matCodeIndex] && globalHeaders[matCodeIndex].trim() === "จำนวนมัดเศษ") ? ' style="color: mediumblue;"' : '';
-          let batchLabelStyle = (globalHeaders[batchIndex] && globalHeaders[batchIndex].trim() === "จำนวนมัดเศษ") ? ' style="color: mediumblue;"' : '';
+                const unclaimArray = extractDataArray(unclaimResult);
+                const claimedArray = extractDataArray(claimedResult);
 
-          html += '<div class="card-row split-row">';
-          html += '  <div class="split-col">';
-          html += '    <div class="card-label"' + matLabelStyle + '>' + globalHeaders[matCodeIndex] + '</div>';
-          html += '    <div class="card-value">' + matValue + '</div>';
-          html += '  </div>';
-          html += '  <div class="split-col">';
-          html += '    <div class="card-label"' + batchLabelStyle + '>' + globalHeaders[batchIndex] + '</div>';
-          html += '    <div class="card-value">' + batchValue + '</div>';
-          html += '  </div>';
-          html += '</div>';
-          continue;
+                const mergedData = [...unclaimArray, ...claimedArray];
+                renderCards(mergedData);
+
+            } catch (error) {
+                container.innerHTML = `<div class='empty-state' style='color:red;'>Cannot load data. Error: ${error.message}</div>`;
+                console.error("Dashboard init error:", error);
+            }
         }
 
-        let cellValue = rows[i][j] !== undefined ? rows[i][j] : '-';
-        let labelStyle = (globalHeaders[j] && globalHeaders[j].trim() === "จำนวนมัดเศษ") ? ' style="color: mediumblue;"' : '';
+        function renderCards(dataArray) {
+            const container = document.getElementById('card-container');
+            if (!dataArray || dataArray.length === 0) {
+                container.innerHTML = '<div class="empty-state">No data available to display.</div>';
+                return;
+            }
 
-        html += '<div class="card-row">';
-        html += '  <div class="card-label"' + labelStyle + '>' + globalHeaders[j] + '</div>';
-        html += '  <div class="card-value">' + cellValue + '</div>';
-        html += '</div>';
-      }
-      
-      html += '</div>'; 
-    }
+            container.innerHTML = dataArray.map((item, index) => `
+                <div class="card">
+                    <div class="card-header ${!item.canAccept ? 'header-blue' : ''}">
+                        <div class="header-left">
+                            <input type="checkbox" class="card-checkbox" value="${item.id}" id="chk-${item.id}-${index}">
+                            <label for="chk-${item.id}-${index}" class="card-title">${item.doItemDesc || 'N/A'}</label>
+                        </div>
+                        <span class="badge ${item.status ? item.status.toLowerCase() : ''}">${item.status || 'Unknown'}</span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="info-row">
+                            <span class="info-label">ชื่อลูกค้า</span>
+                            <span class="info-value">${item.companyName || 'N/A'}</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">ชื่อผลิตภัณฑ์</span>
+                            <span class="info-value material-name">${item.materialName || 'N/A'}</span>
+                        </div>
 
-    html += '</div>'; 
-    container.innerHTML = html;
-  }
-  
-async function loadVersion() {
-    try {
-        const response = await fetch(
-            'https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/refs/heads/main/version_history.log'
-        );
-        const text = await response.text();
-        const firstLine = text.split(/\r?\n/)[0];
-        document.getElementById('version').textContent = firstLine;
-    } catch (error) {
-        console.error(error);
-        document.getElementById('version').textContent = 'Failed to load version';
-    }
-  }
-	
-	let audioCtx = null;
-  let activeOscillators = [];
+                        <div class="info-row">
+                            <span class="info-label">Batch</span>
+                            <span class="info-value">${item.batch || 'N/A'}</span>
+                        </div>
 
-  const DOT_TIME = 0.06; 
-  const FREQUENCY = 1800; 
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <span class="stat-label">จำนวนขาย</span>
+                                <span class="stat-value">${item.actualQuantity || 0}</span>
+                            </div>
+                            
+                            <div class="stat-box">
+                                <span class="stat-label">จำนวนต่อแพ็ค</span>
+                                <span class="stat-value">${item.packageSize || 0}</span>
+                            </div>
 
-  function playMorse() {
-      if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      stopMorse();
+                            <div class="stat-box">
+                                <span class="stat-label">มัดเต็ม</span>
+                                <span class="stat-value">${item.pack || 0}</span>
+                            </div>
 
-      const text = "111111111111";
-      let currentTime = audioCtx.currentTime;
+                            <div class="stat-box">
+                                <span class="stat-label">มัดเศษ</span>
+                                <span class="stat-value">${item.unpackQuantity || 0}</span>
+                            </div>
+                        </div>
 
-      for (const char of text) {
-          const code = "..........";
-          if (!code) continue;
+                        <div class="info-row">
+                            <span class="info-label">ข้อควรระวัง</span>
+                            <span class="info-value">${item.materialText || '-'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <button class="btn btn-flex ${item.canAccept ? 'btn-primary' : 'btn-disabled-transparent'}" 
+                                ${!item.canAccept ? 'disabled' : ''}
+                                onclick="acceptSingle('${item.id}')">รับงาน</button>
+                        
+                        ${item.canPrint ? `<button class="btn btn-flex btn-outline ${item.isAlreadyPrint ? 'btn-transparent' : ''}" onclick="printSingle('${item.id}')">พิมพ์</button>` : ''}
+                        
+                        <button class="btn btn-flex btn-success" onclick="processItem('${item.id}')">จับคู่</button>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-          for (const symbol of code) {
-              const duration = symbol === '.' ? DOT_TIME : DOT_TIME * 3;
-              
-              const osc = audioCtx.createOscillator();
-              const gain = audioCtx.createGain();
+        function refreshData() {
+            const container = document.getElementById('card-container');
+            container.innerHTML = '<div class="loading-state">Loading data from server...</div>';
+            initDashboard();
+        }
 
-              osc.type = 'sine';
-              osc.frequency.value = FREQUENCY;
+        function processItem(id) {
+            console.log("Processing item ID:", id);
+            alert(`Processing item ID: ${id}`);
+        }
 
-              osc.connect(gain);
-              gain.connect(audioCtx.destination);
+        // Functions for Accept
+        async function runFunctionForSelected() {
+            const checkedBoxes = document.querySelectorAll('.card-checkbox:checked');
+            const selectedIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
+            
+            if (selectedIds.length === 0) {
+                alert("Please select at least one item first.");
+                return;
+            }
 
-              osc.start(currentTime);
-              osc.stop(currentTime + duration);
+            const doIdString = selectedIds.join(',');
+            console.log("Selected IDs for Accept:", doIdString);
+            
+            await acceptBundle(doIdString);
+            refreshData(); // Refresh the grid to reflect accepted statuses
+        }
 
-              activeOscillators.push(osc);
-              currentTime += duration + DOT_TIME; 
-          }
-          currentTime += DOT_TIME * 3; 
-      }
-  }
+        async function acceptSingle(id) {
+            await acceptBundle(id);
+            refreshData(); // Refresh the grid to reflect accepted statuses
+        }
 
-  function stopMorse() {
-      activeOscillators.forEach(osc => {
-          try {
-              osc.stop(); 
-          } catch (error) {}
-      });
-      activeOscillators = [];
-  }
-</script>
-  </body>
+        // Functions for the Print Modal
+        function printSelected() {
+            const checkedBoxes = document.querySelectorAll('.card-checkbox:checked');
+            const selectedIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
+            
+            if (selectedIds.length === 0) {
+                alert("Please select at least one item first to print.");
+                return;
+            }
+            
+            pendingPrintIds = selectedIds;
+            document.getElementById('printModal').style.display = 'flex';
+        }
+
+        function printSingle(id) {
+            pendingPrintIds = [id];
+            document.getElementById('printModal').style.display = 'flex';
+        }
+
+        function closePrintModal() {
+            document.getElementById('printModal').style.display = 'none';
+            pendingPrintIds = [];
+        }
+
+        async function confirmPrint() {
+            const printerId = document.getElementById('printerSelect').value;
+            
+            if (pendingPrintIds.length === 0) {
+                alert("No items selected for printing.");
+                closePrintModal();
+                return;
+            }
+            
+            const doIdString = pendingPrintIds.join(',');
+            closePrintModal();
+            console.log(`Printing DO IDs: ${doIdString} on Printer: ${printerId}`);
+            await printBundle(doIdString, printerId);
+        }
+		
+		async function printBundle(do_id, printer_id) {
+			var url = "";
+			url = url + PRINT_URL + "&do_id=" + do_id + "&printer_id=" + printer_id;
+			
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    redirect: "follow"
+                });
+
+                if (!response.ok) throw new Error("Print API returned " + response.status);
+                
+                const returnData = await response.json();
+                console.log("Print successful:", returnData);
+                alert("Print command sent successfully!");
+                return returnData;
+            } catch (error) {
+                console.error("Print error:", error.message);
+                alert("Error sending print command: " + error.message);
+                return null;
+            }
+        }
+		
+		async function acceptBundle(do_id) {
+			var url = "";
+			var gate_id = "";
+			const gate = document.getElementById('gateFilter').value;
+			if (gate === "K2"){
+				gate_id = gateIDK2;
+			} else if (gate === "K4") {
+				gate_id = gateIDK4;
+			} else if (gate === "K6") {
+				gate_id = gateIDK6;
+			} else if (gate === "K8") {
+				gate_id = gateIDK8;
+			}
+			url = url + ACCEPT_URL + "&do_id=" + do_id + "&gate_id=" + gate_id;
+			
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    redirect: "follow"
+                });
+
+                if (!response.ok) throw new Error("Accept API returned " + response.status);
+                
+                const returnData = await response.json();
+                console.log("Accept successful:", returnData);
+                alert("Accept command sent successfully!");
+                return returnData;
+            } catch (error) {
+                console.error("Accept error:", error.message);
+                alert("Error sending accept command: " + error.message);
+                return null;
+            }
+        }
+
+        initDashboard();
+    </script>
+</body>
 </html>
