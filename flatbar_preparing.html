@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏷️ งานเตรียมเหล็กแบน</title>
+    <!-- Include HTML5-QRCode Library for Camera Scanning -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         :root {
             --primary-color: #4F46E5;
@@ -52,7 +54,7 @@
             gap: 0.75rem;
         }
 
-        /* Dropdown Styling */
+        /* Dropdown & Input Styling */
         .gate-dropdown {
             padding: 0.625rem 2rem 0.625rem 1rem;
             border-radius: 6px;
@@ -68,12 +70,19 @@
             background-position: right 0.7rem top 50%;
             background-size: 0.65rem auto;
             transition: all 0.2s;
+            box-sizing: border-box;
         }
 
         .gate-dropdown:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-input {
+            background-image: none !important;
+            padding-right: 1rem !important;
+            cursor: text !important;
         }
 
         /* Modal Styles */
@@ -108,6 +117,27 @@
             justify-content: flex-end;
             gap: 0.75rem;
             margin-top: 1.5rem;
+        }
+
+        /* Loading Spinner Styles */
+        .spinner-container {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(79, 70, 229, 0.1);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border-left-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .grid-container {
@@ -364,9 +394,48 @@
                 <option value="47">PWO4</option>
             </select>
             <div class="modal-actions">
-                <button class="btn btn-outline" onclick="closePrintModal()">ยกเลิก</button>
-                <button class="btn btn-primary" onclick="confirmPrint()">พิมพ์</button>
+                <button class="btn btn-primary" onclick="closePrintModal()">ยกเลิก</button>
+                <button class="btn btn-outline" onclick="confirmPrint()">พิมพ์</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Match (จับคู่) Modal Popup -->
+    <div id="matchModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">จับคู่</h3>
+            
+            <!-- Scan QR Code Row -->
+            <div style="margin-bottom: 1rem;">
+                <label style="display:block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">สแกน QR Code</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="qrInput" class="gate-dropdown form-input" style="flex: 1;" placeholder="ข้อมูล QR Code">
+                    <button class="btn btn-outline" onclick="startScanner()" style="padding: 0.625rem 0.75rem;">📷 สแกน</button>
+                </div>
+                <!-- Div element for the scanner video feed -->
+                <div id="qr-reader" style="width: 100%; margin-top: 0.5rem; display: none; border-radius: 6px; overflow: hidden;"></div>
+            </div>
+
+            <!-- Disabled System Data Row -->
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display:block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">ข้อมูลระบบ (Bundle)</label>
+                <input type="text" id="dummyInput" class="gate-dropdown form-input" style="width: 100%; background-color: #f3f4f6; color: #9ca3af; cursor: not-allowed;" disabled>
+            </div>
+
+            <!-- Actions -->
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeMatchModal()">ยกเลิก</button>
+                <button class="btn btn-success" onclick="confirmMatch()">จับคู่</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Process Loading Modal Popup -->
+    <div id="loadingModal" class="modal-overlay" style="z-index: 2000;">
+        <div class="modal-content spinner-container">
+            <div class="spinner"></div>
+            <h3 class="modal-title" style="margin-bottom: 0;">กำลังดำเนินการ...</h3>
+            <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.875rem;">กรุณารอสักครู่</p>
         </div>
     </div>
 
@@ -375,10 +444,15 @@
     </div>
 
     <script>
-        const UNCLAIM_URL = "https://script.google.com/macros/s/AKfycbwSn5Em1_GUbQcCQfPvrygdk6zYeCpMduWJlavHq6-XZ0r0RocUVuWknjZLJx_bv4SULA/exec?action=getunclaim&gate_id=";
-        const CLAIMED_URL = "https://script.google.com/macros/s/AKfycbwSn5Em1_GUbQcCQfPvrygdk6zYeCpMduWJlavHq6-XZ0r0RocUVuWknjZLJx_bv4SULA/exec?action=getclaimed&gate_id=";
-		const PRINT_URL = "https://script.google.com/macros/s/AKfycbwSn5Em1_GUbQcCQfPvrygdk6zYeCpMduWJlavHq6-XZ0r0RocUVuWknjZLJx_bv4SULA/exec?action=printbundle";
-		const ACCEPT_URL = "https://script.google.com/macros/s/AKfycbwSn5Em1_GUbQcCQfPvrygdk6zYeCpMduWJlavHq6-XZ0r0RocUVuWknjZLJx_bv4SULA/exec?action=acceptbundle";
+		const MAIN_URL = "https://script.google.com/macros/s/AKfycbyiW4xqcYUY5OBgwpxhrAcpBcrepx1Bc52L-9KEzSOwdpgshiIYtIYa01Kd1SnXR0Z9-A/exec?"
+        const UNCLAIM_URL = MAIN_URL + "action=getunclaim&gate_id=";
+        const CLAIMED_URL = MAIN_URL + "action=getclaimed&gate_id=";
+		const PRINT_URL = MAIN_URL + "action=printbundle";
+		const ACCEPT_URL = MAIN_URL + "action=acceptbundle";
+		const SUBMIT_URL = MAIN_URL + "action=submitbundle";
+		const GETBUNDLE_URL = MAIN_URL + "action=getbundle";
+		const SUBMITSCAN_URL = MAIN_URL + "action=submitscan";
+		
 		
 		const gateIDK2 = "32";
 		const gateIDK4 = "34";
@@ -386,6 +460,20 @@
 		const gateIDK8 = "38";
 
         let pendingPrintIds = [];
+        
+        // Variables for match matching
+        let currentMatchDoId = null;
+        let currentBundleShowText = "";
+        let html5QrCode = null;
+
+        // Global Modal Display Functions
+        function showLoading() {
+            document.getElementById('loadingModal').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingModal').style.display = 'none';
+        }
 		
         async function fetchUnclaimData() {
             const gate = document.getElementById('gateFilter').value;
@@ -492,71 +580,77 @@
                 return;
             }
 
-            container.innerHTML = dataArray.map((item, index) => `
-                <div class="card">
-                    <div class="card-header ${!item.canAccept ? 'header-blue' : ''}">
-                        <div class="header-left">
-                            <input type="checkbox" class="card-checkbox" value="${item.id}" id="chk-${item.id}-${index}">
-                            <label for="chk-${item.id}-${index}" class="card-title">${item.doItemDesc || 'N/A'}</label>
-                        </div>
-                        <span class="badge ${item.status ? item.status.toLowerCase() : ''}">${item.status || 'Unknown'}</span>
-                    </div>
-                    
-                    <div class="card-body">
-                        <div class="info-row">
-                            <span class="info-label">ชื่อลูกค้า</span>
-                            <span class="info-value">${item.companyName || 'N/A'}</span>
+            container.innerHTML = dataArray.map((item, index) => {
+                // Calculate if this item should also submit after accepting
+                const shouldSubmit = (!item.canPrint && item.unpackQuantity === 0);
+
+                return `
+                    <div class="card">
+                        <div class="card-header ${!item.canAccept ? 'header-blue' : ''}">
+                            <div class="header-left">
+                                <!-- Storing the shouldSubmit flag in a data attribute for bulk processing -->
+                                <input type="checkbox" class="card-checkbox" value="${item.id}" id="chk-${item.id}-${index}" data-should-submit="${shouldSubmit}">
+                                <label for="chk-${item.id}-${index}" class="card-title">${item.doItemDesc || 'N/A'}</label>
+                            </div>
+                            <span class="badge ${item.status ? item.status.toLowerCase() : ''}">${item.status || 'Unknown'}</span>
                         </div>
                         
-                        <div class="info-row">
-                            <span class="info-label">ชื่อผลิตภัณฑ์</span>
-                            <span class="info-value material-name">${item.materialName || 'N/A'}</span>
-                        </div>
-
-                        <div class="info-row">
-                            <span class="info-label">Batch</span>
-                            <span class="info-value">${item.batch || 'N/A'}</span>
-                        </div>
-
-                        <div class="stats-grid">
-                            <div class="stat-box">
-                                <span class="stat-label">จำนวนขาย</span>
-                                <span class="stat-value">${item.actualQuantity || 0}</span>
+                        <div class="card-body">
+                            <div class="info-row">
+                                <span class="info-label">ชื่อลูกค้า</span>
+                                <span class="info-value">${item.companyName || 'N/A'}</span>
                             </div>
                             
-                            <div class="stat-box">
-                                <span class="stat-label">จำนวนต่อแพ็ค</span>
-                                <span class="stat-value">${item.packageSize || 0}</span>
+                            <div class="info-row">
+                                <span class="info-label">ชื่อผลิตภัณฑ์</span>
+                                <span class="info-value material-name">${item.materialName || 'N/A'}</span>
                             </div>
 
-                            <div class="stat-box">
-                                <span class="stat-label">มัดเต็ม</span>
-                                <span class="stat-value">${item.pack || 0}</span>
+                            <div class="info-row">
+                                <span class="info-label">Batch</span>
+                                <span class="info-value">${item.batch || 'N/A'}</span>
                             </div>
 
-                            <div class="stat-box">
-                                <span class="stat-label">มัดเศษ</span>
-                                <span class="stat-value">${item.unpackQuantity || 0}</span>
+                            <div class="stats-grid">
+                                <div class="stat-box">
+                                    <span class="stat-label">จำนวนขาย</span>
+                                    <span class="stat-value">${item.actualQuantity || 0}</span>
+                                </div>
+                                
+                                <div class="stat-box">
+                                    <span class="stat-label">จำนวนต่อแพ็ค</span>
+                                    <span class="stat-value">${item.packageSize || 0}</span>
+                                </div>
+
+                                <div class="stat-box">
+                                    <span class="stat-label">มัดเต็ม</span>
+                                    <span class="stat-value">${item.pack || 0}</span>
+                                </div>
+
+                                <div class="stat-box">
+                                    <span class="stat-label">มัดเศษ</span>
+                                    <span class="stat-value">${item.unpackQuantity || 0}</span>
+                                </div>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="info-label">ข้อควรระวัง</span>
+                                <span class="info-value">${item.materialText || '-'}</span>
                             </div>
                         </div>
-
-                        <div class="info-row">
-                            <span class="info-label">ข้อควรระวัง</span>
-                            <span class="info-value">${item.materialText || '-'}</span>
+                        
+                        <div class="card-footer">
+                            <button class="btn btn-flex ${item.canAccept ? 'btn-primary' : 'btn-disabled-transparent'}" 
+                                    ${!item.canAccept ? 'disabled' : ''}
+                                    onclick="acceptSingle('${item.id}', ${shouldSubmit})">รับงาน</button>
+                            
+                            ${item.canPrint ? `<button class="btn btn-flex btn-outline ${item.isAlreadyPrint ? 'btn-transparent' : ''}" onclick="printSingle('${item.id}')">พิมพ์</button>` : ''}
+                            
+                            <button class="btn btn-flex btn-success" onclick="processItem('${item.id}')">จับคู่</button>
                         </div>
                     </div>
-                    
-                    <div class="card-footer">
-                        <button class="btn btn-flex ${item.canAccept ? 'btn-primary' : 'btn-disabled-transparent'}" 
-                                ${!item.canAccept ? 'disabled' : ''}
-                                onclick="acceptSingle('${item.id}')">รับงาน</button>
-                        
-                        ${item.canPrint ? `<button class="btn btn-flex btn-outline ${item.isAlreadyPrint ? 'btn-transparent' : ''}" onclick="printSingle('${item.id}')">พิมพ์</button>` : ''}
-                        
-                        <button class="btn btn-flex btn-success" onclick="processItem('${item.id}')">จับคู่</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function refreshData() {
@@ -565,51 +659,199 @@
             initDashboard();
         }
 
-        function processItem(id) {
-            console.log("Processing item ID:", id);
-            alert(`Processing item ID: ${id}`);
+        // ---------- New จับคู่ (Match) & Scanner Functions ---------- //
+
+        async function processItem(id) {
+            console.log("Processing item ID (Match):", id);
+            currentMatchDoId = id;
+            
+            showLoading();
+            const data = await getBundle(id);
+            hideLoading();
+            
+            if (data && data.bundle) {
+                document.getElementById('dummyInput').value = data.bundle;
+                currentBundleShowText = data.bundleShowText; // kept as variable
+                document.getElementById('qrInput').value = ""; // clear previous input
+                document.getElementById('matchModal').style.display = 'flex';
+            } else {
+                alert("ไม่สามารถดึงข้อมูล Bundle ได้ (Failed to get bundle data)");
+            }
         }
+
+        function startScanner() {
+            const qrReaderDiv = document.getElementById('qr-reader');
+            qrReaderDiv.style.display = 'block';
+            
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("qr-reader");
+            }
+            
+            html5QrCode.start(
+                { facingMode: "environment" }, 
+                { fps: 10, qrbox: {width: 250, height: 250} },
+                (decodedText, decodedResult) => {
+                    // Success callback
+                    document.getElementById('qrInput').value = decodedText;
+                    stopScanner();
+                },
+                (errorMessage) => {
+                    // Parse error, ignore and keep scanning
+                }
+            ).catch((err) => {
+                console.error("Cannot start scanner:", err);
+                alert("ไม่สามารถเข้าถึงกล้องได้ (Cannot access camera)");
+                qrReaderDiv.style.display = 'none';
+            });
+        }
+
+        function stopScanner() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById('qr-reader').style.display = 'none';
+                }).catch((err) => {
+                    console.error("Failed to stop scanner", err);
+                });
+            } else {
+                document.getElementById('qr-reader').style.display = 'none';
+            }
+        }
+
+        function closeMatchModal() {
+            document.getElementById('matchModal').style.display = 'none';
+            stopScanner();
+        }
+
+        async function confirmMatch() {
+            const qrText = document.getElementById('qrInput').value;
+            const dummyText = document.getElementById('dummyInput').value;
+            
+            if (!qrText || !dummyText) {
+                alert("กรุณาสแกน QR Code ก่อนยืนยัน");
+                return;
+            }
+            
+            // Split arrays by '*'
+            const qrParts = qrText.split('*');
+            const dummyParts = dummyText.split('*');
+            
+            // Validation to ensure format allows section 2 check
+            if (qrParts.length < 2 || dummyParts.length < 2) {
+                alert("รูปแบบข้อมูลไม่ถูกต้อง");
+                return;
+            }
+            
+            // Get section 2 (index 1) for both variables
+            const scanSection2 = qrParts[1];
+            const dummySection2 = dummyParts[1];
+            
+            if (scanSection2 === dummySection2) {
+                // Prepare arguments
+                const bundleScan = qrParts[0];                     // Section 1 of QR code
+                const fullBundleScan = qrText;                     // Full QR code text
+                const bundleDummyScan = dummyParts[0];             // Section 1 of disabled text
+                const fullBundleDummyScan = dummyText;             // Full disabled text
+                const newUnpackValue = dummyParts[3] || "";        // Section 4 (index 3) of disabled text
+                
+                showLoading();
+                
+                // Submit matched data
+                const result = await submitScan(
+                    currentMatchDoId, 
+                    bundleScan, 
+                    fullBundleScan, 
+                    bundleDummyScan, 
+                    fullBundleDummyScan, 
+                    newUnpackValue
+                );
+                
+                hideLoading();
+                
+                if (result) {
+                    alert(result);
+                    closeMatchModal();
+                    refreshData(); // Optionally refresh grid to show updated status
+                } else {
+                    alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
+                }
+            } else {
+                alert("ข้อมูลไม่ตรงกัน!\nQR: " + scanSection2 + "\nSystem: " + dummySection2);
+            }
+        }
+
+        // ---------- End New Functions ---------- //
+
 
         // Functions for Accept
         async function runFunctionForSelected() {
             const checkedBoxes = document.querySelectorAll('.card-checkbox:checked');
-            const selectedIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
             
-            if (selectedIds.length === 0) {
+            if (checkedBoxes.length === 0) {
                 alert("Please select at least one item first.");
                 return;
             }
             
+            showLoading(); // Display the loading popup
             let allSuccess = true;
 
-            // Iterate over each ID and accept individually
-            for (const id of selectedIds) {
+            // Iterate over each checkbox and process individually
+            for (const checkbox of checkedBoxes) {
+                const id = checkbox.value;
+                const shouldSubmit = checkbox.getAttribute('data-should-submit') === 'true';
+
                 console.log(`Accepting DO ID: ${id}`);
                 const result = await acceptBundle(id);
                 
-                if (!result) {
+                if (result) {
+                    // Check if it also requires a submit
+                    if (shouldSubmit) {
+                        console.log(`Submitting DO ID: ${id}`);
+                        const submitResult = await submitBundle(id);
+                        if (!submitResult) {
+                            allSuccess = false;
+                        }
+                    }
+                } else {
                     allSuccess = false;
                 }
             }
             
+            hideLoading(); // Hide the loading popup
+
             // Show consolidated alert
             if (allSuccess) {
-                alert("All accept commands sent successfully!");
+                alert("All accept (and applicable submit) commands sent successfully!");
             } else {
-                alert("Some accept commands failed. Check the console for details.");
+                alert("Some commands failed. Check the console for details.");
             }
 
             refreshData(); // Refresh the grid to reflect accepted statuses
         }
 
-        async function acceptSingle(id) {
+        async function acceptSingle(id, shouldSubmit = false) {
+            showLoading(); // Display the loading popup
+            
             const result = await acceptBundle(id);
             if (result) {
-                alert("Accept command sent successfully!");
+                if (shouldSubmit) {
+                    const submitResult = await submitBundle(id);
+                    hideLoading(); // Hide the loading popup
+                    
+                    if (submitResult) {
+                        alert("Accept and Submit commands sent successfully!");
+                    } else {
+                        alert("Accept succeeded, but Submit failed. Check console for details.");
+                    }
+                } else {
+                    hideLoading(); // Hide the loading popup
+                    alert("Accept command sent successfully!");
+                }
             } else {
+                hideLoading(); // Hide the loading popup
                 alert("Error sending accept command. Check console for details.");
             }
-            refreshData(); // Refresh the grid to reflect accepted statuses
+            
+            refreshData(); // Refresh the grid to reflect statuses
         }
 
         // Functions for the Print Modal
@@ -649,6 +891,7 @@
             const idsToPrint = [...pendingPrintIds];
             closePrintModal();
             
+            showLoading(); // Can also utilize the loading modal for bulk printing for better UX
             let allSuccess = true;
 
             // Iterate over each ID and print individually
@@ -661,6 +904,8 @@
                 }
             }
             
+            hideLoading();
+
             // Show consolidated alert
             if (allSuccess) {
                 alert("All print commands sent successfully!");
@@ -718,6 +963,85 @@
                 return returnData;
             } catch (error) {
                 console.error(`Accept error for ${do_id}:`, error.message);
+                return null;
+            }
+        }
+		
+		async function submitBundle(do_id) {
+			var url = "";
+			
+			url = url + SUBMIT_URL + "&do_id=" + do_id;
+			
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    redirect: "follow"
+                });
+
+                if (!response.ok) throw new Error("submit API returned " + response.status);
+                
+                const returnData = await response.json();
+                console.log(`submit successful for ${do_id}:`, returnData);
+                return returnData;
+            } catch (error) {
+                console.error(`submit error for ${do_id}:`, error.message);
+                return null;
+            }
+        }
+		
+		async function getBundle(do_id) {
+			var url = "";
+			
+			url = url + GETBUNDLE_URL + "&do_id=" + do_id;
+			
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    redirect: "follow"
+                });
+
+                if (!response.ok) throw new Error("getBundle API returned " + response.status);
+                
+                let returnData = await response.json();
+                
+                // FIX: Parse the stringified JSON returned by the Apps Script API
+                if (typeof returnData === 'string') {
+                    try {
+                        returnData = JSON.parse(returnData);
+                    } catch (e) {
+                        console.error("JSON parse error in getBundle:", e);
+                    }
+                }
+
+                console.log(`getBundle successful for ${do_id}:`, returnData);
+                return returnData;
+            } catch (error) {
+                console.error(`getBundle error for ${do_id}:`, error.message);
+                return null;
+            }
+        }
+		
+		async function submitScan(do_id, bundleScan, fullBundleScan, bundleDummyScan, fullBundleDummyScan, newUnpackValue) {
+			let url = SUBMITSCAN_URL + "&do_id=" + do_id;
+            url += "&bundleScan=" + encodeURIComponent(bundleScan);
+            url += "&fullBundleScan=" + encodeURIComponent(fullBundleScan);
+            url += "&bundleDummyScan=" + encodeURIComponent(bundleDummyScan);
+            url += "&fullBundleDummyScan=" + encodeURIComponent(fullBundleDummyScan);
+            url += "&newUnpackValue=" + encodeURIComponent(newUnpackValue);
+			
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    redirect: "follow"
+                });
+
+                if (!response.ok) throw new Error("submitScan API returned " + response.status);
+                
+                const returnData = await response.json();
+                console.log(`submitScan successful for ${do_id}:`, returnData);
+                return returnData;
+            } catch (error) {
+                console.error(`submitScan error for ${do_id}:`, error.message);
                 return null;
             }
         }
