@@ -579,16 +579,36 @@
                 alert("Please select at least one item first.");
                 return;
             }
-
-            const doIdString = selectedIds.join(',');
-            console.log("Selected IDs for Accept:", doIdString);
             
-            await acceptBundle(doIdString);
+            let allSuccess = true;
+
+            // Iterate over each ID and accept individually
+            for (const id of selectedIds) {
+                console.log(`Accepting DO ID: ${id}`);
+                const result = await acceptBundle(id);
+                
+                if (!result) {
+                    allSuccess = false;
+                }
+            }
+            
+            // Show consolidated alert
+            if (allSuccess) {
+                alert("All accept commands sent successfully!");
+            } else {
+                alert("Some accept commands failed. Check the console for details.");
+            }
+
             refreshData(); // Refresh the grid to reflect accepted statuses
         }
 
         async function acceptSingle(id) {
-            await acceptBundle(id);
+            const result = await acceptBundle(id);
+            if (result) {
+                alert("Accept command sent successfully!");
+            } else {
+                alert("Error sending accept command. Check console for details.");
+            }
             refreshData(); // Refresh the grid to reflect accepted statuses
         }
 
@@ -625,10 +645,28 @@
                 return;
             }
             
-            const doIdString = pendingPrintIds.join(',');
+            // Clone the array because we clear pendingPrintIds in closePrintModal
+            const idsToPrint = [...pendingPrintIds];
             closePrintModal();
-            console.log(`Printing DO IDs: ${doIdString} on Printer: ${printerId}`);
-            await printBundle(doIdString, printerId);
+            
+            let allSuccess = true;
+
+            // Iterate over each ID and print individually
+            for (const id of idsToPrint) {
+                console.log(`Printing DO ID: ${id} on Printer: ${printerId}`);
+                const result = await printBundle(id, printerId);
+                
+                if (!result) {
+                    allSuccess = false;
+                }
+            }
+            
+            // Show consolidated alert
+            if (allSuccess) {
+                alert("All print commands sent successfully!");
+            } else {
+                alert("Some print commands failed. Check the console for details.");
+            }
         }
 		
 		async function printBundle(do_id, printer_id) {
@@ -644,12 +682,10 @@
                 if (!response.ok) throw new Error("Print API returned " + response.status);
                 
                 const returnData = await response.json();
-                console.log("Print successful:", returnData);
-                alert("Print command sent successfully!");
+                console.log(`Print successful for ${do_id}:`, returnData);
                 return returnData;
             } catch (error) {
-                console.error("Print error:", error.message);
-                alert("Error sending print command: " + error.message);
+                console.error(`Print error for ${do_id}:`, error.message);
                 return null;
             }
         }
@@ -678,12 +714,10 @@
                 if (!response.ok) throw new Error("Accept API returned " + response.status);
                 
                 const returnData = await response.json();
-                console.log("Accept successful:", returnData);
-                alert("Accept command sent successfully!");
+                console.log(`Accept successful for ${do_id}:`, returnData);
                 return returnData;
             } catch (error) {
-                console.error("Accept error:", error.message);
-                alert("Error sending accept command: " + error.message);
+                console.error(`Accept error for ${do_id}:`, error.message);
                 return null;
             }
         }
