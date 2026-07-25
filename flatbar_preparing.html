@@ -969,8 +969,19 @@
 		
 		async function submitBundle(do_id) {
 			var url = "";
+			var gate_id = "";
+			const gate = document.getElementById('gateFilter').value;
+			if (gate === "K2"){
+				gate_id = gateIDK2;
+			} else if (gate === "K4") {
+				gate_id = gateIDK4;
+			} else if (gate === "K6") {
+				gate_id = gateIDK6;
+			} else if (gate === "K8") {
+				gate_id = gateIDK8;
+			}
 			
-			url = url + SUBMIT_URL + "&do_id=" + do_id;
+			url = url + SUBMIT_URL + "&do_id=" + do_id + "&gate_id=" + gate_id;
 			
             try {
                 const response = await fetch(url, {
