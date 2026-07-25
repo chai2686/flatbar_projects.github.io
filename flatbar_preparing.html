@@ -444,7 +444,7 @@
     </div>
 
     <script>
-		const MAIN_URL = "https://script.google.com/macros/s/AKfycbyyMzmokH23I0zBg1F8SuDRxryiBlNuw0hcr1xgNSI9eLDBfScgSD0dMp8UdYjSGexI8A/exec?"
+		const MAIN_URL = "https://script.google.com/macros/s/AKfycbz_DXDa-F0Icz5Aqmh4CjIdRgTVithr2yQrfEMFe49er1FyjQWn1ZZKcjWz9MWBH0QkkQ/exec?"
         const UNCLAIM_URL = MAIN_URL + "action=getunclaim&gate_id=";
         const CLAIMED_URL = MAIN_URL + "action=getclaimed&gate_id=";
 		const PRINT_URL = MAIN_URL + "action=printbundle";
@@ -1033,12 +1033,25 @@
         }
 		
 		async function submitScan(do_id, bundleScan, fullBundleScan, bundleDummyScan, fullBundleDummyScan, newUnpackValue) {
+			var gate_id = "";
+			const gate = document.getElementById('gateFilter').value;
+			if (gate === "K2"){
+				gate_id = gateIDK2;
+			} else if (gate === "K4") {
+				gate_id = gateIDK4;
+			} else if (gate === "K6") {
+				gate_id = gateIDK6;
+			} else if (gate === "K8") {
+				gate_id = gateIDK8;
+			}
+			
 			let url = SUBMITSCAN_URL + "&do_id=" + do_id;
             url += "&bundleScan=" + encodeURIComponent(bundleScan);
             url += "&fullBundleScan=" + encodeURIComponent(fullBundleScan);
             url += "&bundleDummyScan=" + encodeURIComponent(bundleDummyScan);
             url += "&fullBundleDummyScan=" + encodeURIComponent(fullBundleDummyScan);
             url += "&newUnpackValue=" + encodeURIComponent(newUnpackValue);
+			url += "&gate_id=" + encodeURIComponent(gate_id);
 			
             try {
                 const response = await fetch(url, {
