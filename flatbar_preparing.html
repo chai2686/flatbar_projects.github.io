@@ -440,7 +440,7 @@
     </div>
 
     <div class="grid-container" id="card-container">
-        <div class="loading-state">Loading data from server...</div>
+        <div class="loading-state">กำลังโหลดข้อมูลจากระบบ...</div>
     </div>
 
     <script>
@@ -741,9 +741,9 @@
                 return;
             }
             
-            // Get section 2 (index 1) for both variables
-            const scanSection2 = qrParts[1];
-            const dummySection2 = dummyParts[1];
+            // Get section 2 (index 1) for both variables and convert to lower case
+            const scanSection2 = qrParts[1].toLowerCase();
+            const dummySection2 = dummyParts[1].toLowerCase();
             
             if (scanSection2 === dummySection2) {
                 // Prepare arguments
@@ -787,7 +787,7 @@
             const checkedBoxes = document.querySelectorAll('.card-checkbox:checked');
             
             if (checkedBoxes.length === 0) {
-                alert("Please select at least one item first.");
+                alert("ไม่ได้เลือกรายการใด.");
                 return;
             }
             
@@ -820,7 +820,7 @@
 
             // Show consolidated alert
             if (allSuccess) {
-                alert("All accept (and applicable submit) commands sent successfully!");
+                alert("รับงานทั้งหมดสำเร็จ!");
             } else {
                 alert("Some commands failed. Check the console for details.");
             }
@@ -838,17 +838,17 @@
                     hideLoading(); // Hide the loading popup
                     
                     if (submitResult) {
-                        alert("Accept and Submit commands sent successfully!");
+                        alert("ดำเนินการรับงานสำเร็จ!");
                     } else {
-                        alert("Accept succeeded, but Submit failed. Check console for details.");
+                        alert("รับงานสำเร็จ!, แต่ไม่สามารถจับคู่สินค้าได้.");
                     }
                 } else {
                     hideLoading(); // Hide the loading popup
-                    alert("Accept command sent successfully!");
+                    alert("รับงานสำเร็จ!");
                 }
             } else {
                 hideLoading(); // Hide the loading popup
-                alert("Error sending accept command. Check console for details.");
+                alert("ไม่สามารถรับงานได้.");
             }
             
             refreshData(); // Refresh the grid to reflect statuses
@@ -860,7 +860,7 @@
             const selectedIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
             
             if (selectedIds.length === 0) {
-                alert("Please select at least one item first to print.");
+                alert("ยังไม่ได้เลือกรายการที่จะพิมพ์สติ้กเกอร์.");
                 return;
             }
             
@@ -882,7 +882,7 @@
             const printerId = document.getElementById('printerSelect').value;
             
             if (pendingPrintIds.length === 0) {
-                alert("No items selected for printing.");
+                alert("ยังไม่ได้เลือกรายการที่จะพิมพ์สติ้กเกอร์.");
                 closePrintModal();
                 return;
             }
@@ -908,9 +908,9 @@
 
             // Show consolidated alert
             if (allSuccess) {
-                alert("All print commands sent successfully!");
+                alert("พิมพ์รายการทั้งหมดสำเร็จ!");
             } else {
-                alert("Some print commands failed. Check the console for details.");
+                alert("พิมพ์ไม่สำเร็จ");
             }
         }
 		
