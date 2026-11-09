@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="เว็บแอพสำหรับจดน้ำหนักออนไลน์ ส่วนงานเหล็กแบน">
+    <meta name="Version" content="2.5">
+    <title>จดน้ำหนักเหล็กแบน</title>
+    
+    <style>
+        :root {
+            --primary: #007bff;
+            --primary-hover: #0056b3;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #6c757d;
+            --border-color: #ced4da;
+            --disabled-bg: #e9ecef;
+            --radius: 8px;
+        }
+
+        /* Resets & Base */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        /* Main App Container */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            padding: 25px 20px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        /* Form Layout */
+        .form-group {
+            margin-bottom: 5px;
+            width: 100%;
+        }
+        
+        .row {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1;
+            min-width: calc(50% - 15px);
+        }
+
+        .label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-main);
+            display: block;
+        }
+
+        /* Inputs & Selects */
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 8px 8px;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background-color: var(--card-bg);
+            transition: all 0.2s ease-in-out;
+        }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none; margin: 0;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+        }
+
+        input:disabled {
+            background-color: var(--disabled-bg);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            border-color: transparent;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Buttons */
+        button {
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        button:active { transform: scale(0.98); }
+        
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        
+        .btn-secondary { background-color: var(--text-muted); color: white; }
+        .btn-secondary:hover { background-color: #5a6268; }
+        
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-success:hover { background-color: #218838; }
+
+        .btn-icon {
+            padding: 0 16px;
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+        
+        .footer span { cursor: pointer; }
+        .footer span:hover { text-decoration: underline; }
+
+        .action-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .action-group button { flex: 1; }
+
+        /* --- Modals CSS --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); 
+            z-index: 1000;
+            justify-content: center; 
+            align-items: center;
+            padding: 15px;
+        }
+        .modal.active { display: flex; }
+        
+        .calc-container {
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: var(--radius);
+            width: 100%; 
+            max-width: 320px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        /* Wider container for the multi-size table */
+        .table-container {
+            max-width: 500px;
+        }
+
+        .calc-display {
+            width: 100%; 
+            background: var(--bg-color); 
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius); 
+            padding: 15px; 
+            font-size: 1.5rem; 
+            text-align: right;
+            margin-bottom: 15px; 
+            min-height: 56px; 
+            overflow-x: auto;
+            color: var(--text-main);
+        }
+        
+        .calc-grid {
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            margin-bottom: 15px;
+        }
+        
+        .calc-btn {
+            padding: 15px 0; 
+            font-size: 1.2rem; 
+            background: var(--bg-color); 
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.05);
+        }
+        .calc-btn:hover { background: var(--border-color); }
+        .calc-btn.op-btn { background: var(--disabled-bg); font-weight: bold; }
+        .calc-btn.clear-btn { background: #ff4d4d; color: white; border-color: #ff4d4d; }
+        .calc-btn.clear-btn:hover { background: #cc0000; }
+        
+        .calc-actions { display: flex; gap: 10px; }
+        .calc-actions button { flex: 1; padding: 15px; }
+
+        /* Multi-Size Table Styles */
+        .multi-size-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+        .multi-size-table th, .multi-size-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            text-align: left;
+        }
+        .multi-size-table th {
+            background-color: var(--bg-color);
+            position: sticky;
+            top: 0;
+        }
+        .multi-size-summary {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .summary-val { color: var(--primary); }
+        .summary-val.diff { color: #ff4d4d; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>📥 จดน้ำหนักเหล็กแบน</h2>
+		
+		<div class="form-group">
+            <label class="label">ชื่อไซส์</label>
+            <div class="input-group">
+                <input type="text" id="sizename" disabled >
+                <button id="scanner" type="button" class="btn-primary btn-icon" onclick="openScanner()" style="font-size: 1.0rem;">📟</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="label">ประเภทสินค้า</label>
+            <select id="type" aria-label="ประเภทสินค้า">
+                <option value="" disabled>🗜️ เลือกประเภทสินค้า</option>
+                <option value="เหล็กแบน" selected>เหล็กแบน</option>
+            </select>
+        </div>
+
+        <div class="row form-group">
+            <div class="col">
+                <label class="label">ความหนา</label>
+                <input type="number" id="thickness" placeholder="ความหนา">
+            </div>
+            <div class="col">
+                <label class="label">หน้ากว้าง</label>
+                <input type="number" id="width" placeholder="หน้ากว้าง">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="label">ความยาว</label>
+            <input type="number" id="length" placeholder="ความยาวเหล็กแบน" value="6000">
+        </div>
+
+        <div class="form-group">
+            <label class="label">จำนวน</label>
+            <div class="input-group">
+                <input type="number" id="quantity" placeholder="จำนวนสินค้า">
+                <button type="button" class="btn-primary btn-icon" id="quantity_cal" onclick="openCalc()">📠</button>
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col">
+                <label class="label">น้ำหนักหัวหนึ่ง</label>
+                <input type="number" id="weight1" placeholder="ตาชั่งหัวหนึ่ง">
+            </div>
+            <div class="col">
+                <label class="label">น้ำหนักหัวสอง</label>
+                <input type="number" id="weight2" placeholder="ตาชั่งหัวสอง">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="label">น้ำหนักหลังชั่งรวม</label>
+            <div class="input-group">
+                <input type="number" id="totalweight" disabled placeholder="คำนวณอัตโนมัติ">
+                <button type="button" class="btn-primary btn-icon" onclick="openMultiSizeModal()" style="font-size: 1.0rem;">ชั่งหลายไซส์</button>
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col">
+                <label class="label">ความหนาเฉลี่ย</label>
+                <input type="number" id="avgthick" disabled placeholder="คำนวณอัตโนมัติ">
+            </div>
+            <div class="col">
+                <label class="label" id="avgthick-1_label">เฉลี่ยหน้ากว้าง -1</label>
+                <input type="number" id="avgthick-1" disabled placeholder="คำนวณอัตโนมัติ">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="label">ทะเบียนรถ</label>
+            <input type="text" id="truckno" placeholder="ทะเบียนรถขนส่ง">
+        </div>
+
+        <div class="action-group">
+            <button type="button" class="btn-primary" onclick="saveData()">บันทึกน้ำหนัก</button>
+            <button type="button" class="btn-secondary" onclick="clearData()" style="background-color: #dc3545;">ล้างข้อมูล</button>
+        </div>
+
+        <div class="footer">
+            <span onclick="about()">Version 2.5 TR</span>
+            <p>Powered by Flatbar Division™️</p>
+        </div>
+    </div>
+
+    <!-- Scanner Modal -->
+    <div id="scannerModal" class="modal">
+        <div class="calc-container">
+            <h3 style="margin-bottom: 15px; color: var(--text-main); font-size: 1.2rem;">สแกนบาร์โค้ด</h3>
+            <input type="text" id="barcodeInput" placeholder="สแกนหรือพิมพ์บาร์โค้ดที่นี่..." style="margin-bottom: 20px;">
+            <div class="calc-actions">
+                <button type="button" class="btn-secondary" onclick="closeScanner()">ยกเลิก</button>
+                <button type="button" class="btn-primary" onclick="processBarcode()">ตกลง</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Multi-Size Modal -->
+    <div id="multiSizeModal" class="modal">
+        <div class="calc-container table-container">
+            <h3 style="margin-bottom: 15px; color: var(--text-main); font-size: 1.2rem;">คำนวณน้ำหนักหลายไซส์</h3>
+            
+            <div class="multi-size-summary">
+                <div class="summary-row">
+                    <span>น้ำหนักชั่งรวม:</span>
+                    <span id="msFormTotal" class="summary-val">0</span>
+                </div>
+                <div class="summary-row">
+                    <span>น้ำหนักที่หักออก:</span>
+                    <span id="msCheckedTotal" class="summary-val">0</span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
+                <div class="summary-row">
+                    <span>น้ำหนักสุทธิ:</span>
+                    <span id="msNetWeight" class="summary-val diff">0</span>
+                </div>
+            </div>
+
+            <div style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                <table class="multi-size-table" id="historyTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px; text-align: center;"></th>
+                            <th>ชื่อไซส์</th>
+                            <th style="width: 50px;">จำนวน</th>
+                            <th>น้ำหนัก</th>
+                            <th>เฉลี่ย</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- Rows will be injected here by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="calc-actions">
+                <button type="button" class="btn-secondary" style="background-color: #dc3545; color: white; border: none;" onclick="clearMultiSizeHistory()">ล้างประวัติ</button>
+                <button type="button" class="btn-primary" onclick="closeMultiSizeModal()">ตกลง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="calc-container" style="text-align: center;">
+            <h3 style="margin-bottom: 10px; color: #28a745; font-size: 1.5rem;">✅ บันทึกสำเร็จ</h3>
+            <p style="margin-bottom: 20px; color: var(--text-muted); font-size: 0.9rem;">ข้อมูลถูกส่งไปยังระบบแล้ว</p>
+            <button type="button" class="btn-success" style="width: 100%;" onclick="closeSuccessModal()">ตกลง</button>
+        </div>
+    </div>
+
+    <!-- Calculator Modal -->
+    <div id="calcModal" class="modal">
+        <div class="calc-container">
+            <div class="calc-display" id="calcDisplay">0</div>
+            <div class="calc-grid">
+                <button type="button" class="calc-btn" onclick="appendCalc('7')">7</button>
+                <button type="button" class="calc-btn" onclick="appendCalc('8')">8</button>
+                <button type="button" class="calc-btn" onclick="appendCalc('9')">9</button>
+                <button type="button" class="calc-btn op-btn" onclick="appendCalc('/')">÷</button>
+                
+                <button type="button" class="calc-btn" onclick="appendCalc('4')">4</button>
+                <button type="button" class="calc-btn" onclick="appendCalc('5')">5</button>
+                <button type="button" class="calc-btn" onclick="appendCalc('6')">6</button>
+                <button type="button" class="calc-btn op-btn" onclick="appendCalc('*')">×</button>
+                
+                <button type="button" class="calc-btn" onclick="appendCalc('1')">1</button>
+                <button type="button" class="calc-btn" onclick="appendCalc('2')">2</button>
+                <button type="button" class="calc-btn" onclick="appendCalc('3')">3</button>
+                <button type="button" class="calc-btn op-btn" onclick="appendCalc('-')">-</button>
+                
+                <button type="button" class="calc-btn clear-btn" onclick="clearCalc()">C</button>
+                <button type="button" class="calc-btn" onclick="appendCalc('0')">0</button>
+                <button type="button" class="calc-btn" onclick="appendCalc('.')">.</button>
+                <button type="button" class="calc-btn op-btn" onclick="appendCalc('+')">+</button>
+            </div>
+            <div class="calc-actions">
+                <button type="button" class="btn-secondary" onclick="closeCalc()">ยกเลิก</button>
+                <button type="button" class="btn-primary" onclick="applyCalc()">ตกลง</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function about() {
+            alert("Flatbar Calculator V. 2.5 Technical Review");
+        }
+
+        // --- Core Inputs ---
+        const typeSelect = document.getElementById('type');
+        const thicknessInput = document.getElementById('thickness');
+        const widthInput = document.getElementById('width');
+        const lengthInput = document.getElementById('length');
+        const quantityInput = document.getElementById('quantity');
+        const sizenameInput = document.getElementById('sizename');
+        const weight1Input = document.getElementById('weight1');
+        const weight2Input = document.getElementById('weight2');
+        const totalWeightInput = document.getElementById('totalweight');
+        const avgThickInput = document.getElementById('avgthick');
+        const avgThickMinusOneInput = document.getElementById('avgthick-1'); 
+        const avgThickMinusOneLabel = document.getElementById('avgthick-1_label'); 
+
+        // --- Clear Data Logic ---
+        function clearData() {
+            const inputs = document.querySelectorAll('.container input, .container select');
+            
+            inputs.forEach(input => {
+                if (input.id === 'truckno') return; 
+                
+                if (input.id === 'type') {
+                    input.value = "เหล็กแบน";
+                } else if (input.id === 'length') {
+                    input.value = "6000";
+                } else {
+                    input.value = "";
+                }
+            });
+            
+            calculateSizeName();
+            calculateAvgThickness();
+        }
+
+        // --- Scanner Logic ---
+        const scannerModal = document.getElementById('scannerModal');
+        const barcodeInput = document.getElementById('barcodeInput');
+
+        function openScanner() {
+            barcodeInput.value = '';
+            scannerModal.classList.add('active');
+            setTimeout(() => barcodeInput.focus(), 100);
+        }
+
+        function closeScanner() {
+            scannerModal.classList.remove('active');
+        }
+
+        function processBarcode() {
+            const barcode = barcodeInput.value.trim();
+            if (!barcode) {
+                closeScanner();
+                return;
+            }
+
+            const parts = barcode.split('*');
+            
+            if (parts.length >= 4) {
+                const specString = parts[1]; 
+                const quantity = parts[3];   
+
+                const regex = /^(.*?)\s+([\d.]+)mm\s*[xX]\s*([\d.]+)mm\s*[xX]\s*([\d.]+)mm/i;
+                const match = specString.match(regex);
+
+                if (match) {
+                    const extractedType = match[1].trim();
+                    let optionExists = false;
+                    for (let i = 0; i < typeSelect.options.length; i++) {
+                        if (typeSelect.options[i].value === extractedType) {
+                            optionExists = true;
+                            break;
+                        }
+                    }
+                    if (optionExists) {
+                        typeSelect.value = extractedType;
+                    }
+                    
+                    thicknessInput.value = parseFloat(match[2]);
+                    widthInput.value = parseFloat(match[3]);
+                    lengthInput.value = parseFloat(match[4]);
+                    quantityInput.value = parseFloat(quantity);
+
+                    calculateSizeName();
+                    calculateAvgThickness();
+                } else {
+                    alert('ไม่สามารถอ่านข้อมูลความหนา/หน้ากว้าง/ความยาว จากบาร์โค้ดได้');
+                }
+            } else {
+                alert('รูปแบบบาร์โค้ดไม่ถูกต้อง (ข้อมูลไม่ครบถ้วน)');
+            }
+            
+            closeScanner();
+        }
+
+        scannerModal.addEventListener('click', function(e) {
+            if (e.target === scannerModal) {
+                closeScanner();
+            }
+        });
+
+        barcodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                processBarcode();
+            }
+        });
+
+        // --- Auto Calculate Size Name Logic ---
+        function calculateSizeName() {
+            const typeVal = typeSelect.value || '';
+            const tVal = thicknessInput.value;
+            const wVal = widthInput.value;
+            const lVal = lengthInput.value;
+
+            if (tVal && wVal && lVal) {
+                const tFormatted = parseFloat(tVal).toFixed(2);
+                sizenameInput.value = `${typeVal} ${tFormatted}mm X ${wVal}mm X ${lVal}mm`;
+            } else {
+                sizenameInput.value = '';
+            }
+        }
+
+        typeSelect.addEventListener('change', calculateSizeName);
+        thicknessInput.addEventListener('input', calculateSizeName);
+        widthInput.addEventListener('input', calculateSizeName);
+        lengthInput.addEventListener('input', calculateSizeName);
+
+        // --- Auto Calculate Total Weight Logic ---
+        function calculateTotalWeight() {
+            const w1 = parseFloat(weight1Input.value) || 0;
+            const w2 = parseFloat(weight2Input.value) || 0;
+            
+            if (weight1Input.value === '' && weight2Input.value === '') {
+                totalWeightInput.value = '';
+            } else {
+                totalWeightInput.value = w1 + w2;
+            }
+            calculateAvgThickness();
+        }
+
+        weight1Input.addEventListener('input', calculateTotalWeight);
+        weight2Input.addEventListener('input', calculateTotalWeight);
+
+        // --- Auto Calculate Avg Thickness Logic ---
+        function calculateAvgThickness() {
+            const tW = parseFloat(totalWeightInput.value);
+            const wVal = parseFloat(widthInput.value);
+            const lVal = parseFloat(lengthInput.value);
+            const qVal = parseFloat(quantityInput.value);
+            const tTarget = parseFloat(thicknessInput.value);
+
+            if (!isNaN(wVal)) {
+                avgThickMinusOneLabel.innerText = `เฉลี่ยหน้ากว้าง ${wVal - 1}`;
+            } else {
+                avgThickMinusOneLabel.innerText = `เฉลี่ยหน้ากว้าง -1`;
+            }
+
+            if (!isNaN(tW) && tW > 0 && !isNaN(wVal) && wVal > 0 && !isNaN(lVal) && lVal > 0 && !isNaN(qVal) && qVal > 0) {
+                const avg = tW / (0.00000785 * wVal * lVal * qVal);
+                avgThickInput.value = avg.toFixed(2);
+                
+                if (!isNaN(tTarget) && (tTarget - avg >= 0.5)) {
+                    avgThickInput.style.backgroundColor = '#ff4d4d'; 
+                    avgThickInput.style.color = '#ffffff';           
+                } else {
+                    avgThickInput.style.backgroundColor = '';        
+                    avgThickInput.style.color = '';                  
+                }
+                
+                if ((wVal - 1) > 0) {
+                    const avgMinusOne = tW / (0.00000785 * (wVal - 1) * lVal * qVal);
+                    avgThickMinusOneInput.value = avgMinusOne.toFixed(2);
+                } else {
+                    avgThickMinusOneInput.value = '';
+                }
+            } else {
+                avgThickInput.value = '';
+                avgThickInput.style.backgroundColor = '';
+                avgThickInput.style.color = '';
+                avgThickMinusOneInput.value = '';
+            }
+        }
+
+        widthInput.addEventListener('input', calculateAvgThickness);
+        lengthInput.addEventListener('input', calculateAvgThickness);
+        quantityInput.addEventListener('input', calculateAvgThickness);
+        thicknessInput.addEventListener('input', calculateAvgThickness); 
+
+        calculateSizeName();
+
+        // --- Calculator Logic ---
+        const calcModal = document.getElementById('calcModal');
+        const calcDisplay = document.getElementById('calcDisplay');
+        let currentCalc = '';
+
+        function openCalc() {
+            currentCalc = quantityInput.value || '';
+            updateDisplay();
+            calcModal.classList.add('active');
+        }
+
+        function closeCalc() {
+            calcModal.classList.remove('active');
+        }
+
+        function appendCalc(val) {
+            currentCalc += val;
+            updateDisplay();
+        }
+
+        function clearCalc() {
+            currentCalc = '';
+            updateDisplay();
+        }
+
+        function calculateResult() {
+            if (!currentCalc) return;
+            try {
+                const sanitized = currentCalc.replace(/[^-()\d/*+.]/g, '');
+                if (sanitized) {
+                    currentCalc = String(new Function('return ' + sanitized)());
+                    updateDisplay();
+                }
+            } catch (error) {
+                calcDisplay.innerText = 'Error';
+                currentCalc = '';
+            }
+        }
+
+        function applyCalc() {
+            calculateResult();
+            if (calcDisplay.innerText !== 'Error' && currentCalc !== '') {
+                quantityInput.value = currentCalc;
+                calculateAvgThickness();
+            }
+            closeCalc();
+        }
+
+        function updateDisplay() {
+            calcDisplay.innerText = currentCalc || '0';
+        }
+        
+        calcModal.addEventListener('click', function(e) {
+            if (e.target === calcModal) {
+                closeCalc();
+            }
+        });
+		
+		// --- Save Data Logic with Validation & Local Storage ---
+		function saveData() {
+			var sizename = document.getElementById('sizename').value;
+			var quantity = document.getElementById('quantity').value;
+			var totalweight = document.getElementById('totalweight').value;
+			var avgthick = document.getElementById('avgthick').value;
+			var truckno = document.getElementById('truckno').value || "ไม่ระบุ";
+			
+            if (!sizename || !quantity || !totalweight || !avgthick || parseFloat(quantity) <= 0 || parseFloat(totalweight) <= 0) {
+                alert("กรุณากรอกข้อมูลและคำนวณน้ำหนักให้ครบถ้วนก่อนบันทึก");
+                return;
+            }
+
+            // Save to Local Storage array
+            let savedRecords = JSON.parse(localStorage.getItem('flatbarHistory')) || [];
+            savedRecords.push({
+                sizename: sizename,
+                quantity: quantity,
+                totalweight: totalweight,
+                avgthick: avgthick
+            });
+            localStorage.setItem('flatbarHistory', JSON.stringify(savedRecords));
+
+            // Execute submission
+			var i = document.createElement("img");
+			i.src = "https://docs.google.com/forms/d/e/1FAIpQLSfSubnUJUW0vnyV5Ohp5iqouvDbbXjOjyyRDR0TpmG1yM3Alw/formResponse?entry.906081497=" + encodeURIComponent(sizename) + "&entry.60271403=" + encodeURIComponent(quantity) + "&entry.1464877610=" + encodeURIComponent(totalweight) + "&entry.1922380272=" + encodeURIComponent(avgthick) + "&entry.35484225=" + encodeURIComponent(truckno);
+			
+			document.getElementById('successModal').classList.add('active');
+			clearData();
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+
+        // --- Multi-Size Logic ---
+        const multiSizeModal = document.getElementById('multiSizeModal');
+        const historyTableBody = document.getElementById('historyTableBody');
+        const msFormTotal = document.getElementById('msFormTotal');
+        const msCheckedTotal = document.getElementById('msCheckedTotal');
+        const msNetWeight = document.getElementById('msNetWeight');
+
+        function openMultiSizeModal() {
+            populateMultiSizeTable();
+            calculateMultiSizeDiff();
+            multiSizeModal.classList.add('active');
+        }
+
+        function closeMultiSizeModal() {
+            let checkedtotalweight = parseFloat(msCheckedTotal.innerText) || 0;
+            
+            // Subtract checked items from the current total weight 
+            if (checkedtotalweight > 0) {
+                let currentTotal = parseFloat(totalWeightInput.value) || 0;
+                let newTotal = currentTotal - checkedtotalweight;
+                
+                if (newTotal < 0) newTotal = 0; // Prevent negative weights
+                
+                // Update totalweight input
+                totalWeightInput.value = newTotal.toFixed(2);
+                
+                // Mirror the subtracted net weight into weight1 and clear weight2 
+                // to prevent form from overriding the new totalweight when users type later.
+                weight1Input.value = newTotal > 0 ? newTotal.toFixed(2) : "";
+                weight2Input.value = "";
+                
+                // Trigger dependent calculations
+                calculateAvgThickness();
+            }
+            
+            multiSizeModal.classList.remove('active');
+        }
+        
+        function clearMultiSizeHistory() {
+            if (confirm("คุณต้องการล้างประวัติการชั่งทั้งหมดใช่หรือไม่?")) {
+                localStorage.removeItem('flatbarHistory');
+                populateMultiSizeTable();
+                calculateMultiSizeDiff();
+            }
+        }
+
+        function populateMultiSizeTable() {
+            historyTableBody.innerHTML = '';
+            let savedRecords = JSON.parse(localStorage.getItem('flatbarHistory')) || [];
+
+            if (savedRecords.length === 0) {
+                historyTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 15px;">ไม่มีประวัติการชั่ง</td></tr>';
+                return;
+            }
+
+            // Populate rows in reverse order (newest first)
+            savedRecords.slice().reverse().forEach((record, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="history-checkbox" data-weight="${record.totalweight}" onchange="calculateMultiSizeDiff()">
+                    </td>
+                    <td>${record.sizename}</td>
+                    <td>${record.quantity}</td>
+                    <td>${record.totalweight}</td>
+                    <td>${record.avgthick}</td>
+                `;
+                historyTableBody.appendChild(tr);
+            });
+        }
+
+        function calculateMultiSizeDiff() {
+            const currentTotalFormWeight = parseFloat(totalWeightInput.value) || 0;
+            let checkedtotalweight = 0;
+
+            const checkboxes = document.querySelectorAll('.history-checkbox');
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    checkedtotalweight += parseFloat(cb.getAttribute('data-weight')) || 0;
+                }
+            });
+
+            const netWeight = currentTotalFormWeight - checkedtotalweight;
+
+            msFormTotal.innerText = currentTotalFormWeight.toFixed(2);
+            msCheckedTotal.innerText = checkedtotalweight.toFixed(2);
+            msNetWeight.innerText = netWeight.toFixed(2);
+        }
+
+        multiSizeModal.addEventListener('click', function(e) {
+            if (e.target === multiSizeModal) {
+                closeMultiSizeModal();
+            }
+        });
+    </script>
+</body>
+</html>
