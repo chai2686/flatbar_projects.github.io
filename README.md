@@ -4,8 +4,6 @@
 
 
 รายการที่ต้องแก้ไข
-1.Flatbar Pooling
-1.1 Auto Refresh รีเฟรซอัตโนมัติ
 
-2.Flatbar Shipment
+Flatbar Shipment
 2.1 Sort by size เรียงข้อมูลตามไซส์
