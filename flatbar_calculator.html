@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="เว็บแอพสำหรับจดน้ำหนักออนไลน์ ส่วนงานเหล็กแบน">
-    <meta name="Version" content="2.5">
+    <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
+    <meta name="Version" content="2.5 Technical Review">
     <title>จดน้ำหนักเหล็กแบน</title>
     
     <style>
@@ -279,7 +279,10 @@
             <label class="label">ประเภทสินค้า</label>
             <select id="type" aria-label="ประเภทสินค้า">
                 <option value="" disabled>🗜️ เลือกประเภทสินค้า</option>
-                <option value="เหล็กแบน" selected>เหล็กแบน</option>
+                <option value="เหล็กแบน" selected>🟰 เหล็กแบน</option>
+				<option value="เหล็กฉากพับ" >🔰 เหล็กฉากพับ</option>
+				<option value="เหล็กแผ่น" >▪️ เหล็กแผ่น</option>
+				<option value="เหล็กแผ่นดำ" >▪️ เหล็กแผ่นดำ</option>
             </select>
         </div>
 
@@ -288,9 +291,20 @@
                 <label class="label">ความหนา</label>
                 <input type="number" id="thickness" placeholder="ความหนา">
             </div>
-            <div class="col">
+            <div id="width_zone" class="col">
                 <label class="label">หน้ากว้าง</label>
                 <input type="number" id="width" placeholder="หน้ากว้าง">
+            </div>
+        </div>
+		
+		<div id="angle_zone" class="row form-group" style="display: none;">
+            <div class="col">
+                <label class="label">ปีกฉากพับ 1</label>
+                <input type="number" id="width1" placeholder="ปีกฉากพับ 1">
+            </div>
+            <div class="col">
+                <label class="label">ปีกฉากพับ 2</label>
+                <input type="number" id="width2" placeholder="ปีกฉากพับ 2">
             </div>
         </div>
 
@@ -331,7 +345,7 @@
                 <label class="label">ความหนาเฉลี่ย</label>
                 <input type="number" id="avgthick" disabled placeholder="คำนวณอัตโนมัติ">
             </div>
-            <div class="col">
+            <div id="avgthick-1_zone" class="col">
                 <label class="label" id="avgthick-1_label">เฉลี่ยหน้ากว้าง -1</label>
                 <input type="number" id="avgthick-1" disabled placeholder="คำนวณอัตโนมัติ">
             </div>
@@ -453,13 +467,17 @@
 
     <script>
         function about() {
-            alert("Flatbar Calculator V. 2.5 Technical Review");
+            alert("Flatbar Calculator Version 2.5 Technical Review");
         }
 
         // --- Core Inputs ---
         const typeSelect = document.getElementById('type');
         const thicknessInput = document.getElementById('thickness');
         const widthInput = document.getElementById('width');
+        const widthZone = document.getElementById('width_zone');
+		const width1Input = document.getElementById('width1');
+		const width2Input = document.getElementById('width2');
+        const angleZone = document.getElementById('angle_zone');
         const lengthInput = document.getElementById('length');
         const quantityInput = document.getElementById('quantity');
         const sizenameInput = document.getElementById('sizename');
@@ -469,6 +487,21 @@
         const avgThickInput = document.getElementById('avgthick');
         const avgThickMinusOneInput = document.getElementById('avgthick-1'); 
         const avgThickMinusOneLabel = document.getElementById('avgthick-1_label'); 
+		const avgThickMinusOneZone = document.getElementById('avgthick-1_zone');
+
+        // --- Toggle Zones Logic ---
+        function toggleZones() {
+            const typeVal = typeSelect.value || '';
+            if (typeVal === 'เหล็กฉากพับ') {
+                angleZone.style.display = 'flex';
+                widthZone.style.display = 'none';
+				avgThickMinusOneZone.style.display = 'none';
+            } else {
+                angleZone.style.display = 'none';
+                widthZone.style.display = 'block'; 
+				avgThickMinusOneZone.style.display = 'block';
+            }
+        }
 
         // --- Clear Data Logic ---
         function clearData() {
@@ -486,6 +519,7 @@
                 }
             });
             
+            toggleZones();
             calculateSizeName();
             calculateAvgThickness();
         }
@@ -517,11 +551,17 @@
                 const specString = parts[1]; 
                 const quantity = parts[3];   
 
-                const regex = /^(.*?)\s+([\d.]+)mm\s*[xX]\s*([\d.]+)mm\s*[xX]\s*([\d.]+)mm/i;
-                const match = specString.match(regex);
+                // Regex for Folded Angle (4 dimensions: w1 x w2 x t x l)
+                const regexAngle = /^(เหล็กฉากพับ)(?:\s*SS400|\s*SPHC)?\s+([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)/i;
+                // Regex for Flat / Plate (3 dimensions: t x w x l)
+                const regexFlat = /^(เหล็กแผ่นดำ|เหล็กแผ่น|เหล็กแบน)(?:\s*SS400|\s*SPHC)?\s+([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)/i;
+                
+                const matchAngle = specString.match(regexAngle);
+                const matchFlat = specString.match(regexFlat);
 
-                if (match) {
-                    const extractedType = match[1].trim();
+                if (matchAngle) {
+                    const extractedType = matchAngle[1].trim(); 
+                    
                     let optionExists = false;
                     for (let i = 0; i < typeSelect.options.length; i++) {
                         if (typeSelect.options[i].value === extractedType) {
@@ -531,11 +571,40 @@
                     }
                     if (optionExists) {
                         typeSelect.value = extractedType;
+                        toggleZones(); 
                     }
                     
-                    thicknessInput.value = parseFloat(match[2]);
-                    widthInput.value = parseFloat(match[3]);
-                    lengthInput.value = parseFloat(match[4]);
+                    width1Input.value = parseFloat(matchAngle[2]);
+                    width2Input.value = parseFloat(matchAngle[3]);
+                    thicknessInput.value = parseFloat(matchAngle[4]);
+                    lengthInput.value = parseFloat(matchAngle[5]);
+                    
+                    widthInput.value = ""; // Clear standard width
+                    quantityInput.value = parseFloat(quantity);
+
+                    calculateSizeName();
+                    calculateAvgThickness();
+                } else if (matchFlat) {
+                    const extractedType = matchFlat[1].trim(); 
+                    
+                    let optionExists = false;
+                    for (let i = 0; i < typeSelect.options.length; i++) {
+                        if (typeSelect.options[i].value === extractedType) {
+                            optionExists = true;
+                            break;
+                        }
+                    }
+                    if (optionExists) {
+                        typeSelect.value = extractedType;
+                        toggleZones(); 
+                    }
+                    
+                    thicknessInput.value = parseFloat(matchFlat[2]);
+                    widthInput.value = parseFloat(matchFlat[3]);
+                    lengthInput.value = parseFloat(matchFlat[4]);
+                    
+                    width1Input.value = ""; // Clear angle widths
+                    width2Input.value = "";
                     quantityInput.value = parseFloat(quantity);
 
                     calculateSizeName();
@@ -568,19 +637,37 @@
             const typeVal = typeSelect.value || '';
             const tVal = thicknessInput.value;
             const wVal = widthInput.value;
+            const w1Val = width1Input.value;
+            const w2Val = width2Input.value;
             const lVal = lengthInput.value;
 
-            if (tVal && wVal && lVal) {
-                const tFormatted = parseFloat(tVal).toFixed(2);
-                sizenameInput.value = `${typeVal} ${tFormatted}mm X ${wVal}mm X ${lVal}mm`;
+            if (typeVal === 'เหล็กฉากพับ') {
+                if (tVal && w1Val && w2Val && lVal) {
+                    const tFormatted = parseFloat(tVal).toFixed(2);
+                    sizenameInput.value = `${typeVal} ${w1Val}mm X ${w2Val}mm X ${tFormatted}mm X ${lVal}mm`;
+                } else {
+                    sizenameInput.value = '';
+                }
             } else {
-                sizenameInput.value = '';
+                if (tVal && wVal && lVal) {
+                    const tFormatted = parseFloat(tVal).toFixed(2);
+                    sizenameInput.value = `${typeVal} ${tFormatted}mm X ${wVal}mm X ${lVal}mm`;
+                } else {
+                    sizenameInput.value = '';
+                }
             }
         }
 
-        typeSelect.addEventListener('change', calculateSizeName);
+        typeSelect.addEventListener('change', () => {
+            toggleZones();
+            calculateSizeName();
+            calculateAvgThickness();
+        });
+        
         thicknessInput.addEventListener('input', calculateSizeName);
         widthInput.addEventListener('input', calculateSizeName);
+        width1Input.addEventListener('input', calculateSizeName);
+        width2Input.addEventListener('input', calculateSizeName);
         lengthInput.addEventListener('input', calculateSizeName);
 
         // --- Auto Calculate Total Weight Logic ---
@@ -603,18 +690,23 @@
         function calculateAvgThickness() {
             const tW = parseFloat(totalWeightInput.value);
             const wVal = parseFloat(widthInput.value);
+			const w1Val = parseFloat(width1Input.value);
+			const w2Val = parseFloat(width2Input.value);
             const lVal = parseFloat(lengthInput.value);
             const qVal = parseFloat(quantityInput.value);
             const tTarget = parseFloat(thicknessInput.value);
+            
+            const isAngle = (typeSelect.value === 'เหล็กฉากพับ');
+            let effectiveWidth = isAngle ? ((w1Val + w2Val) - (tTarget * 2)) : wVal;
 
-            if (!isNaN(wVal)) {
-                avgThickMinusOneLabel.innerText = `เฉลี่ยหน้ากว้าง ${wVal - 1}`;
+            if (!isNaN(effectiveWidth)) {
+                avgThickMinusOneLabel.innerText = `เฉลี่ยหน้ากว้าง ${effectiveWidth - 1}`;
             } else {
                 avgThickMinusOneLabel.innerText = `เฉลี่ยหน้ากว้าง -1`;
             }
 
-            if (!isNaN(tW) && tW > 0 && !isNaN(wVal) && wVal > 0 && !isNaN(lVal) && lVal > 0 && !isNaN(qVal) && qVal > 0) {
-                const avg = tW / (0.00000785 * wVal * lVal * qVal);
+            if (!isNaN(tW) && tW > 0 && !isNaN(effectiveWidth) && effectiveWidth > 0 && !isNaN(lVal) && lVal > 0 && !isNaN(qVal) && qVal > 0) {
+                const avg = tW / (0.00000785 * effectiveWidth * lVal * qVal);
                 avgThickInput.value = avg.toFixed(2);
                 
                 if (!isNaN(tTarget) && (tTarget - avg >= 0.5)) {
@@ -625,8 +717,8 @@
                     avgThickInput.style.color = '';                  
                 }
                 
-                if ((wVal - 1) > 0) {
-                    const avgMinusOne = tW / (0.00000785 * (wVal - 1) * lVal * qVal);
+                if ((effectiveWidth - 1) > 0) {
+                    const avgMinusOne = tW / (0.00000785 * (effectiveWidth - 1) * lVal * qVal);
                     avgThickMinusOneInput.value = avgMinusOne.toFixed(2);
                 } else {
                     avgThickMinusOneInput.value = '';
@@ -640,10 +732,14 @@
         }
 
         widthInput.addEventListener('input', calculateAvgThickness);
+        width1Input.addEventListener('input', calculateAvgThickness);
+        width2Input.addEventListener('input', calculateAvgThickness);
         lengthInput.addEventListener('input', calculateAvgThickness);
         quantityInput.addEventListener('input', calculateAvgThickness);
         thicknessInput.addEventListener('input', calculateAvgThickness); 
 
+        // Run once on initialization
+        toggleZones();
         calculateSizeName();
 
         // --- Calculator Logic ---
@@ -755,22 +851,17 @@
         function closeMultiSizeModal() {
             let checkedtotalweight = parseFloat(msCheckedTotal.innerText) || 0;
             
-            // Subtract checked items from the current total weight 
             if (checkedtotalweight > 0) {
                 let currentTotal = parseFloat(totalWeightInput.value) || 0;
                 let newTotal = currentTotal - checkedtotalweight;
                 
-                if (newTotal < 0) newTotal = 0; // Prevent negative weights
+                if (newTotal < 0) newTotal = 0; 
                 
-                // Update totalweight input
                 totalWeightInput.value = newTotal.toFixed(2);
                 
-                // Mirror the subtracted net weight into weight1 and clear weight2 
-                // to prevent form from overriding the new totalweight when users type later.
                 weight1Input.value = newTotal > 0 ? newTotal.toFixed(2) : "";
                 weight2Input.value = "";
                 
-                // Trigger dependent calculations
                 calculateAvgThickness();
             }
             
@@ -794,7 +885,6 @@
                 return;
             }
 
-            // Populate rows in reverse order (newest first)
             savedRecords.slice().reverse().forEach((record, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
