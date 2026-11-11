@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="เว็บแอพสำหรับบันทึกนับสต๊อก และรายงานสรุปสต๊อก ส่วนงานท่อเกรดบี">
-    <meta name="Version" content="2.5 Technical Review">
+    <meta name="Version" content="2.5">
     <title>จดน้ำหนักเหล็กแบน</title>
     
     <style>
@@ -281,6 +281,7 @@
                 <option value="" disabled>🗜️ เลือกประเภทสินค้า</option>
                 <option value="เหล็กแบน" selected>🟰 เหล็กแบน</option>
 				<option value="เหล็กฉากพับ" >🔰 เหล็กฉากพับ</option>
+				<option value="เหล็กตัวซีพับ" >🧲 เหล็กตัวซีพับ</option>
 				<option value="เหล็กแผ่น" >▪️ เหล็กแผ่น</option>
 				<option value="เหล็กแผ่นดำ" >▪️ เหล็กแผ่นดำ</option>
             </select>
@@ -305,6 +306,17 @@
             <div class="col">
                 <label class="label">ปีกฉากพับ 2</label>
                 <input type="number" id="width2" placeholder="ปีกฉากพับ 2">
+            </div>
+        </div>
+		
+		<div id="uc_zone" class="row form-group" style="display: none;">
+            <div class="col">
+                <label class="label">หน้ากว้างรางพับ</label>
+                <input type="number" id="uc_width1" placeholder="หน้ากว้างรางพับ">
+            </div>
+            <div class="col">
+                <label class="label">ปีกรางพับ</label>
+                <input type="number" id="uc_width2" placeholder="ปีกรางพับ">
             </div>
         </div>
 
@@ -467,7 +479,7 @@
 
     <script>
         function about() {
-            alert("Flatbar Calculator Version 2.5 Technical Review");
+            alert("Flatbar Calculator Version 3.7 Technical Review");
         }
 
         // --- Core Inputs ---
@@ -478,6 +490,9 @@
 		const width1Input = document.getElementById('width1');
 		const width2Input = document.getElementById('width2');
         const angleZone = document.getElementById('angle_zone');
+		const ucZone = document.getElementById('uc_zone');
+		const ucwidth1Input = document.getElementById('uc_width1');
+		const ucwidth2Input = document.getElementById('uc_width2');
         const lengthInput = document.getElementById('length');
         const quantityInput = document.getElementById('quantity');
         const sizenameInput = document.getElementById('sizename');
@@ -494,10 +509,17 @@
             const typeVal = typeSelect.value || '';
             if (typeVal === 'เหล็กฉากพับ') {
                 angleZone.style.display = 'flex';
+				ucZone.style.display = 'none';
+                widthZone.style.display = 'none';
+				avgThickMinusOneZone.style.display = 'none';
+            } else if (typeVal === 'เหล็กตัวซีพับ') {
+                angleZone.style.display = 'none';
+				ucZone.style.display = 'flex';
                 widthZone.style.display = 'none';
 				avgThickMinusOneZone.style.display = 'none';
             } else {
                 angleZone.style.display = 'none';
+				ucZone.style.display = 'none';
                 widthZone.style.display = 'block'; 
 				avgThickMinusOneZone.style.display = 'block';
             }
@@ -551,15 +573,46 @@
                 const specString = parts[1]; 
                 const quantity = parts[3];   
 
+                // Regex for Folded C-Channel (5 dimensions: w1 x w2 x w3 x t x l)
+                const regexUc = /^(เหล็กตัวซีพับ)(?:\s*SS400|\s*SPHC)?\s+([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)/i;
                 // Regex for Folded Angle (4 dimensions: w1 x w2 x t x l)
                 const regexAngle = /^(เหล็กฉากพับ)(?:\s*SS400|\s*SPHC)?\s+([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)/i;
                 // Regex for Flat / Plate (3 dimensions: t x w x l)
                 const regexFlat = /^(เหล็กแผ่นดำ|เหล็กแผ่น|เหล็กแบน)(?:\s*SS400|\s*SPHC)?\s+([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)(?:\s*mm)?\s*[xX]\s*([\d.]+)/i;
                 
+                const matchUc = specString.match(regexUc);
                 const matchAngle = specString.match(regexAngle);
                 const matchFlat = specString.match(regexFlat);
 
-                if (matchAngle) {
+                if (matchUc) {
+                    const extractedType = matchUc[1].trim(); 
+                    
+                    let optionExists = false;
+                    for (let i = 0; i < typeSelect.options.length; i++) {
+                        if (typeSelect.options[i].value === extractedType) {
+                            optionExists = true;
+                            break;
+                        }
+                    }
+                    if (optionExists) {
+                        typeSelect.value = extractedType;
+                        toggleZones(); 
+                    }
+                    
+                    ucwidth1Input.value = parseFloat(matchUc[2]);
+                    ucwidth2Input.value = parseFloat(matchUc[3]);
+                    // matchUc[4] is the redundant second flange, skipping
+                    thicknessInput.value = parseFloat(matchUc[5]);
+                    lengthInput.value = parseFloat(matchUc[6]);
+                    
+                    widthInput.value = ""; 
+                    width1Input.value = ""; 
+                    width2Input.value = ""; 
+                    quantityInput.value = parseFloat(quantity);
+
+                    calculateSizeName();
+                    calculateAvgThickness();
+                } else if (matchAngle) {
                     const extractedType = matchAngle[1].trim(); 
                     
                     let optionExists = false;
@@ -579,7 +632,9 @@
                     thicknessInput.value = parseFloat(matchAngle[4]);
                     lengthInput.value = parseFloat(matchAngle[5]);
                     
-                    widthInput.value = ""; // Clear standard width
+                    widthInput.value = ""; 
+                    ucwidth1Input.value = "";
+                    ucwidth2Input.value = "";
                     quantityInput.value = parseFloat(quantity);
 
                     calculateSizeName();
@@ -603,8 +658,10 @@
                     widthInput.value = parseFloat(matchFlat[3]);
                     lengthInput.value = parseFloat(matchFlat[4]);
                     
-                    width1Input.value = ""; // Clear angle widths
+                    width1Input.value = ""; 
                     width2Input.value = "";
+                    ucwidth1Input.value = "";
+                    ucwidth2Input.value = "";
                     quantityInput.value = parseFloat(quantity);
 
                     calculateSizeName();
@@ -639,12 +696,21 @@
             const wVal = widthInput.value;
             const w1Val = width1Input.value;
             const w2Val = width2Input.value;
+			const ucw1Val = ucwidth1Input.value;
+            const ucw2Val = ucwidth2Input.value;
             const lVal = lengthInput.value;
 
             if (typeVal === 'เหล็กฉากพับ') {
                 if (tVal && w1Val && w2Val && lVal) {
                     const tFormatted = parseFloat(tVal).toFixed(2);
                     sizenameInput.value = `${typeVal} ${w1Val}mm X ${w2Val}mm X ${tFormatted}mm X ${lVal}mm`;
+                } else {
+                    sizenameInput.value = '';
+                }
+			} else if (typeVal === 'เหล็กตัวซีพับ') {
+                if (tVal && ucw1Val && ucw2Val && lVal) {
+                    const tFormatted = parseFloat(tVal).toFixed(2);
+                    sizenameInput.value = `${typeVal} ${ucw1Val}mm X ${ucw2Val}mm X ${ucw2Val}mm X ${tFormatted}mm X ${lVal}mm`;
                 } else {
                     sizenameInput.value = '';
                 }
@@ -668,6 +734,8 @@
         widthInput.addEventListener('input', calculateSizeName);
         width1Input.addEventListener('input', calculateSizeName);
         width2Input.addEventListener('input', calculateSizeName);
+		ucwidth1Input.addEventListener('input', calculateSizeName);
+        ucwidth2Input.addEventListener('input', calculateSizeName);
         lengthInput.addEventListener('input', calculateSizeName);
 
         // --- Auto Calculate Total Weight Logic ---
@@ -692,12 +760,19 @@
             const wVal = parseFloat(widthInput.value);
 			const w1Val = parseFloat(width1Input.value);
 			const w2Val = parseFloat(width2Input.value);
+			const ucw1Val = parseFloat(ucwidth1Input.value);
+			const ucw2Val = parseFloat(ucwidth2Input.value);
             const lVal = parseFloat(lengthInput.value);
             const qVal = parseFloat(quantityInput.value);
             const tTarget = parseFloat(thicknessInput.value);
             
-            const isAngle = (typeSelect.value === 'เหล็กฉากพับ');
-            let effectiveWidth = isAngle ? ((w1Val + w2Val) - (tTarget * 2)) : wVal;
+            let effectiveWidth = wVal; 
+
+			if (typeSelect.value === 'เหล็กฉากพับ') {
+				effectiveWidth = (w1Val + w2Val) - (tTarget * 2);
+			} else if (typeSelect.value === 'เหล็กตัวซีพับ') {
+				effectiveWidth = (ucw1Val + (ucw2Val * 2)) - (tTarget * 4);
+			}
 
             if (!isNaN(effectiveWidth)) {
                 avgThickMinusOneLabel.innerText = `เฉลี่ยหน้ากว้าง ${effectiveWidth - 1}`;
@@ -734,6 +809,8 @@
         widthInput.addEventListener('input', calculateAvgThickness);
         width1Input.addEventListener('input', calculateAvgThickness);
         width2Input.addEventListener('input', calculateAvgThickness);
+		ucwidth1Input.addEventListener('input', calculateAvgThickness);
+        ucwidth2Input.addEventListener('input', calculateAvgThickness);
         lengthInput.addEventListener('input', calculateAvgThickness);
         quantityInput.addEventListener('input', calculateAvgThickness);
         thicknessInput.addEventListener('input', calculateAvgThickness); 
