@@ -1,0 +1,2988 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>จดน้ำหนักท่อเกรดบี</title>
+  <!-- Load Inter Font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* Bottom branding & version bar */
+    .footer-text {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0 0.375rem;
+      font-size: 0.75rem;
+      line-height: 1rem;
+      color: #64748b;
+    }
+
+    .footer-text span[onclick] {
+      cursor: pointer;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .footer-text span[onclick]:hover {
+      color: #1e293b;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased selection:bg-blue-100 selection:text-blue-900">
+  <!-- Main App Container (max-w-2xl for clean 5-column table layout on mobile & desktop) -->
+  <div class="min-h-[100dvh] h-[100dvh] w-full max-w-2xl mx-auto p-3 sm:p-5 flex flex-col gap-2.5 sm:gap-3">
+
+    <!-- 1. TOP BAR: Header Card (Left) + Add Button (Right) -->
+    <header class="shrink-0 flex items-stretch gap-3">
+      <!-- Header Box -->
+      <div class="flex-1 bg-white border border-slate-300 rounded-xl shadow-sm px-4 py-3 flex items-center gap-3 min-w-0">
+        <!-- Clickable System Menu Trigger Icon -->
+        <div
+          id="systemMenuTrigger"
+          role="button"
+          tabindex="0"
+          aria-haspopup="dialog"
+          aria-controls="systemMenuModal"
+          aria-label="เปิดเมนูระบบ"
+          title="เมนูระบบ (บันทึกลงระบบ / ล้างข้อมูล)"
+          class="w-9 h-9 rounded-lg bg-slate-900 hover:bg-slate-700 active:scale-95 text-white flex items-center justify-center shrink-0 shadow-sm cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          <!-- Pipe / Cylinder SVG Icon -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <ellipse cx="12" cy="6" rx="7" ry="3"></ellipse>
+            <path d="M5 6v12c0 1.66 3.13 3 7 3s7-1.34 7-3V6"></path>
+            <path d="M5 12c0 1.66 3.13 3 7 3s7-1.34 7-3"></path>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 truncate">จดน้ำหนักท่อเกรดบี</h1>
+          <p class="text-xs text-slate-500 truncate">เว็บแอพจดน้ำหนักท่อเกรดบี</p>
+        </div>
+      </div>
+
+      <!-- Prominent Add Button -->
+      <button
+        id="openModalBtn"
+        type="button"
+        class="shrink-0 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm sm:text-base px-4 sm:px-5 py-3 rounded-xl border border-blue-700 shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        aria-haspopup="dialog"
+        aria-controls="addModal"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        <span>เพิ่ม</span>
+      </button>
+    </header>
+
+    <!-- 2. MAIN TABLE AREA: Scrollable 5-Column Grouped Table -->
+    <main class="flex-1 min-h-0 bg-white border border-slate-300 rounded-xl shadow-sm flex flex-col overflow-hidden">
+      <!-- Subtle Section Subheader -->
+      <div class="shrink-0 px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">ตารางจดน้ำหนัก</span>
+        <span id="storageBadge" class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-500 bg-white border border-slate-200 rounded-full px-2.5 py-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          บันทึกในเครื่อง
+        </span>
+      </div>
+
+      <!-- Vertically & Horizontally Scrollable Table Container -->
+      <div class="flex-1 overflow-y-auto overflow-x-auto">
+        <table class="w-full min-w-[520px] text-left border-collapse">
+          <thead class="sticky top-0 z-10 bg-slate-100/95 backdrop-blur-sm border-b border-slate-300">
+            <tr>
+              <th scope="col" class="py-3 pl-4 pr-2 text-xs font-bold uppercase tracking-wider text-slate-600">
+                ไซส์ท่อ
+              </th>
+              <th scope="col" class="py-3 px-2 text-xs font-bold uppercase tracking-wider text-slate-600 text-center">
+                วัสดุ
+              </th>
+              <th scope="col" class="py-3 px-2 text-xs font-bold uppercase tracking-wider text-slate-600 text-center">
+                ชนิด
+              </th>
+              <th scope="col" class="py-3 px-2 text-xs font-bold uppercase tracking-wider text-slate-600 text-right">
+                จำนวน <span class="font-normal text-slate-400 normal-case">(Pcs)</span>
+              </th>
+              <th scope="col" class="py-3 pl-2 pr-4 text-xs font-bold uppercase tracking-wider text-slate-600 text-right">
+                น้ำหนัก <span class="font-normal text-slate-400 normal-case">(KG)</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody" class="divide-y divide-slate-200 text-sm">
+            <!-- Grouped rows and expandable lift detail sub-rows are dynamically rendered here by JavaScript -->
+          </tbody>
+        </table>
+
+        <!-- Empty State (shown when there are no records) -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center text-center px-6 py-14">
+          <div class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+            </svg>
+          </div>
+          <p class="text-sm font-semibold text-slate-700">ยังไม่มีรายการจดน้ำหนัก</p>
+          <p class="text-xs text-slate-500 mt-1 max-w-xs">กดปุ่ม <span class="font-semibold text-blue-600">+ เพิ่ม</span> ด้านบนเพื่อบันทึกรายการท่อใหม่</p>
+          <button
+            id="restoreSampleBtn"
+            type="button"
+            class="mt-4 text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg px-3 py-1.5 transition-colors"
+          >
+            โหลดข้อมูลตัวอย่าง
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- 3. SUMMARY AREA: Compact Anchored Bottom Card (Max Weight + Total Net Weight & Remaining Weight) -->
+    <footer class="shrink-0 bg-white border border-slate-300 rounded-xl shadow-sm p-3 sm:p-3.5 space-y-2">
+      <!-- Top Compact Row: Summary Title + Max Weight Input -->
+      <div class="flex items-center justify-between gap-2.5">
+        <div class="min-w-0">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">สรุปข้อมูล</h2>
+        </div>
+
+        <!-- Max Weight Input ("ตั้งน้ำหนักสูงสุด") -->
+        <div class="flex items-center gap-2 shrink-0">
+          <label for="maxWeightInput" class="text-xs font-semibold text-slate-600 whitespace-nowrap">
+            ตั้งน้ำหนักสูงสุด
+          </label>
+          <div class="relative w-32 sm:w-40">
+            <input
+              id="maxWeightInput"
+              name="maxWeight"
+              type="number"
+              inputmode="decimal"
+              step="any"
+              min="0"
+              placeholder="0.00"
+              aria-label="น้ำหนักสูงสุด (KG)"
+              class="w-full bg-slate-50 focus:bg-white border border-slate-300 rounded-lg pl-2.5 pr-9 py-1.5 text-sm font-semibold text-right text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors tabular-nums"
+            />
+            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-[11px] font-bold text-slate-400">
+              KG
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-Column Summary Cards: Total Net Weight & Remaining Weight -->
+      <div class="grid grid-cols-2 gap-2 sm:gap-2.5">
+        <!-- Total Net Weight Card ("น้ำหนักรวม") -->
+        <div class="bg-blue-50/70 border border-blue-200 rounded-lg px-3 py-2 sm:px-3.5 sm:py-2.5 flex flex-col justify-between min-w-0">
+          <p class="text-[11px] sm:text-xs font-semibold text-blue-700 uppercase tracking-wide truncate">น้ำหนักรวม</p>
+          <p class="text-base sm:text-lg font-bold text-blue-900 tabular-nums mt-0.5 truncate">
+            <span id="summaryWeight">0.00</span>
+            <span class="text-[11px] sm:text-xs font-semibold text-blue-700 ml-0.5">KG</span>
+          </p>
+        </div>
+
+        <!-- Remaining Weight Card ("น้ำหนักที่เหลือ" = น้ำหนักสูงสุด - น้ำหนักรวม) -->
+        <div
+          id="remainingWeightCard"
+          class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 sm:px-3.5 sm:py-2.5 flex flex-col justify-between min-w-0 transition-colors"
+        >
+          <div class="flex items-center justify-between gap-1">
+            <p id="remainingWeightLabel" class="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wide truncate">
+              น้ำหนักที่เหลือ
+            </p>
+            <span
+              id="overweightBadge"
+              class="hidden shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-600 text-white leading-none"
+            >
+              เกินพิกัด
+            </span>
+          </div>
+          <p id="remainingWeightValueWrap" class="text-base sm:text-lg font-bold text-slate-400 tabular-nums mt-0.5 truncate">
+            <span id="remainingWeight">-</span>
+            <span id="remainingWeightUnit" class="hidden text-[11px] sm:text-xs font-semibold text-slate-500 ml-0.5">KG</span>
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- 4. BOTTOM BRANDING & VERSION BAR -->
+    <div class="footer-text">
+      <span>Powered by Flatbar Division™️</span>
+      <span onclick="about()">Version 3.0</span>
+    </div>
+  </div>
+
+  <!-- ADD DATA MODAL POPUP -->
+  <div
+    id="addModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-[2px] transition-opacity"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+  >
+    <!-- Modal Card (scrolls smoothly on small viewports) -->
+    <div
+      id="modalCard"
+      class="w-full max-w-md max-h-[90dvh] flex flex-col bg-white border border-slate-300 rounded-2xl shadow-xl overflow-hidden transform transition-all"
+    >
+      <!-- Modal Header -->
+      <div class="shrink-0 px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div>
+          <h3 id="modalTitle" class="text-base font-bold text-slate-900">เพิ่มรายการ</h3>
+          <p class="text-xs text-slate-500 mt-0.5">เพิ่มรายการจดน้ำหนักท่อเกรดบี</p>
+        </div>
+        <button
+          id="closeModalIconBtn"
+          type="button"
+          class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+          aria-label="Close popup"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" style="color: red;" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Scrollable Modal Form -->
+      <form id="addRecordForm" novalidate class="flex-1 overflow-y-auto p-5 space-y-4">
+        <!-- 1. Pipe Size Dropdown -->
+        <div>
+          <label for="pipeSizeInput" class="block text-sm font-semibold text-slate-700 mb-1.5">
+            ไซส์ท่อ <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <select
+              id="pipeSizeInput"
+              name="pipeSize"
+              required
+              class="w-full appearance-none bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 pr-10 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            >
+              <option value="" disabled selected>🗜️ เลือกขนาดของท่อ</option>
+              <optgroup label="ท่อดำ">
+                <option value="ท่อดำ 3/4&quot;">ท่อดำ 3/4"</option>
+                <option value="ท่อดำ 1/2&quot;">ท่อดำ 1/2"</option>
+                <option value="ท่อดำ 1&quot;">ท่อดำ 1"</option>
+                <option value="ท่อดำ 1 1/4&quot;">ท่อดำ 1 1/4"</option>
+                <option value="ท่อดำ 1 1/2&quot;">ท่อดำ 1 1/2"</option>
+                <option value="ท่อดำ 2&quot;">ท่อดำ 2"</option>
+                <option value="ท่อดำ 2 1/2&quot;">ท่อดำ 2 1/2"</option>
+                <option value="ท่อดำ 3&quot;">ท่อดำ 3"</option>
+                <option value="ท่อดำ 3 1/2&quot;">ท่อดำ 3 1/2"</option>
+                <option value="ท่อดำ 4&quot;">ท่อดำ 4"</option>
+                <option value="ท่อดำ 5&quot;">ท่อดำ 5"</option>
+                <option value="ท่อดำ 6&quot;">ท่อดำ 6"</option>
+                <option value="ท่อดำ 7&quot;">ท่อดำ 7"</option>
+                <option value="ท่อดำ 8&quot;">ท่อดำ 8"</option>
+                <option value="ท่อดำ 10&quot;">ท่อดำ 10"</option>
+                <option value="ท่อดำ 11&quot;">ท่อดำ 11"</option>
+              </optgroup>
+              <optgroup label="ท่อเหลี่ยม">
+                <option value="ท่อเหลี่ยม 19x19">ท่อเหลี่ยม 19x19</option>
+                <option value="ท่อเหลี่ยม 25x25">ท่อเหลี่ยม 25x25</option>
+                <option value="ท่อเหลี่ยม 32x32">ท่อเหลี่ยม 32x32</option>
+                <option value="ท่อเหลี่ยม 38x38">ท่อเหลี่ยม 38x38</option>
+                <option value="ท่อเหลี่ยม 50x50">ท่อเหลี่ยม 50x50</option>
+                <option value="ท่อเหลี่ยม 70x65">ท่อเหลี่ยม 70x65</option>
+                <option value="ท่อเหลี่ยม 75x75">ท่อเหลี่ยม 75x75</option>
+                <option value="ท่อเหลี่ยม 100x100">ท่อเหลี่ยม 100x100</option>
+                <option value="ท่อเหลี่ยม 125x125">ท่อเหลี่ยม 125x125</option>
+                <option value="ท่อเหลี่ยม 150x150">ท่อเหลี่ยม 150x150</option>
+                <option value="ท่อเหลี่ยม 200x200">ท่อเหลี่ยม 200x200</option>
+              </optgroup>
+              <optgroup label="แป๊บแบน">
+                <option value="แป๊บแบน 50x25">แป๊บแบน 50x25</option>
+                <option value="แป๊บแบน 60x30">แป๊บแบน 60x30</option>
+                <option value="แป๊บแบน 70x45">แป๊บแบน 70x45</option>
+                <option value="แป๊บแบน 75x38">แป๊บแบน 75x38</option>
+                <option value="แป๊บแบน 75x45">แป๊บแบน 75x45</option>
+                <option value="แป๊บแบน 75x50">แป๊บแบน 75x50</option>
+                <option value="แป๊บแบน 100x50">แป๊บแบน 100x50</option>
+                <option value="แป๊บแบน 100x75">แป๊บแบน 100x75</option>
+                <option value="แป๊บแบน 125x50">แป๊บแบน 125x50</option>
+                <option value="แป๊บแบน 125x75">แป๊บแบน 125x75</option>
+                <option value="แป๊บแบน 125x100">แป๊บแบน 125x100</option>
+                <option value="แป๊บแบน 150x50">แป๊บแบน 150x50</option>
+                <option value="แป๊บแบน 150x75">แป๊บแบน 150x75</option>
+                <option value="แป๊บแบน 150x100">แป๊บแบน 150x100</option>
+                <option value="แป๊บแบน 175x175">แป๊บแบน 175x175</option>
+                <option value="แป๊บแบน 200x100">แป๊บแบน 200x100</option>
+              </optgroup>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </div>
+          </div>
+          <p id="pipeSizeError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+        </div>
+
+        <!-- 2. Material Radio Buttons ("เหล็กดำ", "GI") -->
+        <fieldset>
+          <legend class="block text-sm font-semibold text-slate-700 mb-1.5">
+            วัสดุ <span class="text-red-500">*</span>
+          </legend>
+          <div id="materialGroup" class="grid grid-cols-2 gap-2.5">
+            <label
+              for="materialSteel"
+              class="material-option flex items-center gap-2.5 p-3 rounded-xl border border-slate-300 bg-white cursor-pointer hover:bg-slate-50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:ring-1 has-[:checked]:ring-blue-600 transition-all select-none"
+              style="background-color: black;"
+            >
+              <input
+                id="materialSteel"
+                type="radio"
+                name="material"
+                value="เหล็กดำ"
+                required
+                class="w-4 h-4 accent-blue-600 text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer shrink-0"
+              />
+              <span class="text-sm font-semibold text-slate-800" style="color: white;">เหล็กดำ</span>
+            </label>
+            <label
+              for="materialGalvanized"
+              class="material-option flex items-center gap-2.5 p-3 rounded-xl border border-slate-300 bg-white cursor-pointer hover:bg-slate-50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:ring-1 has-[:checked]:ring-blue-600 transition-all select-none"
+              style="background-color: lightgray;"
+            >
+              <input
+                id="materialGalvanized"
+                type="radio"
+                name="material"
+                value="GI"
+                required
+                class="w-4 h-4 accent-blue-600 text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer shrink-0"
+              />
+              <span class="text-sm font-semibold text-slate-800">GI</span>
+            </label>
+          </div>
+          <p id="materialError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+        </fieldset>
+
+        <!-- 3. Type Radio Buttons ("BN", "BJ") — hidden when Average mode ("เฉลี่ย") is active -->
+        <fieldset id="pipeTypeFieldset">
+          <legend class="block text-sm font-semibold text-slate-700 mb-1.5">
+            ชนิด <span class="text-red-500">*</span>
+          </legend>
+          <div id="pipeTypeGroup" class="grid grid-cols-2 gap-2.5">
+            <label
+              for="typeBN"
+              class="type-option flex items-center gap-2.5 p-3 rounded-xl border border-slate-300 bg-white cursor-pointer hover:bg-slate-50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:ring-1 has-[:checked]:ring-blue-600 transition-all select-none"
+              style="background-color: orangered;"
+            >
+              <input
+                id="typeBN"
+                type="radio"
+                name="pipeType"
+                value="BN"
+                required
+                class="w-4 h-4 accent-blue-600 text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer shrink-0"
+              />
+              <span class="text-sm font-semibold text-slate-800" style="font-size: x-large;">BN</span>
+            </label>
+            <label
+              for="typeBJ"
+              class="type-option flex items-center gap-2.5 p-3 rounded-xl border border-slate-300 bg-white cursor-pointer hover:bg-slate-50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:ring-1 has-[:checked]:ring-blue-600 transition-all select-none"
+              style="background-color: yellow;"
+            >
+              <input
+                id="typeBJ"
+                type="radio"
+                name="pipeType"
+                value="BJ"
+                required
+                class="w-4 h-4 accent-blue-600 text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer shrink-0"
+              />
+              <span class="text-sm font-semibold text-slate-800" style="font-size: x-large;">BJ</span>
+            </label>
+          </div>
+          <p id="pipeTypeError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+        </fieldset>
+
+        <!-- 4A. Single Quantity Input (Strict Integer) — hidden when Average mode ("เฉลี่ย") is active -->
+        <div id="singleQuantityContainer">
+          <label for="quantityInput" class="block text-sm font-semibold text-slate-700 mb-1.5">
+            จำนวน <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <input
+              id="quantityInput"
+              name="quantity"
+              type="number"
+              inputmode="numeric"
+              step="1"
+              min="1"
+              placeholder="e.g. 25"
+              required
+              class="w-full bg-white border border-slate-300 rounded-xl pl-3.5 pr-14 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors tabular-nums"
+            />
+            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs font-bold text-slate-500 bg-transparent">
+              Pcs
+            </span>
+          </div>
+          <p id="quantityError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+        </div>
+
+        <!-- 4B. Average Split Quantity Inputs ("จำนวน BN" & "จำนวน BJ") — shown ONLY when Average mode ("เฉลี่ย") is active -->
+        <div id="averageQuantitySection" class="hidden grid grid-cols-2 gap-2.5">
+          <!-- Quantity BN Input -->
+          <div>
+            <label for="quantityBNInput" class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5">
+              <span>จำนวน</span>
+              <span
+                class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-indigo-50 border border-indigo-200 leading-none"
+                style="color: crimson;"
+              >BN</span>
+              <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <input
+                id="quantityBNInput"
+                name="quantityBN"
+                type="number"
+                inputmode="numeric"
+                step="1"
+                min="1"
+                placeholder="e.g. 10"
+                class="w-full bg-white border border-slate-300 rounded-xl pl-3.5 pr-12 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors tabular-nums"
+              />
+              <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs font-bold text-slate-500 bg-transparent">
+                Pcs
+              </span>
+            </div>
+            <p id="quantityBNError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+          </div>
+
+          <!-- Quantity BJ Input -->
+          <div>
+            <label for="quantityBJInput" class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5">
+              <span>จำนวน</span>
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 leading-none">
+                BJ
+              </span>
+              <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <input
+                id="quantityBJInput"
+                name="quantityBJ"
+                type="number"
+                inputmode="numeric"
+                step="1"
+                min="1"
+                placeholder="e.g. 15"
+                class="w-full bg-white border border-slate-300 rounded-xl pl-3.5 pr-12 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors tabular-nums"
+              />
+              <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs font-bold text-slate-500 bg-transparent">
+                Pcs
+              </span>
+            </div>
+            <p id="quantityBJError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+          </div>
+        </div>
+
+        <!-- 5. Dual Hoist Overhead Crane Weight Inputs ("น้ำหนักหัว1" + "น้ำหนักหัว2") -->
+        <div class="space-y-2.5">
+          <div class="grid grid-cols-2 gap-2.5">
+            <!-- Hoist 1 Weight Input -->
+            <div>
+              <label for="hoist1WeightInput" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                น้ำหนักหัว1 <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="hoist1WeightInput"
+                  name="hoist1Weight"
+                  type="number"
+                  inputmode="decimal"
+                  step="any"
+                  min="0"
+                  placeholder="0.00"
+                  required
+                  class="w-full bg-white border border-slate-300 rounded-xl pl-3.5 pr-12 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors tabular-nums"
+                />
+                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs font-bold text-slate-500 bg-transparent">
+                  KG
+                </span>
+              </div>
+              <p id="hoist1WeightError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+            </div>
+
+            <!-- Hoist 2 Weight Input -->
+            <div>
+              <label for="hoist2WeightInput" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                น้ำหนักหัว2 <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="hoist2WeightInput"
+                  name="hoist2Weight"
+                  type="number"
+                  inputmode="decimal"
+                  step="any"
+                  min="0"
+                  placeholder="0.00"
+                  required
+                  class="w-full bg-white border border-slate-300 rounded-xl pl-3.5 pr-12 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors tabular-nums"
+                />
+                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs font-bold text-slate-500 bg-transparent">
+                  KG
+                </span>
+              </div>
+              <p id="hoist2WeightError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+            </div>
+          </div>
+
+          <!-- Hidden Net Weight Field (auto-computed as น้ำหนักหัว1 + น้ำหนักหัว2 - ชั่งรวม) -->
+          <input type="hidden" id="netWeightInput" name="netWeight" value="" />
+
+          <!-- Read-only Live Total / Net Weight Preview Box -->
+          <div
+            id="netWeightPreviewBox"
+            class="bg-blue-50/70 border border-blue-200 rounded-xl px-3.5 py-2.5 space-y-2 transition-colors"
+          >
+            <!-- Deduction Breakdown (shown only when ชั่งรวม deduction > 0) -->
+            <div id="deductionBreakdown" class="hidden space-y-1 pb-2 border-b border-blue-200/80 text-xs">
+              <div class="flex items-center justify-between text-slate-600">
+                <span>หัว1 + หัว2</span>
+                <span class="font-medium tabular-nums">
+                  <span id="previewGrossWeight">0.00</span> KG
+                </span>
+              </div>
+              <div class="flex items-center justify-between gap-2 text-amber-700">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="truncate">หักชั่งรวม (<span id="previewDeductionCount">0</span> รายการ)</span>
+                  <button
+                    id="clearDeductionBtn"
+                    type="button"
+                    class="px-1.5 py-0.5 rounded bg-white/90 hover:bg-red-50 text-[11px] font-semibold text-red-600 border border-red-200 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 shrink-0"
+                    title="ล้างรายการหักชั่งรวม"
+                  >
+                    ล้าง
+                  </button>
+                </div>
+                <span class="font-semibold tabular-nums shrink-0">
+                  -<span id="previewDeductedWeight">0.00</span> KG
+                </span>
+              </div>
+            </div>
+
+            <!-- Main Live Weight Result Row -->
+            <div class="flex items-center justify-between gap-2">
+              <span id="liveNetWeightLabel" class="text-xs font-semibold text-blue-700">น้ำหนักรวม</span>
+              <span id="liveNetWeightValueWrap" class="text-sm sm:text-base font-bold text-blue-900 tabular-nums">
+                <span id="liveNetWeightPreview">0.00</span>
+                <span id="liveNetWeightUnit" class="text-xs font-semibold text-blue-700 ml-0.5">KG</span>
+              </span>
+            </div>
+
+            <!-- Live Average Split Breakdown (shown ONLY when isAverageMode === true) -->
+            <div id="averagePreviewBreakdown" class="hidden pt-2 border-t border-blue-200/80 space-y-1 text-xs">
+              <div class="flex items-center justify-between text-slate-600">
+                <span>จำนวนทั้งหมด / น้ำหนักต่อเส้น</span>
+                <span class="font-semibold text-slate-800 tabular-nums">
+                  <span id="avgTotalQtyPreview">0</span> Pcs · <span id="avgWeightPerPiecePreview">0.00</span> KG/เส้น
+                </span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 pt-0.5">
+                <div class="flex items-center justify-between bg-white/85 border border-slate-200/90 rounded-lg px-2 py-1">
+                  <span class="font-bold text-[11px]" style="color: crimson;">
+                    BN <span class="font-medium text-slate-500 tabular-nums">(<span id="avgBNQtyPreview">0</span>)</span>
+                  </span>
+                  <span class="font-semibold text-slate-800 tabular-nums">
+                    <span id="avgBNWeightPreview">0.00</span> <span class="text-[10px] font-normal text-slate-400">KG</span>
+                  </span>
+                </div>
+                <div class="flex items-center justify-between bg-white/85 border border-slate-200/90 rounded-lg px-2 py-1">
+                  <span class="font-bold text-[11px] text-amber-700">
+                    BJ <span class="font-medium text-slate-500 tabular-nums">(<span id="avgBJQtyPreview">0</span>)</span>
+                  </span>
+                  <span class="font-semibold text-slate-800 tabular-nums">
+                    <span id="avgBJWeightPreview">0.00</span> <span class="text-[10px] font-normal text-slate-400">KG</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p id="netWeightError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+        </div>
+
+        <!-- Modal Action Buttons (Left: ชั่งรวม + เฉลี่ย | Right: ยกเลิก + บันทึก) -->
+        <div class="pt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100">
+          <!-- Left Bottom: Multi-Weigh Deduction & Average Split Toggle Buttons -->
+          <div class="flex items-center gap-2">
+            <!-- Multi-Weigh Deduction Button -->
+            <button
+              id="openMultiWeighBtn"
+              type="button"
+              class="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2.5 rounded-xl text-sm font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 active:bg-amber-200/80 border border-amber-300 shadow-xs transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500"
+              aria-haspopup="dialog"
+              aria-controls="multiWeighModal"
+            >
+              <span>ชั่งรวม</span>
+              <span
+                id="multiWeighBadge"
+                class="hidden inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold bg-amber-600 text-white tabular-nums"
+              >0</span>
+            </button>
+
+            <!-- Average Split Mode Toggle Button -->
+            <button
+              id="toggleAverageBtn"
+              type="button"
+              aria-pressed="false"
+              class="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2.5 rounded-xl text-sm font-semibold text-violet-800 bg-violet-50 hover:bg-violet-100 active:bg-violet-200/80 border border-violet-300 shadow-xs transition-all focus:outline-none focus:ring-2 focus:ring-violet-500"
+            >
+              <span id="toggleAverageDot" class="w-2 h-2 rounded-full bg-violet-400 transition-colors" aria-hidden="true"></span>
+              <span>เฉลี่ย</span>
+            </button>
+          </div>
+
+          <!-- Right Bottom: Cancel & Save Buttons -->
+          <div class="flex items-center gap-2">
+            <button
+              id="cancelModalBtn"
+              type="button"
+              class="px-3 sm:px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+            >
+              ยกเลิก
+            </button>
+            <button
+              id="saveRecordBtn"
+              type="submit"
+              class="px-3.5 sm:px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 border border-blue-700 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+            >
+              บันทึก
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MULTI-WEIGH DEDUCTION MODAL POPUP ("ชั่งหลายไซส์", layered above #addModal) -->
+  <div
+    id="multiWeighModal"
+    class="fixed inset-0 z-[60] hidden items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-[2px] transition-opacity"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="multiWeighModalTitle"
+  >
+    <div
+      id="multiWeighCard"
+      class="w-full max-w-xl max-h-[88dvh] flex flex-col bg-white border border-slate-300 rounded-2xl shadow-2xl overflow-hidden transform transition-all"
+    >
+      <!-- Multi-Weigh Modal Header -->
+      <div class="shrink-0 px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <h3 id="multiWeighModalTitle" class="text-base font-bold text-slate-900">ชั่งหลายไซส์</h3>
+          <p class="text-xs text-slate-500 mt-0.5">เลือกรายการที่ชั่งไว้ก่อนหน้าเพื่อหักออกจากน้ำหนักเครนรอบนี้</p>
+        </div>
+        <button
+          id="closeMultiWeighIconBtn"
+          type="button"
+          class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 shrink-0"
+          aria-label="ปิดหน้าต่างชั่งหลายไซส์"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" style="color: red;" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Scrollable Local Memory Table Body -->
+      <div class="flex-1 min-h-0 overflow-y-auto overflow-x-auto">
+        <table id="multiWeighTable" class="w-full min-w-[480px] text-left border-collapse">
+          <thead class="sticky top-0 z-10 bg-slate-100/95 backdrop-blur-sm border-b border-slate-300">
+            <tr>
+              <th scope="col" class="py-2.5 pl-4 pr-2 w-10 text-center">
+                <input
+                  id="selectAllMultiWeigh"
+                  type="checkbox"
+                  aria-label="เลือกรายการทั้งหมด"
+                  class="w-4 h-4 rounded accent-blue-600 text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer align-middle"
+                />
+              </th>
+              <th scope="col" class="py-2.5 px-2 text-xs font-bold uppercase tracking-wider text-slate-600">
+                ไซส์ท่อ
+              </th>
+              <th scope="col" class="py-2.5 px-2 text-xs font-bold uppercase tracking-wider text-slate-600 text-center">
+                วัสดุ
+              </th>
+              <th scope="col" class="py-2.5 px-2 text-xs font-bold uppercase tracking-wider text-slate-600 text-center">
+                ชนิด
+              </th>
+              <th scope="col" class="py-2.5 px-2 text-xs font-bold uppercase tracking-wider text-slate-600 text-right">
+                จำนวน <span class="font-normal text-slate-400 normal-case">(Pcs)</span>
+              </th>
+              <th scope="col" class="py-2.5 pl-2 pr-4 text-xs font-bold uppercase tracking-wider text-slate-600 text-right">
+                น้ำหนัก <span class="font-normal text-slate-400 normal-case">(KG)</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="multiWeighTableBody" class="divide-y divide-slate-200 text-sm">
+            <!-- Individual local memory records rendered dynamically here -->
+          </tbody>
+        </table>
+
+        <!-- Empty State (shown when inventoryData is empty) -->
+        <div id="multiWeighEmptyState" class="hidden flex-col items-center justify-center text-center px-6 py-12">
+          <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 mb-2.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+            </svg>
+          </div>
+          <p class="text-sm font-semibold text-slate-700">ยังไม่มีข้อมูลในตารางจดน้ำหนัก</p>
+          <p class="text-xs text-slate-500 mt-1">เมื่อมีรายการที่บันทึกไว้แล้ว จะสามารถเลือกหักน้ำหนักชั่งรวมได้ที่นี่</p>
+        </div>
+      </div>
+
+      <!-- Live Summary Bar & Footer Action Buttons -->
+      <div class="shrink-0 bg-slate-50 border-t border-slate-200 p-4 space-y-3">
+        <!-- Live Calculation Summary Bar -->
+        <div class="bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 space-y-1.5 text-xs sm:text-sm">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-medium text-slate-600">
+              หักออก (<span id="multiWeighSelectedCount" class="font-bold text-amber-700 tabular-nums">0</span> รายการ):
+            </span>
+            <span class="font-bold text-amber-700 tabular-nums">
+              <span id="multiWeighSelectedWeight">0.00</span> KG
+            </span>
+          </div>
+          <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-100">
+            <span class="font-semibold text-slate-700">
+              น้ำหนักคงเหลือ <span class="text-[11px] font-normal text-slate-400">(หัว1+หัว2: <span id="multiWeighGrossDisplay" class="tabular-nums">0.00</span> KG)</span>:
+            </span>
+            <span id="multiWeighRemainingWrap" class="font-bold text-blue-900 tabular-nums">
+              <span id="multiWeighRemainingWeight">0.00</span> KG
+            </span>
+          </div>
+        </div>
+
+        <!-- Footer Buttons -->
+        <div class="flex items-center justify-end gap-2.5">
+          <button
+            id="cancelMultiWeighBtn"
+            type="button"
+            class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+          >
+            ยกเลิก
+          </button>
+          <button
+            id="confirmMultiWeighBtn"
+            type="button"
+            class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 border border-blue-700 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYSTEM MENU POPUP MODAL ("เมนูระบบ", triggered by clicking top-left icon) -->
+  <div
+    id="systemMenuModal"
+    class="fixed inset-0 z-[62] hidden items-center justify-center p-4 bg-slate-900/55 backdrop-blur-[2px] transition-opacity"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="systemMenuTitle"
+  >
+    <div class="w-full max-w-sm bg-white border border-slate-300 rounded-2xl shadow-2xl overflow-hidden">
+      <!-- System Menu Header -->
+      <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <h3 id="systemMenuTitle" class="text-base font-bold text-slate-900">เมนูระบบ</h3>
+          <p class="text-xs text-slate-500 mt-0.5">จัดการข้อมูลในเครื่องและส่งข้อมูลลงระบบ</p>
+        </div>
+        <button
+          id="closeSystemMenuIconBtn"
+          type="button"
+          class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 shrink-0"
+          aria-label="ปิดเมนูระบบ"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" style="color: red;" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- System Menu Content -->
+      <div class="p-5 space-y-4">
+        <!-- Current Local Memory Status Summary -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">รายการที่รอส่ง</p>
+            <p class="text-base font-bold text-slate-900 tabular-nums mt-0.5">
+              <span id="sysMenuRecordCount">0</span>
+              <span class="text-xs font-medium text-slate-500 ml-0.5">รายการ</span>
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">น้ำหนักรวม</p>
+            <p class="text-base font-bold text-blue-900 tabular-nums mt-0.5">
+              <span id="sysMenuTotalWeight">0.00</span>
+              <span class="text-xs font-semibold text-blue-700 ml-0.5">KG</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- System Menu Action Buttons -->
+        <div class="space-y-2.5">
+          <!-- Button 1: Submit to Google Forms / System ("บันทึกลงระบบ") -->
+          <button
+            id="submitSystemBtn"
+            type="button"
+            class="w-full flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-300 disabled:cursor-not-allowed border border-blue-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+          >
+            <span class="flex items-center gap-2.5">
+              <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+              </svg>
+              <span>บันทึกลงระบบ</span>
+            </span>
+            <svg class="w-4 h-4 shrink-0 opacity-80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+
+          <!-- Button 2: Clear All Local Memory ("ล้างข้อมูล") -->
+          <button
+            id="clearAllDataBtn"
+            type="button"
+            class="w-full flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-red-700 bg-red-50 hover:bg-red-100 active:bg-red-200/80 border border-red-200 transition-all focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1"
+          >
+            <span class="flex items-center gap-2.5">
+              <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+              </svg>
+              <span>ล้างข้อมูล</span>
+            </span>
+            <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- System Menu Footer -->
+      <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button
+          id="closeSystemMenuBtn"
+          type="button"
+          class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+        >
+          ปิด
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT MODAL POPUP (Triggered by global window.about() on Version 3.0 click) -->
+  <div
+    id="aboutModal"
+    class="fixed inset-0 z-[65] hidden items-center justify-center p-4 bg-slate-900/55 backdrop-blur-[2px] transition-opacity"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="aboutModalTitle"
+  >
+    <div class="w-full max-w-sm bg-white border border-slate-300 rounded-2xl shadow-2xl overflow-hidden">
+      <!-- About Header -->
+      <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-sm" aria-hidden="true">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <ellipse cx="12" cy="6" rx="7" ry="3"></ellipse>
+              <path d="M5 6v12c0 1.66 3.13 3 7 3s7-1.34 7-3V6"></path>
+              <path d="M5 12c0 1.66 3.13 3 7 3s7-1.34 7-3"></path>
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <h3 id="aboutModalTitle" class="text-base font-bold text-slate-900 truncate">จดน้ำหนักท่อเกรดบี</h3>
+            <p class="text-xs font-medium text-blue-600">Version 3.0</p>
+          </div>
+        </div>
+        <button
+          id="closeAboutIconBtn"
+          type="button"
+          class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 shrink-0"
+          aria-label="ปิดหน้าต่างเกี่ยวกับแอพ"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" style="color: red;" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- About Content -->
+      <div class="p-5 space-y-4 text-sm text-slate-700">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-800">Powered by Flatbar Division™️</span>
+          <span class="text-xs font-medium text-slate-500">พัฒนาโดย ส่วนงานเหล็กแบน</span>
+        </div>
+
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">ความสามารถหลัก</p>
+          <ul class="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+            <li class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0"></span>
+              <span>จัดกลุ่มรายการอัตโนมัติตาม <strong>ไซส์ท่อ / วัสดุ / ชนิด</strong> พร้อมดูและลบย่อยแต่ละรอบได้</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0"></span>
+              <span>รองรับการชั่งเครน 2 หัว (<strong>น้ำหนักหัว1 + น้ำหนักหัว2</strong>) พร้อมคำนวณยอดสุทธิทันที</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0"></span>
+              <span>โหมด <strong>ชั่งรวม / ชั่งหลายไซส์</strong> สำหรับเลือกหักน้ำหนักรายการที่ชั่งไว้ก่อนหน้า</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-violet-500 mt-1.5 shrink-0"></span>
+              <span>โหมด <strong>เฉลี่ย</strong> แบ่งน้ำหนักตามสัดส่วนจำนวนท่อ <strong>BN</strong> และ <strong>BJ</strong> อัตโนมัติ</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
+              <span>คำนวณ <strong>น้ำหนักที่เหลือ</strong> จาก <strong>น้ำหนักสูงสุด</strong> และส่งข้อมูลลงระบบ Google Forms ทีละรายการ</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- About Footer -->
+      <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button
+          id="closeAboutBtn"
+          type="button"
+          class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-950 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-1"
+        >
+          ปิด
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM CONFIRM ACTION MODAL ("ยืนยันการดำเนินการ", replaces browser confirm()) -->
+  <div
+    id="confirmActionModal"
+    class="fixed inset-0 z-[66] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] transition-opacity"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirmActionTitle"
+  >
+    <div class="w-full max-w-sm bg-white border border-slate-300 rounded-2xl shadow-2xl overflow-hidden">
+      <div class="p-5 space-y-4">
+        <div class="flex items-start gap-3">
+          <div id="confirmActionIconWrap" class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+            <!-- Icon dynamically updated via JavaScript -->
+          </div>
+          <div class="min-w-0">
+            <h3 id="confirmActionTitle" class="text-base font-bold text-slate-900">ยืนยันการดำเนินการ</h3>
+            <p id="confirmActionMessage" class="text-xs text-slate-600 mt-1 leading-relaxed"></p>
+          </div>
+        </div>
+
+        <!-- Summary Metrics Pill Grid -->
+        <div class="grid grid-cols-3 gap-2 bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+          <div>
+            <p class="text-[11px] font-medium text-slate-500">รายการ</p>
+            <p id="confirmSummaryRecords" class="text-sm font-bold text-slate-900 tabular-nums mt-0.5">0</p>
+          </div>
+          <div class="border-x border-slate-200 px-1">
+            <p class="text-[11px] font-medium text-slate-500">จำนวนรวม</p>
+            <p class="text-sm font-bold text-slate-900 tabular-nums mt-0.5">
+              <span id="confirmSummaryQty">0</span>
+              <span class="text-[10px] font-medium text-slate-400">Pcs</span>
+            </p>
+          </div>
+          <div>
+            <p class="text-[11px] font-medium text-slate-500">น้ำหนักรวม</p>
+            <p class="text-sm font-bold text-blue-900 tabular-nums mt-0.5">
+              <span id="confirmSummaryWeight">0.00</span>
+              <span class="text-[10px] font-medium text-blue-600">KG</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Dialog Buttons -->
+      <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5">
+        <button
+          id="cancelConfirmActionBtn"
+          type="button"
+          class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+        >
+          ยกเลิก
+        </button>
+        <button
+          id="proceedConfirmActionBtn"
+          type="button"
+          class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 border border-blue-700 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+        >
+          ยืนยัน
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NON-DISMISSIBLE PROCESSING MODAL (shown during sequential summitGS submission) -->
+  <div
+    id="processingModal"
+    class="fixed inset-0 z-[68] hidden items-center justify-center p-4 bg-slate-900/70 backdrop-blur-[2px] transition-opacity"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="processingModalTitle"
+    aria-busy="true"
+  >
+    <div class="w-full max-w-sm bg-white border border-slate-300 rounded-2xl shadow-2xl p-6 text-center space-y-4">
+      <!-- Animated Spinner -->
+      <div class="mx-auto w-12 h-12 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center">
+        <svg class="w-6 h-6 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3.5"></circle>
+          <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </div>
+
+      <div class="space-y-1">
+        <h3 id="processingModalTitle" class="text-base font-bold text-slate-900">กำลังบันทึกลงระบบ...</h3>
+        <p id="processingStatusText" class="text-xs text-slate-600 min-h-[2rem] flex items-center justify-center">
+          กำลังเตรียมส่งข้อมูล กรุณาอย่าปิดหน้าต่างนี้
+        </p>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="space-y-1.5">
+        <div class="w-full h-2.5 bg-slate-100 border border-slate-200 rounded-full overflow-hidden">
+          <div
+            id="processingProgressBar"
+            class="h-full bg-blue-600 rounded-full transition-all duration-300 ease-out"
+            style="width: 0%;"
+          ></div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 tabular-nums">
+          <span id="processingCounterText">0 / 0 รายการ</span>
+          <span id="processingPercentText">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subtle Toast Feedback Banner (No alert() used) -->
+  <div
+    id="toastBanner"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[80] pointer-events-none opacity-0 translate-y-2 transition-all duration-200 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 max-w-[92vw] text-center leading-snug"
+  >
+    <span id="toastMessage">บันทึกสำเร็จ</span>
+  </div>
+
+  <script>
+    /**
+     * Submits a single pipe inventory row to Google Forms via HTTP POST (no-cors)
+     * using URLSearchParams so special characters (quotes, Thai text) are properly
+     * encoded, requests are never browser-cached/deduplicated like detached <img> GETs,
+     * and the caller can reliably await each submission in sequence.
+     *
+     * @param {string} size - Pipe size label (entry.1362014552)
+     * @param {number} nogi - Black steel ("เหล็กดำ") quantity (entry.1472257121, sent as negative)
+     * @param {number} gi   - Galvanized ("GI") quantity (entry.1655074373, sent as negative)
+     * @returns {Promise<void>}
+     */
+    async function summitGS(size, nogi, gi) {
+      const formUrl =
+        'https://docs.google.com/forms/d/e/1FAIpQLSf4OqAabdM32leCV0UbLyqG-rmGZQNnxBBcm-ZlP5HLrYh4Fw/formResponse';
+
+      const nogiValue = nogi ? -Math.abs(Number(nogi)) : 0;
+      const giValue = gi ? -Math.abs(Number(gi)) : 0;
+
+      const formBody = new URLSearchParams();
+      formBody.append('entry.1362014552', String(size));
+      formBody.append('entry.1472257121', String(nogiValue));
+      formBody.append('entry.1655074373', String(giValue));
+
+      await fetch(formUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        },
+        body: formBody.toString(),
+      });
+    }
+
+    // Explicitly expose summitGS on window for external inspection or testing
+    window.summitGS = summitGS;
+
+    /**
+     * Pipe Inventory Web Application (จดน้ำหนักท่อเกรดบี - Version 3.0)
+     * Stores individual pipe weighing lifts ({ id, pipeSize, material, type, quantity, hoist1Weight, hoist2Weight, netWeight })
+     * in local memory with automatic localStorage persistence and safe fallback.
+     * Groups rows in "ตารางจดน้ำหนัก" by identical (pipeSize, material, type) with expandable per-lift detail rows,
+     * supports "ชั่งรวม" / "ชั่งหลายไซส์" deduction from previously weighed records,
+     * supports "เฉลี่ย" split mode to proportionally divide NetWeight across BN and BJ pieces,
+     * computes remaining capacity ("น้ำหนักที่เหลือ" = "น้ำหนักสูงสุด" - "น้ำหนักรวม"),
+     * and provides a System Menu to sequentially submit every row to Google Forms via summitGS() or clear all local memory.
+     */
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. Constants, Sample Data & Runtime State
+      // =========================================================================
+      const STORAGE_KEY = 'pipe_inventory_records_v1';
+      const MAX_WEIGHT_STORAGE_KEY = 'pipe_inventory_max_weight_v1';
+
+      const DEFAULT_SAMPLE_DATA = [
+        { id: 'rec-1', pipeSize: 'ท่อดำ 2"', material: 'เหล็กดำ', type: 'BN', quantity: 15, hoist1Weight: 92.25, hoist2Weight: 92.25, netWeight: 184.50 },
+        { id: 'rec-2', pipeSize: 'ท่อเหลี่ยม 50x50', material: 'GI', type: 'BJ', quantity: 8, hoist1Weight: 134.40, hoist2Weight: 134.40, netWeight: 268.80 },
+        { id: 'rec-3', pipeSize: 'แป๊บแบน 100x50', material: 'เหล็กดำ', type: 'BN', quantity: 24, hoist1Weight: 98.15, hoist2Weight: 98.10, netWeight: 196.25 }
+      ];
+
+      // In-memory state array (stores individual lifts for full auditability)
+      let inventoryData = [];
+      // Tracks which grouped rows are currently expanded in the UI
+      const expandedGroupKeys = new Set();
+      // Tracks applied & draft selected record IDs for "ชั่งรวม" / "ชั่งหลายไซส์" deduction
+      let selectedDeductionIds = new Set();
+      let draftDeductionIds = new Set();
+      let appliedDeductedWeight = 0;
+      // Tracks whether "เฉลี่ย" (BN/BJ proportional split) mode is active inside #addModal
+      let isAverageMode = false;
+      // Tracks pending confirmation dialog action ('submit' | 'clear' | null) & submission lock
+      let pendingConfirmAction = null;
+      let isSubmitting = false;
+      let storageAvailable = false;
+      let toastTimer = null;
+
+      // =========================================================================
+      // 2. DOM Element References
+      // =========================================================================
+      const systemMenuTrigger = document.getElementById('systemMenuTrigger');
+      const tableBody = document.getElementById('inventoryTableBody');
+      const emptyState = document.getElementById('emptyState');
+      const storageBadge = document.getElementById('storageBadge');
+
+      // Footer summary & max/remaining weight elements
+      const summaryWeightEl = document.getElementById('summaryWeight');
+      const maxWeightInput = document.getElementById('maxWeightInput');
+      const remainingWeightCard = document.getElementById('remainingWeightCard');
+      const remainingWeightLabel = document.getElementById('remainingWeightLabel');
+      const overweightBadge = document.getElementById('overweightBadge');
+      const remainingWeightValueWrap = document.getElementById('remainingWeightValueWrap');
+      const remainingWeightEl = document.getElementById('remainingWeight');
+      const remainingWeightUnit = document.getElementById('remainingWeightUnit');
+
+      // System Menu modal elements
+      const systemMenuModal = document.getElementById('systemMenuModal');
+      const closeSystemMenuIconBtn = document.getElementById('closeSystemMenuIconBtn');
+      const closeSystemMenuBtn = document.getElementById('closeSystemMenuBtn');
+      const sysMenuRecordCount = document.getElementById('sysMenuRecordCount');
+      const sysMenuTotalWeight = document.getElementById('sysMenuTotalWeight');
+      const submitSystemBtn = document.getElementById('submitSystemBtn');
+      const clearAllDataBtn = document.getElementById('clearAllDataBtn');
+
+      // Confirm Action modal elements
+      const confirmActionModal = document.getElementById('confirmActionModal');
+      const confirmActionIconWrap = document.getElementById('confirmActionIconWrap');
+      const confirmActionTitle = document.getElementById('confirmActionTitle');
+      const confirmActionMessage = document.getElementById('confirmActionMessage');
+      const confirmSummaryRecords = document.getElementById('confirmSummaryRecords');
+      const confirmSummaryQty = document.getElementById('confirmSummaryQty');
+      const confirmSummaryWeight = document.getElementById('confirmSummaryWeight');
+      const cancelConfirmActionBtn = document.getElementById('cancelConfirmActionBtn');
+      const proceedConfirmActionBtn = document.getElementById('proceedConfirmActionBtn');
+
+      // Processing modal elements
+      const processingModal = document.getElementById('processingModal');
+      const processingStatusText = document.getElementById('processingStatusText');
+      const processingProgressBar = document.getElementById('processingProgressBar');
+      const processingCounterText = document.getElementById('processingCounterText');
+      const processingPercentText = document.getElementById('processingPercentText');
+
+      // About modal elements
+      const aboutModal = document.getElementById('aboutModal');
+      const closeAboutIconBtn = document.getElementById('closeAboutIconBtn');
+      const closeAboutBtn = document.getElementById('closeAboutBtn');
+
+      const openModalBtn = document.getElementById('openModalBtn');
+      const restoreSampleBtn = document.getElementById('restoreSampleBtn');
+      const addModal = document.getElementById('addModal');
+      const closeModalIconBtn = document.getElementById('closeModalIconBtn');
+      const cancelModalBtn = document.getElementById('cancelModalBtn');
+      const addRecordForm = document.getElementById('addRecordForm');
+
+      const pipeSizeInput = document.getElementById('pipeSizeInput');
+      const materialRadios = document.querySelectorAll('input[name="material"]');
+      const materialOptionLabels = document.querySelectorAll('.material-option');
+      const pipeTypeFieldset = document.getElementById('pipeTypeFieldset');
+      const pipeTypeRadios = document.querySelectorAll('input[name="pipeType"]');
+      const typeOptionLabels = document.querySelectorAll('.type-option');
+      const singleQuantityContainer = document.getElementById('singleQuantityContainer');
+      const quantityInput = document.getElementById('quantityInput');
+      const averageQuantitySection = document.getElementById('averageQuantitySection');
+      const quantityBNInput = document.getElementById('quantityBNInput');
+      const quantityBJInput = document.getElementById('quantityBJInput');
+      const hoist1WeightInput = document.getElementById('hoist1WeightInput');
+      const hoist2WeightInput = document.getElementById('hoist2WeightInput');
+      const netWeightInput = document.getElementById('netWeightInput');
+      const netWeightPreviewBox = document.getElementById('netWeightPreviewBox');
+      const deductionBreakdown = document.getElementById('deductionBreakdown');
+      const previewGrossWeight = document.getElementById('previewGrossWeight');
+      const previewDeductionCount = document.getElementById('previewDeductionCount');
+      const previewDeductedWeight = document.getElementById('previewDeductedWeight');
+      const clearDeductionBtn = document.getElementById('clearDeductionBtn');
+      const liveNetWeightLabel = document.getElementById('liveNetWeightLabel');
+      const liveNetWeightValueWrap = document.getElementById('liveNetWeightValueWrap');
+      const liveNetWeightPreview = document.getElementById('liveNetWeightPreview');
+      const liveNetWeightUnit = document.getElementById('liveNetWeightUnit');
+
+      // Average preview breakdown elements
+      const averagePreviewBreakdown = document.getElementById('averagePreviewBreakdown');
+      const avgTotalQtyPreview = document.getElementById('avgTotalQtyPreview');
+      const avgWeightPerPiecePreview = document.getElementById('avgWeightPerPiecePreview');
+      const avgBNQtyPreview = document.getElementById('avgBNQtyPreview');
+      const avgBNWeightPreview = document.getElementById('avgBNWeightPreview');
+      const avgBJQtyPreview = document.getElementById('avgBJQtyPreview');
+      const avgBJWeightPreview = document.getElementById('avgBJWeightPreview');
+
+      // Average mode toggle button elements
+      const toggleAverageBtn = document.getElementById('toggleAverageBtn');
+      const toggleAverageDot = document.getElementById('toggleAverageDot');
+
+      // Multi-Weigh modal elements
+      const openMultiWeighBtn = document.getElementById('openMultiWeighBtn');
+      const multiWeighBadge = document.getElementById('multiWeighBadge');
+      const multiWeighModal = document.getElementById('multiWeighModal');
+      const closeMultiWeighIconBtn = document.getElementById('closeMultiWeighIconBtn');
+      const cancelMultiWeighBtn = document.getElementById('cancelMultiWeighBtn');
+      const confirmMultiWeighBtn = document.getElementById('confirmMultiWeighBtn');
+      const selectAllMultiWeigh = document.getElementById('selectAllMultiWeigh');
+      const multiWeighTable = document.getElementById('multiWeighTable');
+      const multiWeighTableBody = document.getElementById('multiWeighTableBody');
+      const multiWeighEmptyState = document.getElementById('multiWeighEmptyState');
+      const multiWeighSelectedCount = document.getElementById('multiWeighSelectedCount');
+      const multiWeighSelectedWeight = document.getElementById('multiWeighSelectedWeight');
+      const multiWeighGrossDisplay = document.getElementById('multiWeighGrossDisplay');
+      const multiWeighRemainingWrap = document.getElementById('multiWeighRemainingWrap');
+      const multiWeighRemainingWeight = document.getElementById('multiWeighRemainingWeight');
+
+      // Inline validation error elements
+      const pipeSizeError = document.getElementById('pipeSizeError');
+      const materialError = document.getElementById('materialError');
+      const pipeTypeError = document.getElementById('pipeTypeError');
+      const quantityError = document.getElementById('quantityError');
+      const quantityBNError = document.getElementById('quantityBNError');
+      const quantityBJError = document.getElementById('quantityBJError');
+      const hoist1WeightError = document.getElementById('hoist1WeightError');
+      const hoist2WeightError = document.getElementById('hoist2WeightError');
+      const netWeightError = document.getElementById('netWeightError');
+
+      const toastBanner = document.getElementById('toastBanner');
+      const toastMessage = document.getElementById('toastMessage');
+
+      // =========================================================================
+      // 3. Storage Helpers (localStorage with clean in-memory fallback)
+      // =========================================================================
+      function checkLocalStorage() {
+        try {
+          const testKey = '__pipe_inv_test__';
+          window.localStorage.setItem(testKey, '1');
+          window.localStorage.removeItem(testKey);
+          return true;
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function loadRecords() {
+        storageAvailable = checkLocalStorage();
+
+        if (storageAvailable) {
+          try {
+            const raw = window.localStorage.getItem(STORAGE_KEY);
+            if (raw !== null) {
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed)) {
+                inventoryData = parsed;
+                updateStorageBadge(true);
+                return;
+              }
+            }
+          } catch (err) {
+            // Fall through to default sample data if stored JSON is corrupted
+          }
+        }
+
+        // Clone default sample rows into local memory on first visit
+        inventoryData = DEFAULT_SAMPLE_DATA.map((item) => ({ ...item }));
+        saveRecords();
+        updateStorageBadge(storageAvailable);
+      }
+
+      function saveRecords() {
+        if (!storageAvailable) return;
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(inventoryData));
+        } catch (err) {
+          // Silently degrade to in-memory only if quota exceeded or blocked
+          storageAvailable = false;
+          updateStorageBadge(false);
+        }
+      }
+
+      /**
+       * Restores persisted "น้ำหนักสูงสุด" value from localStorage if available.
+       */
+      function loadMaxWeight() {
+        if (!storageAvailable) return;
+        try {
+          const savedMax = window.localStorage.getItem(MAX_WEIGHT_STORAGE_KEY);
+          if (savedMax !== null && savedMax.trim() !== '') {
+            const parsed = Number(savedMax);
+            if (!Number.isNaN(parsed) && Number.isFinite(parsed) && parsed >= 0) {
+              maxWeightInput.value = savedMax;
+            }
+          }
+        } catch (err) {
+          // Ignore storage read errors cleanly
+        }
+      }
+
+      /**
+       * Persists "น้ำหนักสูงสุด" value to localStorage safely.
+       */
+      function saveMaxWeight(rawValue) {
+        if (!storageAvailable) return;
+        try {
+          if (rawValue === '') {
+            window.localStorage.removeItem(MAX_WEIGHT_STORAGE_KEY);
+          } else {
+            window.localStorage.setItem(MAX_WEIGHT_STORAGE_KEY, rawValue);
+          }
+        } catch (err) {
+          // Silently degrade if storage write fails
+        }
+      }
+
+      function updateStorageBadge(isPersisted) {
+        if (isPersisted) {
+          storageBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>บันทึกในเครื่อง';
+        } else {
+          storageBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Session Memory';
+        }
+      }
+
+      // =========================================================================
+      // 4. Grouping, Formatting, Timing, Badges & Toast Helpers
+      // =========================================================================
+
+      /**
+       * Rounds a floating-point number safely to 2 decimal places.
+       */
+      function round2(num) {
+        return Math.round(num * 100) / 100;
+      }
+
+      /**
+       * Promise-based delay helper for spacing sequential Google Forms requests.
+       */
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      /**
+       * Builds a deterministic composite key for grouping rows with identical
+       * "ไซส์ท่อ" (pipeSize), "วัสดุ" (material), and "ชนิด" (type).
+       */
+      function getGroupKey(pipeSize, material, type) {
+        return `${String(pipeSize ?? '').trim()}|||${String(material ?? '').trim()}|||${String(type ?? '').trim()}`;
+      }
+
+      /**
+       * Groups all records in inventoryData by (pipeSize, material, type),
+       * preserving the exact order of first appearance.
+       */
+      function buildGroupedRecords(records) {
+        const groupMap = new Map();
+
+        records.forEach((item) => {
+          const key = getGroupKey(item.pipeSize, item.material, item.type);
+          if (!groupMap.has(key)) {
+            groupMap.set(key, {
+              key: key,
+              pipeSize: item.pipeSize,
+              material: item.material,
+              type: item.type,
+              totalQuantity: 0,
+              totalNetWeight: 0,
+              items: []
+            });
+          }
+
+          const group = groupMap.get(key);
+          group.totalQuantity += Number(item.quantity || 0);
+          group.totalNetWeight = round2(group.totalNetWeight + Number(item.netWeight || 0));
+          group.items.push(item);
+        });
+
+        return Array.from(groupMap.values());
+      }
+
+      function formatInteger(num) {
+        return Number(num).toLocaleString('en-US', { maximumFractionDigits: 0 });
+      }
+
+      function formatWeight(num) {
+        return Number(num).toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+
+      function createMaterialBadge(material) {
+        const badge = document.createElement('span');
+        if (material === 'GI' || material === 'Galvanized') {
+          badge.className = 'inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200';
+          badge.textContent = 'GI';
+        } else if (material === 'เหล็กดำ' || material === 'Steel') {
+          badge.className = 'inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-zinc-100 text-zinc-700 border border-zinc-300';
+          badge.textContent = 'เหล็กดำ';
+        } else {
+          badge.className = 'text-xs font-medium text-slate-400';
+          badge.textContent = '-';
+        }
+        return badge;
+      }
+
+      function createTypeBadge(pipeType) {
+        const badge = document.createElement('span');
+        if (pipeType === 'BN') {
+          badge.className = 'inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200';
+          badge.style.color = 'crimson';
+          badge.textContent = 'BN';
+        } else if (pipeType === 'BJ') {
+          badge.className = 'inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200';
+          badge.textContent = 'BJ';
+        } else {
+          badge.className = 'text-xs font-medium text-slate-400';
+          badge.textContent = '-';
+        }
+        return badge;
+      }
+
+      function showToast(message) {
+        toastMessage.textContent = message;
+        toastBanner.classList.remove('opacity-0', 'translate-y-2');
+        toastBanner.classList.add('opacity-100', 'translate-y-0');
+
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastBanner.classList.remove('opacity-100', 'translate-y-0');
+          toastBanner.classList.add('opacity-0', 'translate-y-2');
+        }, 3200);
+      }
+
+      // =========================================================================
+      // 5. Render Grouped Table, Expandable Detail Sub-Rows & Summary Area
+      // =========================================================================
+      function renderApp() {
+        renderTable();
+        renderSummary();
+      }
+
+      /**
+       * Renders the expandable detail sub-row directly underneath a grouped row
+       * showing each individual weighing lift and its delete action (simplified without hoistInfo text).
+       */
+      function createGroupDetailSubRow(group) {
+        const detailTr = document.createElement('tr');
+        detailTr.className = 'bg-slate-50/90';
+
+        const detailTd = document.createElement('td');
+        detailTd.colSpan = 5;
+        detailTd.className = 'px-4 py-2.5 border-t border-slate-200/80';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'rounded-xl bg-white border border-slate-200/90 shadow-xs overflow-hidden';
+
+        // Detail sub-header
+        const subHeader = document.createElement('div');
+        subHeader.className = 'px-3 py-1.5 bg-slate-100/80 border-b border-slate-200 flex items-center justify-between text-[11px] font-semibold text-slate-500';
+        subHeader.innerHTML = `
+          <span>รายละเอียดการชั่ง (${group.items.length} ครั้ง)</span>
+          <span>รวม ${formatInteger(group.totalQuantity)} Pcs / ${formatWeight(group.totalNetWeight)} KG</span>
+        `;
+        wrapper.appendChild(subHeader);
+
+        // List of individual lifts
+        const list = document.createElement('ul');
+        list.className = 'divide-y divide-slate-100';
+
+        group.items.forEach((lift, idx) => {
+          const li = document.createElement('li');
+          li.className = 'px-3 py-2 flex items-center justify-between gap-2 text-xs hover:bg-slate-50/80 transition-colors';
+
+          // Left side: lift index
+          const leftSide = document.createElement('div');
+          leftSide.className = 'flex flex-wrap items-center gap-x-2.5 gap-y-0.5 min-w-0';
+
+          const liftLabel = document.createElement('span');
+          liftLabel.className = 'inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200/80 font-semibold text-[11px] shrink-0';
+          liftLabel.textContent = `รอบที่ ${idx + 1}`;
+          leftSide.appendChild(liftLabel);
+
+          // Right side: quantity, net weight, and single-lift delete button
+          const rightSide = document.createElement('div');
+          rightSide.className = 'flex items-center gap-3 shrink-0';
+
+          const qtySpan = document.createElement('span');
+          qtySpan.className = 'font-medium text-slate-700 tabular-nums';
+          qtySpan.innerHTML = `${formatInteger(lift.quantity)} <span class="text-[11px] font-normal text-slate-400">Pcs</span>`;
+
+          const weightSpan = document.createElement('span');
+          weightSpan.className = 'font-semibold text-slate-900 tabular-nums min-w-[78px] text-right';
+          weightSpan.innerHTML = `${formatWeight(lift.netWeight)} <span class="text-[11px] font-normal text-slate-400">KG</span>`;
+
+          const singleDeleteBtn = document.createElement('button');
+          singleDeleteBtn.type = 'button';
+          singleDeleteBtn.className =
+            'p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 active:bg-red-100 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400';
+          singleDeleteBtn.title = `ลบครั้งที่ ${idx + 1} (${formatInteger(lift.quantity)} Pcs / ${formatWeight(lift.netWeight)} KG)`;
+          singleDeleteBtn.setAttribute('aria-label', `ลบรายการย่อยครั้งที่ ${idx + 1} ของ ${group.pipeSize}`);
+          singleDeleteBtn.innerHTML = `
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+            </svg>
+          `;
+          singleDeleteBtn.addEventListener('click', () => handleDeleteSingleRecord(lift.id));
+
+          rightSide.appendChild(qtySpan);
+          rightSide.appendChild(weightSpan);
+          rightSide.appendChild(singleDeleteBtn);
+
+          li.appendChild(leftSide);
+          li.appendChild(rightSide);
+          list.appendChild(li);
+        });
+
+        wrapper.appendChild(list);
+        detailTd.appendChild(wrapper);
+        detailTr.appendChild(detailTd);
+        return detailTr;
+      }
+
+      function renderTable() {
+        tableBody.innerHTML = '';
+
+        if (inventoryData.length === 0) {
+          expandedGroupKeys.clear();
+          emptyState.classList.remove('hidden');
+          emptyState.classList.add('flex');
+          return;
+        }
+
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+
+        const groupedRecords = buildGroupedRecords(inventoryData);
+
+        // Prune any expanded keys that no longer exist or have dropped to a single lift
+        const expandableKeys = new Set(
+          groupedRecords.filter((g) => g.items.length > 1).map((g) => g.key)
+        );
+        Array.from(expandedGroupKeys).forEach((key) => {
+          if (!expandableKeys.has(key)) {
+            expandedGroupKeys.delete(key);
+          }
+        });
+
+        const fragment = document.createDocumentFragment();
+
+        groupedRecords.forEach((group) => {
+          const isMulti = group.items.length > 1;
+          const isExpanded = isMulti && expandedGroupKeys.has(group.key);
+
+          const tr = document.createElement('tr');
+          tr.className = isExpanded
+            ? 'bg-blue-50/35 hover:bg-blue-50/55 transition-colors group'
+            : 'hover:bg-slate-50/90 transition-colors group';
+
+          // Column 1: ไซส์ท่อ (Pipe Size) + optional interactive toggle badge when grouped (> 1 lift)
+          const tdSize = document.createElement('td');
+          tdSize.className = 'py-3.5 pl-4 pr-2 font-semibold text-slate-900 whitespace-nowrap';
+
+          const sizeWrapper = document.createElement('div');
+          sizeWrapper.className = 'inline-flex items-center gap-1.5';
+
+          const sizePill = document.createElement('span');
+          sizePill.className = 'inline-flex items-center px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-800 font-semibold text-xs sm:text-sm';
+          sizePill.textContent = group.pipeSize;
+          sizeWrapper.appendChild(sizePill);
+
+          if (isMulti) {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.type = 'button';
+            toggleBtn.className = isExpanded
+              ? 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-600 text-white border border-blue-700 shadow-xs transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400'
+              : 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400';
+            toggleBtn.setAttribute('aria-expanded', String(isExpanded));
+            toggleBtn.setAttribute('aria-label', `${isExpanded ? 'ซ่อน' : 'ดู'}รายละเอียด ${group.items.length} รอบของ ${group.pipeSize}`);
+            toggleBtn.title = isExpanded ? 'คลิกเพื่อย่อรายละเอียด' : 'คลิกเพื่อดูรายละเอียดแต่ละรอบ';
+            toggleBtn.innerHTML = `
+              <svg class="w-3 h-3 transition-transform duration-150 ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+              <span>${group.items.length} รอบ</span>
+            `;
+            toggleBtn.addEventListener('click', () => handleToggleGroup(group.key));
+            sizeWrapper.appendChild(toggleBtn);
+          }
+
+          tdSize.appendChild(sizeWrapper);
+
+          // Column 2: วัสดุ (เหล็กดำ / GI / fallback "-")
+          const tdMaterial = document.createElement('td');
+          tdMaterial.className = 'py-3.5 px-2 text-center whitespace-nowrap';
+          tdMaterial.appendChild(createMaterialBadge(group.material));
+
+          // Column 3: ชนิด (BN / BJ / fallback "-")
+          const tdType = document.createElement('td');
+          tdType.className = 'py-3.5 px-2 text-center whitespace-nowrap';
+          tdType.appendChild(createTypeBadge(group.type));
+
+          // Column 4: จำนวนรวม (Pcs)
+          const tdQty = document.createElement('td');
+          tdQty.className = 'py-3.5 px-2 text-right font-medium text-slate-800 whitespace-nowrap tabular-nums';
+          tdQty.innerHTML = `${formatInteger(group.totalQuantity)} <span class="text-xs font-normal text-slate-400">Pcs</span>`;
+
+          // Column 5: น้ำหนักรวม (KG) + Group Delete Button
+          const tdWeight = document.createElement('td');
+          tdWeight.className = 'py-3.5 pl-2 pr-3 sm:pr-4 text-right whitespace-nowrap';
+
+          const weightWrapper = document.createElement('div');
+          weightWrapper.className = 'inline-flex items-center justify-end gap-2 sm:gap-3';
+
+          const weightText = document.createElement('span');
+          weightText.className = 'font-medium text-slate-800 tabular-nums';
+          weightText.innerHTML = `${formatWeight(group.totalNetWeight)} <span class="text-xs font-normal text-slate-400">KG</span>`;
+
+          if (isMulti) {
+            weightText.title = `รวมจาก ${group.items.length} รอบ (คลิก "${group.items.length} รอบ" เพื่อดูรายละเอียด)`;
+          } else {
+            const singleItem = group.items[0];
+            if (singleItem.hoist1Weight !== undefined && singleItem.hoist2Weight !== undefined) {
+              const deductionNote = singleItem.deductedWeight > 0
+                ? ` - หักชั่งรวม: ${formatWeight(singleItem.deductedWeight)} KG`
+                : '';
+              weightText.title = `หัว1: ${formatWeight(singleItem.hoist1Weight)} KG + หัว2: ${formatWeight(singleItem.hoist2Weight)} KG${deductionNote}`;
+            } else if (singleItem.isAveraged) {
+              const deductionNote = singleItem.deductedWeight > 0
+                ? ` (หักชั่งรวม: ${formatWeight(singleItem.deductedWeight)} KG)`
+                : '';
+              weightText.title = `คำนวณแบบเฉลี่ย${deductionNote}`;
+            }
+          }
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.type = 'button';
+          deleteBtn.className =
+            'p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 active:bg-red-100 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400';
+          deleteBtn.title = isMulti
+            ? `ลบรายการทั้งหมดของ ${group.pipeSize} (${group.items.length} รายการย่อย)`
+            : `ลบรายการ ${group.pipeSize}`;
+          deleteBtn.setAttribute('aria-label', deleteBtn.title);
+          deleteBtn.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+            </svg>
+          `;
+          deleteBtn.addEventListener('click', () => handleDeleteGroup(group));
+
+          weightWrapper.appendChild(weightText);
+          weightWrapper.appendChild(deleteBtn);
+          tdWeight.appendChild(weightWrapper);
+
+          tr.appendChild(tdSize);
+          tr.appendChild(tdMaterial);
+          tr.appendChild(tdType);
+          tr.appendChild(tdQty);
+          tr.appendChild(tdWeight);
+          fragment.appendChild(tr);
+
+          // Append detail sub-row directly underneath if expanded
+          if (isExpanded) {
+            fragment.appendChild(createGroupDetailSubRow(group));
+          }
+        });
+
+        tableBody.appendChild(fragment);
+      }
+
+      /**
+       * Computes overall inventory statistics for footer summary and dialogs.
+       */
+      function getInventoryStats() {
+        const totalRecords = inventoryData.length;
+        const totalQuantity = inventoryData.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+        const totalWeight = round2(
+          inventoryData.reduce((sum, item) => sum + Number(item.netWeight || 0), 0)
+        );
+        return { totalRecords, totalQuantity, totalWeight };
+      }
+
+      /**
+       * Updates "น้ำหนักรวม" and auto-calculates "น้ำหนักที่เหลือ" = "น้ำหนักสูงสุด" - "น้ำหนักรวม".
+       */
+      function renderSummary() {
+        const { totalWeight } = getInventoryStats();
+        summaryWeightEl.textContent = formatWeight(totalWeight);
+        updateRemainingWeight(totalWeight);
+      }
+
+      /**
+       * Computes and renders the "น้ำหนักที่เหลือ" card with neutral, emerald, or red alert states.
+       */
+      function updateRemainingWeight(totalWeight) {
+        const rawMax = maxWeightInput.value.trim();
+        const parsedMax = Number(rawMax);
+        const hasValidMax = rawMax !== '' && !Number.isNaN(parsedMax) && Number.isFinite(parsedMax) && parsedMax >= 0;
+
+        if (!hasValidMax) {
+          remainingWeightCard.className =
+            'bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 sm:px-3.5 sm:py-2.5 flex flex-col justify-between min-w-0 transition-colors';
+          remainingWeightLabel.className =
+            'text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wide truncate';
+          remainingWeightValueWrap.className =
+            'text-base sm:text-lg font-bold text-slate-400 tabular-nums mt-0.5 truncate';
+          remainingWeightEl.textContent = '-';
+          remainingWeightUnit.classList.add('hidden');
+          overweightBadge.classList.add('hidden');
+          return;
+        }
+
+        const remaining = round2(parsedMax - totalWeight);
+        remainingWeightEl.textContent = formatWeight(remaining);
+        remainingWeightUnit.classList.remove('hidden');
+
+        if (remaining < 0) {
+          remainingWeightCard.className =
+            'bg-red-50/85 border border-red-300 rounded-lg px-3 py-2 sm:px-3.5 sm:py-2.5 flex flex-col justify-between min-w-0 transition-colors';
+          remainingWeightLabel.className =
+            'text-[11px] sm:text-xs font-semibold text-red-700 uppercase tracking-wide truncate';
+          remainingWeightValueWrap.className =
+            'text-base sm:text-lg font-bold text-red-700 tabular-nums mt-0.5 truncate';
+          remainingWeightUnit.className =
+            'text-[11px] sm:text-xs font-semibold text-red-600 ml-0.5';
+          overweightBadge.classList.remove('hidden');
+        } else {
+          remainingWeightCard.className =
+            'bg-emerald-50/75 border border-emerald-200 rounded-lg px-3 py-2 sm:px-3.5 sm:py-2.5 flex flex-col justify-between min-w-0 transition-colors';
+          remainingWeightLabel.className =
+            'text-[11px] sm:text-xs font-semibold text-emerald-700 uppercase tracking-wide truncate';
+          remainingWeightValueWrap.className =
+            'text-base sm:text-lg font-bold text-emerald-900 tabular-nums mt-0.5 truncate';
+          remainingWeightUnit.className =
+            'text-[11px] sm:text-xs font-semibold text-emerald-700 ml-0.5';
+          overweightBadge.classList.add('hidden');
+        }
+      }
+
+      // =========================================================================
+      // 6. CRUD, Clear All & Group Expand/Collapse Actions
+      // =========================================================================
+      function handleToggleGroup(groupKey) {
+        if (expandedGroupKeys.has(groupKey)) {
+          expandedGroupKeys.delete(groupKey);
+        } else {
+          expandedGroupKeys.add(groupKey);
+        }
+        renderTable();
+      }
+
+      /**
+       * Deletes all individual records belonging to the specified (pipeSize, material, type) group.
+       */
+      function handleDeleteGroup(group) {
+        const beforeCount = inventoryData.length;
+        inventoryData = inventoryData.filter(
+          (item) => getGroupKey(item.pipeSize, item.material, item.type) !== group.key
+        );
+
+        if (inventoryData.length === beforeCount) return;
+
+        expandedGroupKeys.delete(group.key);
+        saveRecords();
+        renderApp();
+
+        if (group.items.length > 1) {
+          showToast(`ลบรายการ ${group.pipeSize} (${group.items.length} รายการย่อย)`);
+        } else {
+          showToast(`ลบรายการ ${group.pipeSize} (${formatInteger(group.totalQuantity)} Pcs)`);
+        }
+      }
+
+      /**
+       * Deletes only a single individual lift by its unique record id,
+       * preserving expansion state for the group if > 1 lifts still remain.
+       */
+      function handleDeleteSingleRecord(id) {
+        const index = inventoryData.findIndex((item) => item.id === id);
+        if (index === -1) return;
+
+        const removed = inventoryData.splice(index, 1)[0];
+        saveRecords();
+        renderApp();
+        showToast(`ลบรายการย่อย ${removed.pipeSize} (${formatInteger(removed.quantity)} Pcs / ${formatWeight(removed.netWeight)} KG)`);
+      }
+
+      function handleRestoreSample() {
+        expandedGroupKeys.clear();
+        inventoryData = DEFAULT_SAMPLE_DATA.map((item) => ({
+          ...item,
+          id: `rec-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+        }));
+        saveRecords();
+        renderApp();
+        showToast('โหลดข้อมูลตัวอย่างแล้ว');
+      }
+
+      /**
+       * Clears all local memory records, writes "[]" to localStorage so sample data
+       * does not reload on refresh, clears max weight, resets UI state, and re-renders.
+       */
+      function clearAllLocalData() {
+        inventoryData = [];
+        expandedGroupKeys.clear();
+        selectedDeductionIds.clear();
+        draftDeductionIds.clear();
+        appliedDeductedWeight = 0;
+        saveRecords();
+        maxWeightInput.value = '';
+        saveMaxWeight('');
+        renderApp();
+      }
+
+      // =========================================================================
+      // 7. System Menu, Confirmation Dialog & Sequential summitGS Submission
+      // =========================================================================
+      function openSystemMenuModal() {
+        if (isSubmitting) return;
+
+        const { totalRecords, totalWeight } = getInventoryStats();
+        sysMenuRecordCount.textContent = formatInteger(totalRecords);
+        sysMenuTotalWeight.textContent = formatWeight(totalWeight);
+
+        // Guard "บันทึกลงระบบ" when there are no records
+        submitSystemBtn.disabled = totalRecords === 0;
+
+        systemMenuModal.classList.remove('hidden');
+        systemMenuModal.classList.add('flex');
+        requestAnimationFrame(() => {
+          if (totalRecords > 0) {
+            submitSystemBtn.focus();
+          } else {
+            clearAllDataBtn.focus();
+          }
+        });
+      }
+
+      function closeSystemMenuModal() {
+        systemMenuModal.classList.add('hidden');
+        systemMenuModal.classList.remove('flex');
+      }
+
+      /**
+       * Opens the custom confirmation modal for either 'submit' ("บันทึกลงระบบ")
+       * or 'clear' ("ล้างข้อมูล") without using browser alert()/confirm().
+       */
+      function openConfirmActionModal(actionType) {
+        if (isSubmitting) return;
+
+        const { totalRecords, totalQuantity, totalWeight } = getInventoryStats();
+
+        if (actionType === 'submit' && totalRecords === 0) {
+          showToast('ไม่มีรายการสำหรับบันทึกลงระบบ');
+          return;
+        }
+
+        pendingConfirmAction = actionType;
+        confirmSummaryRecords.textContent = formatInteger(totalRecords);
+        confirmSummaryQty.textContent = formatInteger(totalQuantity);
+        confirmSummaryWeight.textContent = formatWeight(totalWeight);
+
+        if (actionType === 'submit') {
+          confirmActionIconWrap.className =
+            'w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0';
+          confirmActionIconWrap.innerHTML = `
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+            </svg>
+          `;
+          confirmActionTitle.textContent = 'ยืนยันการบันทึกลงระบบ';
+          confirmActionMessage.textContent =
+            'ต้องการส่งข้อมูลทุกรายการในตารางไปยังระบบ Google Forms และล้างข้อมูลในเครื่องหลังจากส่งเสร็จใช่หรือไม่?';
+          proceedConfirmActionBtn.textContent = 'ยืนยันบันทึกลงระบบ';
+          proceedConfirmActionBtn.className =
+            'px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 border border-blue-700 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1';
+        } else {
+          confirmActionIconWrap.className =
+            'w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0';
+          confirmActionIconWrap.innerHTML = `
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+          `;
+          confirmActionTitle.textContent = 'ยืนยันการล้างข้อมูลทั้งหมด';
+          confirmActionMessage.textContent =
+            'ข้อมูลทุกรายการในเครื่องและค่าน้ำหนักสูงสุดจะถูกลบออกทั้งหมด ไม่สามารถกู้คืนได้ ต้องการดำเนินการต่อใช่หรือไม่?';
+          proceedConfirmActionBtn.textContent = 'ยืนยันล้างข้อมูล';
+          proceedConfirmActionBtn.className =
+            'px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-700 active:bg-red-800 border border-red-700 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1';
+        }
+
+        closeSystemMenuModal();
+        confirmActionModal.classList.remove('hidden');
+        confirmActionModal.classList.add('flex');
+        requestAnimationFrame(() => proceedConfirmActionBtn.focus());
+      }
+
+      function closeConfirmActionModal() {
+        confirmActionModal.classList.add('hidden');
+        confirmActionModal.classList.remove('flex');
+        pendingConfirmAction = null;
+      }
+
+      function openProcessingModal(totalCount) {
+        processingStatusText.textContent = 'กำลังเตรียมส่งข้อมูล กรุณาอย่าปิดหน้าต่างนี้';
+        processingProgressBar.style.width = '0%';
+        processingCounterText.textContent = `0 / ${formatInteger(totalCount)} รายการ`;
+        processingPercentText.textContent = '0%';
+        processingModal.classList.remove('hidden');
+        processingModal.classList.add('flex');
+      }
+
+      function closeProcessingModal() {
+        processingModal.classList.add('hidden');
+        processingModal.classList.remove('flex');
+      }
+
+      /**
+       * Sequentially submits a snapshot of all rows in local memory to Google Forms
+       * via summitGS(size, nogi, gi) with a 600ms delay between rows so Google Forms
+       * records every single row reliably without burst drops or caching.
+       */
+      async function executeSubmitToSystem() {
+        if (isSubmitting) return;
+
+        // Snapshot inventoryData so it is never mutated mid-loop
+        const rowsToSubmit = inventoryData.slice();
+        if (rowsToSubmit.length === 0) {
+          showToast('ไม่มีรายการสำหรับบันทึกลงระบบ');
+          return;
+        }
+
+        isSubmitting = true;
+        openProcessingModal(rowsToSubmit.length);
+
+        try {
+          for (let i = 0; i < rowsToSubmit.length; i++) {
+            const row = rowsToSubmit[i];
+            const rowNumber = i + 1;
+            const mat = String(row.material || '').trim();
+            const qty = Number(row.quantity || 0);
+
+            // Update processing modal status and midpoint progress for current row
+            const midPercent = Math.round(((i + 0.5) / rowsToSubmit.length) * 100);
+            processingStatusText.textContent =
+              `กำลังส่งรายการที่ ${rowNumber} / ${rowsToSubmit.length}: ${row.pipeSize} (${mat || '-'})`;
+            processingProgressBar.style.width = `${midPercent}%`;
+            processingCounterText.textContent = `${formatInteger(rowNumber)} / ${formatInteger(rowsToSubmit.length)} รายการ`;
+            processingPercentText.textContent = `${midPercent}%`;
+
+            if (mat === 'เหล็กดำ' || mat === 'Steel') {
+              await summitGS(row.pipeSize, qty, 0);
+              console.log(
+                `[summitGS] Row ${rowNumber}/${rowsToSubmit.length} submitted -> size="${row.pipeSize}", material="${mat}", nogi=${qty}, gi=0`
+              );
+            } else if (mat === 'GI' || mat === 'Galvanized') {
+              await summitGS(row.pipeSize, 0, qty);
+              console.log(
+                `[summitGS] Row ${rowNumber}/${rowsToSubmit.length} submitted -> size="${row.pipeSize}", material="${mat}", nogi=0, gi=${qty}`
+              );
+            } else {
+              console.warn(
+                `[summitGS] Row ${rowNumber}/${rowsToSubmit.length} skipped (unknown material="${mat}") -> size="${row.pipeSize}"`
+              );
+            }
+
+            // Update progress after current row completes
+            const donePercent = Math.round((rowNumber / rowsToSubmit.length) * 100);
+            processingProgressBar.style.width = `${donePercent}%`;
+            processingPercentText.textContent = `${donePercent}%`;
+
+            // Space consecutive requests by 600ms so Google Forms does not drop burst submissions
+            if (i < rowsToSubmit.length - 1) {
+              await sleep(600);
+            }
+          }
+
+          // Finalize at 100% and pause briefly before clearing local data
+          processingStatusText.textContent = `ส่งข้อมูลครบทั้งหมด ${formatInteger(rowsToSubmit.length)} รายการแล้ว กำลังล้างข้อมูล...`;
+          processingProgressBar.style.width = '100%';
+          processingPercentText.textContent = '100%';
+          await sleep(400);
+
+          // Only clear local memory AFTER all rows finished submitting without error
+          clearAllLocalData();
+          closeProcessingModal();
+          isSubmitting = false;
+
+          showToast(`บันทึกลงระบบเรียบร้อยแล้ว ${formatInteger(rowsToSubmit.length)} รายการ และล้างข้อมูลแล้ว`);
+        } catch (err) {
+          console.error('[summitGS] Submission failed:', err);
+          // Preserve inventoryData intact so no unsent data is lost on network failure
+          closeProcessingModal();
+          isSubmitting = false;
+          showToast('ส่งข้อมูลไม่สำเร็จ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต (ข้อมูลในเครื่องยังคงอยู่)');
+        }
+      }
+
+      // =========================================================================
+      // 8. Modal Controls, About Modal, Average Split, Multi-Weigh & Validation
+      // =========================================================================
+      function openAboutModal() {
+        if (isSubmitting) return;
+        aboutModal.classList.remove('hidden');
+        aboutModal.classList.add('flex');
+        requestAnimationFrame(() => closeAboutBtn.focus());
+      }
+
+      function closeAboutModal() {
+        aboutModal.classList.add('hidden');
+        aboutModal.classList.remove('flex');
+      }
+
+      // Expose global window.about() for inline onclick="about()" on Version 3.0
+      window.about = openAboutModal;
+
+      function clearRadioGroupError(labels, errorEl) {
+        labels.forEach((label) => {
+          label.classList.remove('border-red-500', 'bg-red-50/40');
+          label.classList.add('border-slate-300');
+        });
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+      }
+
+      function setRadioGroupError(labels, errorEl, message) {
+        labels.forEach((label) => {
+          label.classList.remove('border-slate-300');
+          label.classList.add('border-red-500', 'bg-red-50/40');
+        });
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+      }
+
+      function clearFieldError(inputEl, errorEl) {
+        inputEl.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+      }
+
+      function clearValidationErrors() {
+        [
+          { input: pipeSizeInput, error: pipeSizeError },
+          { input: quantityInput, error: quantityError },
+          { input: quantityBNInput, error: quantityBNError },
+          { input: quantityBJInput, error: quantityBJError },
+          { input: hoist1WeightInput, error: hoist1WeightError },
+          { input: hoist2WeightInput, error: hoist2WeightError }
+        ].forEach(({ input, error }) => {
+          clearFieldError(input, error);
+        });
+
+        netWeightError.textContent = '';
+        netWeightError.classList.add('hidden');
+
+        clearRadioGroupError(materialOptionLabels, materialError);
+        clearRadioGroupError(typeOptionLabels, pipeTypeError);
+      }
+
+      function setFieldError(inputEl, errorEl, message) {
+        inputEl.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+      }
+
+      /**
+       * Switches between normal single-type mode and Average ("เฉลี่ย") BN/BJ split mode.
+       */
+      function setAverageMode(enabled) {
+        isAverageMode = Boolean(enabled);
+        toggleAverageBtn.setAttribute('aria-pressed', String(isAverageMode));
+
+        if (isAverageMode) {
+          toggleAverageBtn.className =
+            'inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2.5 rounded-xl text-sm font-semibold text-white bg-violet-600 hover:bg-violet-700 active:bg-violet-800 border border-violet-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-1';
+          toggleAverageDot.className =
+            'w-2 h-2 rounded-full bg-white ring-2 ring-violet-300/70 transition-colors';
+
+          pipeTypeFieldset.classList.add('hidden');
+          singleQuantityContainer.classList.add('hidden');
+          averageQuantitySection.classList.remove('hidden');
+
+          clearRadioGroupError(typeOptionLabels, pipeTypeError);
+          clearFieldError(quantityInput, quantityError);
+        } else {
+          toggleAverageBtn.className =
+            'inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2.5 rounded-xl text-sm font-semibold text-violet-800 bg-violet-50 hover:bg-violet-100 active:bg-violet-200/80 border border-violet-300 shadow-xs transition-all focus:outline-none focus:ring-2 focus:ring-violet-500';
+          toggleAverageDot.className =
+            'w-2 h-2 rounded-full bg-violet-400 transition-colors';
+
+          pipeTypeFieldset.classList.remove('hidden');
+          singleQuantityContainer.classList.remove('hidden');
+          averageQuantitySection.classList.add('hidden');
+
+          clearFieldError(quantityBNInput, quantityBNError);
+          clearFieldError(quantityBJInput, quantityBJError);
+        }
+
+        netWeightError.textContent = '';
+        netWeightError.classList.add('hidden');
+        updateLiveNetWeightPreview();
+      }
+
+      /**
+       * Reads the current dual hoist crane weights from #addModal inputs.
+       */
+      function getCurrentGrossWeight() {
+        const raw1 = hoist1WeightInput.value.trim();
+        const raw2 = hoist2WeightInput.value.trim();
+        const hasHoistInput = raw1 !== '' || raw2 !== '';
+        const val1 = raw1 !== '' && !Number.isNaN(Number(raw1)) && Number(raw1) >= 0 ? Number(raw1) : 0;
+        const val2 = raw2 !== '' && !Number.isNaN(Number(raw2)) && Number(raw2) >= 0 ? Number(raw2) : 0;
+        return {
+          raw1,
+          raw2,
+          val1,
+          val2,
+          hasHoistInput,
+          grossWeight: round2(val1 + val2)
+        };
+      }
+
+      /**
+       * Computes total deducted weight and count for a Set of inventoryData IDs
+       * (filtered to records currently present in inventoryData).
+       */
+      function getDeductedSummary(idSet) {
+        let count = 0;
+        let total = 0;
+        inventoryData.forEach((item) => {
+          if (idSet.has(item.id)) {
+            count += 1;
+            total += Number(item.netWeight || 0);
+          }
+        });
+        return {
+          count,
+          totalWeight: round2(total)
+        };
+      }
+
+      /**
+       * Updates the count badge on the "ชั่งรวม" button in #addModal.
+       */
+      function updateMultiWeighBadge() {
+        const { count } = getDeductedSummary(selectedDeductionIds);
+        if (count > 0) {
+          multiWeighBadge.textContent = String(count);
+          multiWeighBadge.classList.remove('hidden');
+        } else {
+          multiWeighBadge.textContent = '0';
+          multiWeighBadge.classList.add('hidden');
+        }
+      }
+
+      /**
+       * Updates the live Average ("เฉลี่ย") split preview inside #netWeightPreviewBox.
+       */
+      function updateAveragePreview(finalNetWeight) {
+        if (!isAverageMode) {
+          averagePreviewBreakdown.classList.add('hidden');
+          return;
+        }
+
+        averagePreviewBreakdown.classList.remove('hidden');
+
+        const rawBN = quantityBNInput.value.trim();
+        const rawBJ = quantityBJInput.value.trim();
+        const qtyBN = /^[1-9]\d*$/.test(rawBN) ? Number(rawBN) : 0;
+        const qtyBJ = /^[1-9]\d*$/.test(rawBJ) ? Number(rawBJ) : 0;
+        const totalQty = qtyBN + qtyBJ;
+
+        let weightPerPiece = 0;
+        let weightBN = 0;
+        let weightBJ = 0;
+
+        if (totalQty > 0 && finalNetWeight > 0) {
+          weightPerPiece = finalNetWeight / totalQty;
+          if (qtyBN > 0 && qtyBJ > 0) {
+            weightBN = round2(qtyBN * weightPerPiece);
+            weightBJ = round2(finalNetWeight - weightBN);
+          } else if (qtyBN > 0) {
+            weightBN = round2(finalNetWeight);
+            weightBJ = 0;
+          } else if (qtyBJ > 0) {
+            weightBN = 0;
+            weightBJ = round2(finalNetWeight);
+          }
+        }
+
+        avgTotalQtyPreview.textContent = formatInteger(totalQty);
+        avgWeightPerPiecePreview.textContent = formatWeight(weightPerPiece);
+        avgBNQtyPreview.textContent = formatInteger(qtyBN);
+        avgBNWeightPreview.textContent = formatWeight(weightBN);
+        avgBJQtyPreview.textContent = formatInteger(qtyBJ);
+        avgBJWeightPreview.textContent = formatWeight(weightBJ);
+      }
+
+      /**
+       * Recalculates and updates the live read-only preview (หัว1 + หัว2 - ชั่งรวม),
+       * optional average breakdown, and keeps the hidden netWeightInput synchronized.
+       */
+      function updateLiveNetWeightPreview() {
+        const { hasHoistInput, grossWeight } = getCurrentGrossWeight();
+        const { count: deductedCount, totalWeight: deductedWeight } = getDeductedSummary(selectedDeductionIds);
+        appliedDeductedWeight = deductedWeight;
+
+        const finalNetWeight = round2(grossWeight - deductedWeight);
+
+        if (!hasHoistInput && deductedWeight === 0) {
+          netWeightInput.value = '';
+        } else {
+          netWeightInput.value = finalNetWeight.toFixed(2);
+        }
+
+        liveNetWeightPreview.textContent = formatWeight(finalNetWeight);
+
+        const isInvalidNet = deductedWeight > 0 && hasHoistInput && finalNetWeight < 0.01;
+
+        if (deductedWeight > 0) {
+          previewGrossWeight.textContent = formatWeight(grossWeight);
+          previewDeductionCount.textContent = String(deductedCount);
+          previewDeductedWeight.textContent = formatWeight(deductedWeight);
+          deductionBreakdown.classList.remove('hidden');
+          liveNetWeightLabel.textContent = 'น้ำหนักสุทธิ';
+        } else {
+          deductionBreakdown.classList.add('hidden');
+          liveNetWeightLabel.textContent = 'น้ำหนักรวม';
+        }
+
+        if (isInvalidNet) {
+          netWeightPreviewBox.classList.remove('bg-blue-50/70', 'border-blue-200');
+          netWeightPreviewBox.classList.add('bg-red-50/80', 'border-red-300');
+          deductionBreakdown.classList.remove('border-blue-200/80');
+          deductionBreakdown.classList.add('border-red-200');
+          averagePreviewBreakdown.classList.remove('border-blue-200/80');
+          averagePreviewBreakdown.classList.add('border-red-200');
+          liveNetWeightLabel.classList.remove('text-blue-700');
+          liveNetWeightLabel.classList.add('text-red-700');
+          liveNetWeightValueWrap.classList.remove('text-blue-900');
+          liveNetWeightValueWrap.classList.add('text-red-700');
+          liveNetWeightUnit.classList.remove('text-blue-700');
+          liveNetWeightUnit.classList.add('text-red-600');
+        } else {
+          netWeightPreviewBox.classList.remove('bg-red-50/80', 'border-red-300');
+          netWeightPreviewBox.classList.add('bg-blue-50/70', 'border-blue-200');
+          deductionBreakdown.classList.remove('border-red-200');
+          deductionBreakdown.classList.add('border-blue-200/80');
+          averagePreviewBreakdown.classList.remove('border-red-200');
+          averagePreviewBreakdown.classList.add('border-blue-200/80');
+          liveNetWeightLabel.classList.remove('text-red-700');
+          liveNetWeightLabel.classList.add('text-blue-700');
+          liveNetWeightValueWrap.classList.remove('text-red-700');
+          liveNetWeightValueWrap.classList.add('text-blue-900');
+          liveNetWeightUnit.classList.remove('text-red-600');
+          liveNetWeightUnit.classList.add('text-blue-700');
+        }
+
+        updateAveragePreview(finalNetWeight);
+      }
+
+      /**
+       * Synchronizes the "Select All" checkbox state and live summary bar in #multiWeighModal.
+       */
+      function updateMultiWeighSummary() {
+        const totalItems = inventoryData.length;
+        const { count, totalWeight } = getDeductedSummary(draftDeductionIds);
+        const { grossWeight } = getCurrentGrossWeight();
+        const remaining = round2(grossWeight - totalWeight);
+
+        if (totalItems === 0) {
+          selectAllMultiWeigh.checked = false;
+          selectAllMultiWeigh.indeterminate = false;
+          selectAllMultiWeigh.disabled = true;
+        } else {
+          selectAllMultiWeigh.disabled = false;
+          selectAllMultiWeigh.checked = count === totalItems;
+          selectAllMultiWeigh.indeterminate = count > 0 && count < totalItems;
+        }
+
+        multiWeighSelectedCount.textContent = formatInteger(count);
+        multiWeighSelectedWeight.textContent = formatWeight(totalWeight);
+        multiWeighGrossDisplay.textContent = formatWeight(grossWeight);
+        multiWeighRemainingWeight.textContent = formatWeight(remaining);
+
+        if (remaining < 0) {
+          multiWeighRemainingWrap.classList.remove('text-blue-900');
+          multiWeighRemainingWrap.classList.add('text-red-600');
+        } else {
+          multiWeighRemainingWrap.classList.remove('text-red-600');
+          multiWeighRemainingWrap.classList.add('text-blue-900');
+        }
+      }
+
+      /**
+       * Renders local memory records (inventoryData) inside #multiWeighModal with checkboxes.
+       */
+      function renderMultiWeighTable() {
+        multiWeighTableBody.innerHTML = '';
+
+        if (inventoryData.length === 0) {
+          multiWeighTable.classList.add('hidden');
+          multiWeighEmptyState.classList.remove('hidden');
+          multiWeighEmptyState.classList.add('flex');
+          updateMultiWeighSummary();
+          return;
+        }
+
+        multiWeighTable.classList.remove('hidden');
+        multiWeighEmptyState.classList.add('hidden');
+        multiWeighEmptyState.classList.remove('flex');
+
+        const fragment = document.createDocumentFragment();
+
+        inventoryData.forEach((item) => {
+          const isChecked = draftDeductionIds.has(item.id);
+          const tr = document.createElement('tr');
+          tr.className = isChecked
+            ? 'bg-amber-50/80 hover:bg-amber-100/60 transition-colors cursor-pointer select-none'
+            : 'hover:bg-slate-50/90 transition-colors cursor-pointer select-none';
+
+          // Column 1: Checkbox
+          const tdCheck = document.createElement('td');
+          tdCheck.className = 'py-3 pl-4 pr-2 text-center whitespace-nowrap';
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.dataset.id = item.id;
+          checkbox.checked = isChecked;
+          checkbox.className =
+            'w-4 h-4 rounded accent-blue-600 text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer align-middle';
+          checkbox.setAttribute('aria-label', `เลือก ${item.pipeSize} น้ำหนัก ${formatWeight(item.netWeight)} KG`);
+          tdCheck.appendChild(checkbox);
+
+          // Column 2: ไซส์ท่อ (pipeSize pill)
+          const tdSize = document.createElement('td');
+          tdSize.className = 'py-3 px-2 font-semibold text-slate-900 whitespace-nowrap';
+          const sizePill = document.createElement('span');
+          sizePill.className =
+            'inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-800 font-semibold text-xs';
+          sizePill.textContent = item.pipeSize;
+          tdSize.appendChild(sizePill);
+
+          // Column 3: วัสดุ (material badge)
+          const tdMaterial = document.createElement('td');
+          tdMaterial.className = 'py-3 px-2 text-center whitespace-nowrap';
+          tdMaterial.appendChild(createMaterialBadge(item.material));
+
+          // Column 4: ชนิด (type badge with crimson BN)
+          const tdType = document.createElement('td');
+          tdType.className = 'py-3 px-2 text-center whitespace-nowrap';
+          tdType.appendChild(createTypeBadge(item.type));
+
+          // Column 5: จำนวน (Pcs)
+          const tdQty = document.createElement('td');
+          tdQty.className = 'py-3 px-2 text-right font-medium text-slate-800 whitespace-nowrap tabular-nums';
+          tdQty.innerHTML = `${formatInteger(item.quantity)} <span class="text-xs font-normal text-slate-400">Pcs</span>`;
+
+          // Column 6: น้ำหนัก (KG)
+          const tdWeight = document.createElement('td');
+          tdWeight.className = 'py-3 pl-2 pr-4 text-right font-semibold text-slate-900 whitespace-nowrap tabular-nums';
+          tdWeight.innerHTML = `${formatWeight(item.netWeight)} <span class="text-xs font-normal text-slate-400">KG</span>`;
+
+          function syncRowSelection(checked) {
+            if (checked) {
+              draftDeductionIds.add(item.id);
+              tr.className = 'bg-amber-50/80 hover:bg-amber-100/60 transition-colors cursor-pointer select-none';
+            } else {
+              draftDeductionIds.delete(item.id);
+              tr.className = 'hover:bg-slate-50/90 transition-colors cursor-pointer select-none';
+            }
+            updateMultiWeighSummary();
+          }
+
+          checkbox.addEventListener('change', () => {
+            syncRowSelection(checkbox.checked);
+          });
+
+          // Toggle checkbox when clicking anywhere on the row without double-toggling the checkbox itself
+          tr.addEventListener('click', (e) => {
+            if (e.target === checkbox || e.target.tagName === 'INPUT') return;
+            checkbox.checked = !checkbox.checked;
+            syncRowSelection(checkbox.checked);
+          });
+
+          tr.appendChild(tdCheck);
+          tr.appendChild(tdSize);
+          tr.appendChild(tdMaterial);
+          tr.appendChild(tdType);
+          tr.appendChild(tdQty);
+          tr.appendChild(tdWeight);
+          fragment.appendChild(tr);
+        });
+
+        multiWeighTableBody.appendChild(fragment);
+        updateMultiWeighSummary();
+      }
+
+      function openMultiWeighModal() {
+        const validIds = new Set(inventoryData.map((item) => item.id));
+        draftDeductionIds = new Set(
+          Array.from(selectedDeductionIds).filter((id) => validIds.has(id))
+        );
+
+        renderMultiWeighTable();
+        multiWeighModal.classList.remove('hidden');
+        multiWeighModal.classList.add('flex');
+        requestAnimationFrame(() => confirmMultiWeighBtn.focus());
+      }
+
+      function closeMultiWeighModal() {
+        multiWeighModal.classList.add('hidden');
+        multiWeighModal.classList.remove('flex');
+        openMultiWeighBtn.focus();
+      }
+
+      function confirmMultiWeighSelection() {
+        selectedDeductionIds = new Set(draftDeductionIds);
+        const { count, totalWeight } = getDeductedSummary(selectedDeductionIds);
+        appliedDeductedWeight = totalWeight;
+
+        netWeightError.textContent = '';
+        netWeightError.classList.add('hidden');
+        if (hoist1WeightError.classList.contains('hidden')) {
+          hoist1WeightInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        }
+        if (hoist2WeightError.classList.contains('hidden')) {
+          hoist2WeightInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        }
+
+        updateMultiWeighBadge();
+        updateLiveNetWeightPreview();
+        closeMultiWeighModal();
+
+        if (count > 0) {
+          showToast(`หักน้ำหนักชั่งรวมแล้ว -${formatWeight(totalWeight)} KG (${count} รายการ)`);
+        } else {
+          showToast('ยกเลิกการหักน้ำหนักชั่งรวมแล้ว');
+        }
+      }
+
+      function clearMultiWeighDeduction() {
+        selectedDeductionIds.clear();
+        draftDeductionIds.clear();
+        appliedDeductedWeight = 0;
+
+        netWeightError.textContent = '';
+        netWeightError.classList.add('hidden');
+        if (hoist1WeightError.classList.contains('hidden')) {
+          hoist1WeightInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        }
+        if (hoist2WeightError.classList.contains('hidden')) {
+          hoist2WeightInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        }
+
+        updateMultiWeighBadge();
+        updateLiveNetWeightPreview();
+        showToast('ยกเลิกการหักน้ำหนักชั่งรวมแล้ว');
+      }
+
+      function openModal() {
+        if (isSubmitting) return;
+        addRecordForm.reset();
+        clearValidationErrors();
+        selectedDeductionIds.clear();
+        draftDeductionIds.clear();
+        appliedDeductedWeight = 0;
+        netWeightInput.value = '';
+        setAverageMode(false);
+        updateMultiWeighBadge();
+        updateLiveNetWeightPreview();
+        addModal.classList.remove('hidden');
+        addModal.classList.add('flex');
+        requestAnimationFrame(() => pipeSizeInput.focus());
+      }
+
+      function closeModal() {
+        addModal.classList.add('hidden');
+        addModal.classList.remove('flex');
+        openModalBtn.focus();
+      }
+
+      function validateAndSave(event) {
+        event.preventDefault();
+        clearValidationErrors();
+
+        let isValid = true;
+
+        // 1. Validate Pipe Size
+        const pipeSize = pipeSizeInput.value.trim();
+        if (!pipeSize) {
+          setFieldError(pipeSizeInput, pipeSizeError, 'กรุณาเลือกขนาดของท่อ');
+          isValid = false;
+        }
+
+        // 2. Validate Material radio selection
+        const selectedMaterial = addRecordForm.querySelector('input[name="material"]:checked');
+        if (!selectedMaterial) {
+          setRadioGroupError(materialOptionLabels, materialError, 'กรุณาเลือกวัสดุ (เหล็กดำ หรือ GI)');
+          isValid = false;
+        }
+
+        // 3 & 4. Validate Type + Quantity (Normal Mode) OR BN + BJ Quantities (Average Mode)
+        let selectedPipeType = null;
+        let parsedQty = 0;
+        let parsedQtyBN = 0;
+        let parsedQtyBJ = 0;
+
+        if (!isAverageMode) {
+          selectedPipeType = addRecordForm.querySelector('input[name="pipeType"]:checked');
+          if (!selectedPipeType) {
+            setRadioGroupError(typeOptionLabels, pipeTypeError, 'กรุณาเลือก Type (BN หรือ BJ)');
+            isValid = false;
+          }
+
+          const rawQty = quantityInput.value.trim();
+          const isStrictInteger = /^[1-9]\d*$/.test(rawQty);
+          parsedQty = Number(rawQty);
+
+          if (!rawQty) {
+            setFieldError(quantityInput, quantityError, 'กรุณาระบุจำนวนท่อ');
+            isValid = false;
+          } else if (!isStrictInteger || !Number.isInteger(parsedQty) || parsedQty < 1) {
+            setFieldError(quantityInput, quantityError, 'จำนวนต้องเป็นเลขจำนวนเต็มตั้งแต่ 1 ขึ้นไป');
+            isValid = false;
+          }
+        } else {
+          const rawQtyBN = quantityBNInput.value.trim();
+          const isStrictBN = /^[1-9]\d*$/.test(rawQtyBN);
+          parsedQtyBN = Number(rawQtyBN);
+
+          if (!rawQtyBN) {
+            setFieldError(quantityBNInput, quantityBNError, 'กรุณาระบุจำนวนท่อ BN');
+            isValid = false;
+          } else if (!isStrictBN || !Number.isInteger(parsedQtyBN) || parsedQtyBN < 1) {
+            setFieldError(quantityBNInput, quantityBNError, 'จำนวนต้องเป็นเลขจำนวนเต็มตั้งแต่ 1 ขึ้นไป');
+            isValid = false;
+          }
+
+          const rawQtyBJ = quantityBJInput.value.trim();
+          const isStrictBJ = /^[1-9]\d*$/.test(rawQtyBJ);
+          parsedQtyBJ = Number(rawQtyBJ);
+
+          if (!rawQtyBJ) {
+            setFieldError(quantityBJInput, quantityBJError, 'กรุณาระบุจำนวนท่อ BJ');
+            isValid = false;
+          } else if (!isStrictBJ || !Number.isInteger(parsedQtyBJ) || parsedQtyBJ < 1) {
+            setFieldError(quantityBJInput, quantityBJError, 'จำนวนต้องเป็นเลขจำนวนเต็มตั้งแต่ 1 ขึ้นไป');
+            isValid = false;
+          }
+        }
+
+        // 5. Validate Dual Hoist Weights ("น้ำหนักหัว1" and "น้ำหนักหัว2", decimals >= 0)
+        const rawHoist1 = hoist1WeightInput.value.trim();
+        const parsedHoist1 = Number(rawHoist1);
+        let hoist1Valid = true;
+
+        if (rawHoist1 === '') {
+          setFieldError(hoist1WeightInput, hoist1WeightError, 'กรุณาระบุน้ำหนักหัว1');
+          hoist1Valid = false;
+          isValid = false;
+        } else if (Number.isNaN(parsedHoist1) || !Number.isFinite(parsedHoist1) || parsedHoist1 < 0) {
+          setFieldError(hoist1WeightInput, hoist1WeightError, 'น้ำหนักหัว1 ต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป');
+          hoist1Valid = false;
+          isValid = false;
+        }
+
+        const rawHoist2 = hoist2WeightInput.value.trim();
+        const parsedHoist2 = Number(rawHoist2);
+        let hoist2Valid = true;
+
+        if (rawHoist2 === '') {
+          setFieldError(hoist2WeightInput, hoist2WeightError, 'กรุณาระบุน้ำหนักหัว2');
+          hoist2Valid = false;
+          isValid = false;
+        } else if (Number.isNaN(parsedHoist2) || !Number.isFinite(parsedHoist2) || parsedHoist2 < 0) {
+          setFieldError(hoist2WeightInput, hoist2WeightError, 'น้ำหนักหัว2 ต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป');
+          hoist2Valid = false;
+          isValid = false;
+        }
+
+        // Validate combined net weight sum minus multi-weigh deduction >= 0.01 KG
+        let hoist1 = 0;
+        let hoist2 = 0;
+        let grossWeight = 0;
+        let finalNetWeight = 0;
+        const { totalWeight: deductedWeight } = getDeductedSummary(selectedDeductionIds);
+        appliedDeductedWeight = deductedWeight;
+
+        if (hoist1Valid && hoist2Valid) {
+          hoist1 = round2(parsedHoist1);
+          hoist2 = round2(parsedHoist2);
+          grossWeight = round2(hoist1 + hoist2);
+          finalNetWeight = round2(grossWeight - deductedWeight);
+
+          if (finalNetWeight < 0.01) {
+            hoist1WeightInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+            hoist2WeightInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+            if (deductedWeight > 0) {
+              netWeightError.textContent = `น้ำหนักสุทธิหลังหักชั่งรวมต้องมีค่าตั้งแต่ 0.01 KG ขึ้นไป (น้ำหนักรวม ${formatWeight(grossWeight)} - หักออก ${formatWeight(deductedWeight)} = ${formatWeight(finalNetWeight)} KG)`;
+            } else {
+              netWeightError.textContent = 'น้ำหนักรวม (หัว1 + หัว2) ต้องมีค่าตั้งแต่ 0.01 KG ขึ้นไป';
+            }
+            netWeightError.classList.remove('hidden');
+            isValid = false;
+          }
+        }
+
+        // 6. Average Mode Formula Computation & Positive Split Check
+        let weightBN = 0;
+        let weightBJ = 0;
+
+        if (isValid && isAverageMode) {
+          const totalQuantity = parsedQtyBN + parsedQtyBJ;
+          const weightPerPiece = finalNetWeight / totalQuantity;
+          weightBN = round2(parsedQtyBN * weightPerPiece);
+          weightBJ = round2(finalNetWeight - weightBN);
+
+          if (weightBN < 0.01 || weightBJ < 0.01) {
+            hoist1WeightInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+            hoist2WeightInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+            netWeightError.textContent = 'น้ำหนักสุทธิมีค่าน้อยเกินไปสำหรับการเฉลี่ยให้ทั้ง BN และ BJ (ต้องได้อย่างน้อยชนิดละ 0.01 KG)';
+            netWeightError.classList.remove('hidden');
+            isValid = false;
+          }
+        }
+
+        if (!isValid) return;
+
+        // Assign final net weight value to hidden netWeightInput before saving
+        netWeightInput.value = finalNetWeight.toFixed(2);
+
+        const materialVal = selectedMaterial.value;
+
+        // Save branch A: Average Mode ("เฉลี่ย") — save two records (BN & BJ)
+        if (isAverageMode) {
+          const timestamp = Date.now();
+          const randSuffix = Math.random().toString(36).slice(2, 6);
+
+          const bnRecord = {
+            id: `rec-${timestamp}-${randSuffix}-bn`,
+            pipeSize: pipeSize,
+            material: materialVal,
+            type: 'BN',
+            quantity: parsedQtyBN,
+            netWeight: weightBN,
+            isAveraged: true
+          };
+
+          if (deductedWeight > 0) {
+            bnRecord.deductedWeight = deductedWeight;
+          }
+
+          const bjRecord = {
+            id: `rec-${timestamp + 1}-${randSuffix}-bj`,
+            pipeSize: pipeSize,
+            material: materialVal,
+            type: 'BJ',
+            quantity: parsedQtyBJ,
+            netWeight: weightBJ,
+            isAveraged: true
+          };
+
+          inventoryData.push(bnRecord, bjRecord);
+          saveRecords();
+          renderApp();
+          closeModal();
+
+          showToast(
+            `บันทึกแบบเฉลี่ยแล้ว: ${pipeSize} (${materialVal}) — BN ${formatInteger(parsedQtyBN)} Pcs (${formatWeight(weightBN)} KG) / BJ ${formatInteger(parsedQtyBJ)} Pcs (${formatWeight(weightBJ)} KG)`
+          );
+          return;
+        }
+
+        // Save branch B: Normal Mode
+        const typeVal = selectedPipeType.value;
+        const targetGroupKey = getGroupKey(pipeSize, materialVal, typeVal);
+
+        const existingGroupExists = inventoryData.some(
+          (item) => getGroupKey(item.pipeSize, item.material, item.type) === targetGroupKey
+        );
+
+        const newRecord = {
+          id: `rec-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          pipeSize: pipeSize,
+          material: materialVal,
+          type: typeVal,
+          quantity: parsedQty,
+          hoist1Weight: hoist1,
+          hoist2Weight: hoist2,
+          netWeight: finalNetWeight
+        };
+
+        if (deductedWeight > 0) {
+          newRecord.deductedWeight = deductedWeight;
+        }
+
+        inventoryData.push(newRecord);
+        saveRecords();
+        renderApp();
+        closeModal();
+
+        if (existingGroupExists) {
+          const matchingItems = inventoryData.filter(
+            (item) => getGroupKey(item.pipeSize, item.material, item.type) === targetGroupKey
+          );
+          const groupTotalQty = matchingItems.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+          const groupTotalWeight = round2(
+            matchingItems.reduce((sum, item) => sum + Number(item.netWeight || 0), 0)
+          );
+
+          showToast(
+            `รวมเข้าแถวเดิมแล้ว: ${newRecord.pipeSize} (${newRecord.material} / ${newRecord.type}) — รวม ${formatInteger(groupTotalQty)} Pcs / ${formatWeight(groupTotalWeight)} KG`
+          );
+        } else {
+          showToast(
+            `บันทึกแล้ว: ${newRecord.pipeSize} (${newRecord.material} / ${newRecord.type}) — ${formatWeight(newRecord.netWeight)} KG`
+          );
+        }
+      }
+
+      // =========================================================================
+      // 9. Event Listeners
+      // =========================================================================
+
+      // System Menu Trigger (Mouse click + Keyboard Enter / Space)
+      systemMenuTrigger.addEventListener('click', openSystemMenuModal);
+      systemMenuTrigger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openSystemMenuModal();
+        }
+      });
+
+      // System Menu Modal Controls
+      closeSystemMenuIconBtn.addEventListener('click', closeSystemMenuModal);
+      closeSystemMenuBtn.addEventListener('click', closeSystemMenuModal);
+      systemMenuModal.addEventListener('click', (e) => {
+        if (e.target === systemMenuModal) {
+          closeSystemMenuModal();
+        }
+      });
+      submitSystemBtn.addEventListener('click', () => openConfirmActionModal('submit'));
+      clearAllDataBtn.addEventListener('click', () => openConfirmActionModal('clear'));
+
+      // Custom Confirm Action Modal Controls
+      cancelConfirmActionBtn.addEventListener('click', closeConfirmActionModal);
+      confirmActionModal.addEventListener('click', (e) => {
+        if (e.target === confirmActionModal) {
+          closeConfirmActionModal();
+        }
+      });
+      proceedConfirmActionBtn.addEventListener('click', () => {
+        const action = pendingConfirmAction;
+        closeConfirmActionModal();
+
+        if (action === 'clear') {
+          clearAllLocalData();
+          showToast('ล้างข้อมูลทั้งหมดเรียบร้อยแล้ว');
+        } else if (action === 'submit') {
+          executeSubmitToSystem();
+        }
+      });
+
+      // Add Data Modal Controls
+      openModalBtn.addEventListener('click', openModal);
+      closeModalIconBtn.addEventListener('click', closeModal);
+      cancelModalBtn.addEventListener('click', closeModal);
+      restoreSampleBtn.addEventListener('click', handleRestoreSample);
+      addRecordForm.addEventListener('submit', validateAndSave);
+
+      // Footer Max Weight ("ตั้งน้ำหนักสูงสุด") live calculation & persistence
+      maxWeightInput.addEventListener('keydown', (e) => {
+        if (['e', 'E', '+', '-'].includes(e.key)) {
+          e.preventDefault();
+        }
+      });
+
+      maxWeightInput.addEventListener('input', () => {
+        saveMaxWeight(maxWeightInput.value.trim());
+        renderSummary();
+      });
+
+      // About Modal Controls
+      closeAboutIconBtn.addEventListener('click', closeAboutModal);
+      closeAboutBtn.addEventListener('click', closeAboutModal);
+      aboutModal.addEventListener('click', (e) => {
+        if (e.target === aboutModal) {
+          closeAboutModal();
+        }
+      });
+
+      // Average ("เฉลี่ย") Mode Toggle Control
+      toggleAverageBtn.addEventListener('click', () => {
+        setAverageMode(!isAverageMode);
+      });
+
+      // Multi-Weigh ("ชั่งรวม" / "ชั่งหลายไซส์") Modal Controls
+      openMultiWeighBtn.addEventListener('click', openMultiWeighModal);
+      clearDeductionBtn.addEventListener('click', clearMultiWeighDeduction);
+      closeMultiWeighIconBtn.addEventListener('click', closeMultiWeighModal);
+      cancelMultiWeighBtn.addEventListener('click', closeMultiWeighModal);
+      confirmMultiWeighBtn.addEventListener('click', confirmMultiWeighSelection);
+
+      selectAllMultiWeigh.addEventListener('change', () => {
+        if (selectAllMultiWeigh.checked) {
+          draftDeductionIds = new Set(inventoryData.map((item) => item.id));
+        } else {
+          draftDeductionIds.clear();
+        }
+        renderMultiWeighTable();
+      });
+
+      // Prevent typing decimal points or scientific notation in all strict integer Quantity fields
+      [quantityInput, quantityBNInput, quantityBJInput].forEach((inputEl) => {
+        inputEl.addEventListener('keydown', (e) => {
+          if (['.', ',', 'e', 'E', '+', '-'].includes(e.key)) {
+            e.preventDefault();
+          }
+        });
+      });
+
+      // Clear individual field errors as the user corrects input
+      pipeSizeInput.addEventListener('change', () => {
+        clearFieldError(pipeSizeInput, pipeSizeError);
+      });
+
+      materialRadios.forEach((radio) => {
+        radio.addEventListener('change', () => {
+          clearRadioGroupError(materialOptionLabels, materialError);
+        });
+      });
+
+      pipeTypeRadios.forEach((radio) => {
+        radio.addEventListener('change', () => {
+          clearRadioGroupError(typeOptionLabels, pipeTypeError);
+        });
+      });
+
+      quantityInput.addEventListener('input', () => {
+        clearFieldError(quantityInput, quantityError);
+      });
+
+      quantityBNInput.addEventListener('input', () => {
+        clearFieldError(quantityBNInput, quantityBNError);
+        netWeightError.classList.add('hidden');
+        updateLiveNetWeightPreview();
+      });
+
+      quantityBJInput.addEventListener('input', () => {
+        clearFieldError(quantityBJInput, quantityBJError);
+        netWeightError.classList.add('hidden');
+        updateLiveNetWeightPreview();
+      });
+
+      // Prevent negative signs and scientific notation in dual hoist weight inputs
+      [hoist1WeightInput, hoist2WeightInput].forEach((inputEl) => {
+        inputEl.addEventListener('keydown', (e) => {
+          if (['e', 'E', '+', '-'].includes(e.key)) {
+            e.preventDefault();
+          }
+        });
+      });
+
+      hoist1WeightInput.addEventListener('input', () => {
+        clearFieldError(hoist1WeightInput, hoist1WeightError);
+        if (hoist2WeightError.classList.contains('hidden')) {
+          hoist2WeightInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        }
+        netWeightError.classList.add('hidden');
+        updateLiveNetWeightPreview();
+      });
+
+      hoist2WeightInput.addEventListener('input', () => {
+        clearFieldError(hoist2WeightInput, hoist2WeightError);
+        if (hoist1WeightError.classList.contains('hidden')) {
+          hoist1WeightInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        }
+        netWeightError.classList.add('hidden');
+        updateLiveNetWeightPreview();
+      });
+
+      // Close modal when clicking outside the modal card (on backdrop)
+      addModal.addEventListener('click', (e) => {
+        if (e.target === addModal) {
+          closeModal();
+        }
+      });
+
+      // Close only #multiWeighModal when clicking its backdrop
+      multiWeighModal.addEventListener('click', (e) => {
+        if (e.target === multiWeighModal) {
+          closeMultiWeighModal();
+        }
+      });
+
+      // Close topmost dismissible modal on Escape key (blocked while #processingModal is active)
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (isSubmitting || !processingModal.classList.contains('hidden')) return;
+
+        if (!confirmActionModal.classList.contains('hidden')) {
+          closeConfirmActionModal();
+        } else if (!aboutModal.classList.contains('hidden')) {
+          closeAboutModal();
+        } else if (!systemMenuModal.classList.contains('hidden')) {
+          closeSystemMenuModal();
+        } else if (!multiWeighModal.classList.contains('hidden')) {
+          closeMultiWeighModal();
+        } else if (!addModal.classList.contains('hidden')) {
+          closeModal();
+        }
+      });
+
+      // =========================================================================
+      // 10. Initialize App
+      // =========================================================================
+      loadRecords();
+      loadMaxWeight();
+      renderApp();
+    })();
+  </script>
+</body>
+</html>
