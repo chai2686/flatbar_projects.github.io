@@ -4,10 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>จดน้ำหนักท่อเกรดบี</title>
-  <!-- Load Inter Font from Google Fonts -->
+  <!-- Load Inter & Sarabun (Thai-friendly) Fonts from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Load jsPDF & html2canvas for accurate Thai PDF report export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- Load Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -46,6 +49,47 @@
       text-decoration: underline;
       text-underline-offset: 2px;
     }
+
+    /* Offline / fallback print stylesheet for PDF report container */
+    #pdfPrintFallbackContainer {
+      display: none;
+    }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 8mm;
+      }
+
+      body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      body > *:not(#pdfPrintFallbackContainer) {
+        display: none !important;
+      }
+
+      #pdfPrintFallbackContainer {
+        display: block !important;
+        width: 100% !important;
+        background: #ffffff !important;
+      }
+
+      #pdfPrintFallbackContainer .pdf-report-page {
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 12px 16px !important;
+        page-break-after: always;
+        break-after: page;
+      }
+
+      #pdfPrintFallbackContainer .pdf-report-page:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+    }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased selection:bg-blue-100 selection:text-blue-900">
@@ -64,7 +108,7 @@
           aria-haspopup="dialog"
           aria-controls="systemMenuModal"
           aria-label="เปิดเมนูระบบ"
-          title="เมนูระบบ (บันทึกลงระบบ / ล้างข้อมูล)"
+          title="เมนูระบบ (Export PDF / บันทึกลงระบบ / ล้างข้อมูล)"
           class="w-9 h-9 rounded-lg bg-slate-900 hover:bg-slate-700 active:scale-95 text-white flex items-center justify-center shrink-0 shadow-sm cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           <!-- Pipe / Cylinder SVG Icon -->
@@ -223,7 +267,7 @@
     <!-- 4. BOTTOM BRANDING & VERSION BAR -->
     <div class="footer-text">
       <span>Powered by Flatbar Division™️</span>
-      <span onclick="about()">Version 3.0</span>
+      <span onclick="about()">Version 3.1</span>
     </div>
   </div>
 
@@ -806,7 +850,7 @@
       <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3">
         <div class="min-w-0">
           <h3 id="systemMenuTitle" class="text-base font-bold text-slate-900">เมนูระบบ</h3>
-          <p class="text-xs text-slate-500 mt-0.5">จัดการข้อมูลในเครื่องและส่งข้อมูลลงระบบ</p>
+          <p class="text-xs text-slate-500 mt-0.5">จัดการข้อมูล ส่งออกรายงาน PDF และส่งข้อมูลลงระบบ</p>
         </div>
         <button
           id="closeSystemMenuIconBtn"
@@ -842,7 +886,24 @@
 
         <!-- System Menu Action Buttons -->
         <div class="space-y-2.5">
-          <!-- Button 1: Submit to Google Forms / System ("บันทึกลงระบบ") -->
+          <!-- Button 1: Export Grouped Table Report to PDF ("Export PDF") -->
+          <button
+            id="exportPdfBtn"
+            type="button"
+            class="w-full flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-300 disabled:cursor-not-allowed border border-emerald-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
+          >
+            <span class="flex items-center gap-2.5">
+              <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+              </svg>
+              <span>สร้างรายงาน PDF</span>
+            </span>
+            <svg class="w-4 h-4 shrink-0 opacity-80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+
+          <!-- Button 2: Submit to Google Forms / System ("บันทึกลงระบบ") -->
           <button
             id="submitSystemBtn"
             type="button"
@@ -912,7 +973,7 @@
           </div>
           <div class="min-w-0">
             <h3 id="aboutModalTitle" class="text-base font-bold text-slate-900 truncate">จดน้ำหนักท่อเกรดบี</h3>
-            <p class="text-xs font-medium text-blue-600">Version 3.0</p>
+            <p class="text-xs font-medium text-blue-600">Version 3.1</p>
           </div>
         </div>
         <button
@@ -956,6 +1017,10 @@
             <li class="flex items-start gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
               <span>คำนวณ <strong>น้ำหนักที่เหลือ</strong> จาก <strong>น้ำหนักสูงสุด</strong> และส่งข้อมูลลงระบบ Google Forms ทีละรายการ</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></span>
+              <span>ส่งออกรายงานตารางจดน้ำหนักเป็นไฟล์ <strong>PDF (A4)</strong> ภาษาไทยคมชัดได้ทันทีจากเมนูระบบ</span>
             </li>
           </ul>
         </div>
@@ -1089,6 +1154,9 @@
     <span id="toastMessage">บันทึกสำเร็จ</span>
   </div>
 
+  <!-- Print-only fallback container used if jsPDF/html2canvas CDNs are unavailable offline -->
+  <div id="pdfPrintFallbackContainer" aria-hidden="true"></div>
+
   <script>
     /**
      * Submits a single pipe inventory row to Google Forms via HTTP POST (no-cors)
@@ -1164,6 +1232,7 @@
       // Tracks pending confirmation dialog action ('submit' | 'clear' | null) & submission lock
       let pendingConfirmAction = null;
       let isSubmitting = false;
+      let isExportingPdf = false;
       let storageAvailable = false;
       let toastTimer = null;
 
@@ -1191,6 +1260,7 @@
       const closeSystemMenuBtn = document.getElementById('closeSystemMenuBtn');
       const sysMenuRecordCount = document.getElementById('sysMenuRecordCount');
       const sysMenuTotalWeight = document.getElementById('sysMenuTotalWeight');
+      const exportPdfBtn = document.getElementById('exportPdfBtn');
       const submitSystemBtn = document.getElementById('submitSystemBtn');
       const clearAllDataBtn = document.getElementById('clearAllDataBtn');
 
@@ -1207,12 +1277,12 @@
 
       // Processing modal elements
       const processingModal = document.getElementById('processingModal');
+      const processingModalTitle = document.getElementById('processingModalTitle');
       const processingStatusText = document.getElementById('processingStatusText');
       const processingProgressBar = document.getElementById('processingProgressBar');
       const processingCounterText = document.getElementById('processingCounterText');
       const processingPercentText = document.getElementById('processingPercentText');
-
-      // About modal elements
+      const pdfPrintFallbackContainer = document.getElementById('pdfPrintFallbackContainer');
       const aboutModal = document.getElementById('aboutModal');
       const closeAboutIconBtn = document.getElementById('closeAboutIconBtn');
       const closeAboutBtn = document.getElementById('closeAboutBtn');
@@ -1401,6 +1471,19 @@
        */
       function sleep(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      /**
+       * Escapes HTML special characters (including double quotes in pipe sizes like 2")
+       * so dynamically generated PDF report markup is always safe and well-formed.
+       */
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
       }
 
       /**
@@ -1848,6 +1931,9 @@
         showToast(`ลบรายการย่อย ${removed.pipeSize} (${formatInteger(removed.quantity)} Pcs / ${formatWeight(removed.netWeight)} KG)`);
       }
 
+      /**
+       * Loads the default sample pipe records into local memory and refreshes the UI.
+       */
       function handleRestoreSample() {
         expandedGroupKeys.clear();
         inventoryData = DEFAULT_SAMPLE_DATA.map((item) => ({
@@ -1876,23 +1962,24 @@
       }
 
       // =========================================================================
-      // 7. System Menu, Confirmation Dialog & Sequential summitGS Submission
+      // 7. System Menu, Confirmation Dialog, PDF Export & Sequential summitGS Submission
       // =========================================================================
       function openSystemMenuModal() {
-        if (isSubmitting) return;
+        if (isSubmitting || isExportingPdf) return;
 
         const { totalRecords, totalWeight } = getInventoryStats();
         sysMenuRecordCount.textContent = formatInteger(totalRecords);
         sysMenuTotalWeight.textContent = formatWeight(totalWeight);
 
-        // Guard "บันทึกลงระบบ" when there are no records
+        // Guard "Export PDF" and "บันทึกลงระบบ" when there are no records
+        exportPdfBtn.disabled = totalRecords === 0;
         submitSystemBtn.disabled = totalRecords === 0;
 
         systemMenuModal.classList.remove('hidden');
         systemMenuModal.classList.add('flex');
         requestAnimationFrame(() => {
           if (totalRecords > 0) {
-            submitSystemBtn.focus();
+            exportPdfBtn.focus();
           } else {
             clearAllDataBtn.focus();
           }
@@ -1909,7 +1996,7 @@
        * or 'clear' ("ล้างข้อมูล") without using browser alert()/confirm().
        */
       function openConfirmActionModal(actionType) {
-        if (isSubmitting) return;
+        if (isSubmitting || isExportingPdf) return;
 
         const { totalRecords, totalQuantity, totalWeight } = getInventoryStats();
 
@@ -1965,10 +2052,12 @@
         pendingConfirmAction = null;
       }
 
-      function openProcessingModal(totalCount) {
-        processingStatusText.textContent = 'กำลังเตรียมส่งข้อมูล กรุณาอย่าปิดหน้าต่างนี้';
+      function openProcessingModal(totalCount, titleText, initialStatusText, unitLabel) {
+        processingModalTitle.textContent = titleText || 'กำลังบันทึกลงระบบ...';
+        processingStatusText.textContent =
+          initialStatusText || 'กำลังเตรียมส่งข้อมูล กรุณาอย่าปิดหน้าต่างนี้';
         processingProgressBar.style.width = '0%';
-        processingCounterText.textContent = `0 / ${formatInteger(totalCount)} รายการ`;
+        processingCounterText.textContent = `0 / ${formatInteger(totalCount)} ${unitLabel || 'รายการ'}`;
         processingPercentText.textContent = '0%';
         processingModal.classList.remove('hidden');
         processingModal.classList.add('flex');
@@ -1980,12 +2069,454 @@
       }
 
       /**
+       * Formats a Date instance into a clean Thai date/time string for the PDF report header.
+       */
+      function formatThaiExportDateTime(date) {
+        try {
+          const datePart = date.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          const timePart = date.toLocaleTimeString('th-TH', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          });
+          return `${datePart} เวลา ${timePart} น.`;
+        } catch (err) {
+          return date.toLocaleString();
+        }
+      }
+
+      /**
+       * Builds the standardized PDF download filename: pipe-report-YYYYMMDD-HHmm.pdf
+       */
+      function formatPdfFilename(date) {
+        const pad2 = (n) => String(n).padStart(2, '0');
+        const yyyy = date.getFullYear();
+        const mm = pad2(date.getMonth() + 1);
+        const dd = pad2(date.getDate());
+        const hh = pad2(date.getHours());
+        const min = pad2(date.getMinutes());
+        return `pipe-report-${yyyy}${mm}${dd}-${hh}${min}.pdf`;
+      }
+
+      /**
+       * Builds a single A4 portrait (794x1123 px at 96dpi) HTML page element
+       * styled with inline CSS and Sarabun Thai typography for crisp html2canvas capture.
+       */
+      function createPdfReportPageElement(options) {
+        const {
+          rowsChunk,
+          startIndex,
+          pageNumber,
+          totalPages,
+          isFirstPage,
+          isLastPage,
+          exportDateText,
+          totalGroupedCount,
+          totalLiftCount,
+          totalQuantity,
+          totalWeight,
+          hasValidMax,
+          maxWeightVal,
+          remainingWeightVal
+        } = options;
+
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'pdf-report-page';
+        pageDiv.style.cssText = [
+          'width: 794px',
+          'min-height: 1123px',
+          'background-color: #ffffff',
+          'color: #0f172a',
+          'padding: 36px 40px 30px 40px',
+          'box-sizing: border-box',
+          "font-family: 'Sarabun', 'Inter', system-ui, -apple-system, sans-serif",
+          'display: flex',
+          'flex-direction: column',
+          'line-height: 1.5'
+        ].join('; ');
+
+        // 1. Report Header (Full header on Page 1, compact continuation header on Page 2+)
+        let headerHtml = '';
+        if (isFirstPage) {
+          headerHtml = `
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding-bottom:14px; border-bottom:2px solid #0f172a; margin-bottom:16px;">
+              <div>
+                <div style="font-size:22px; font-weight:700; color:#0f172a; line-height:1.35;">รายงานจดน้ำหนักท่อเกรดบี</div>
+                <div style="font-size:13px; font-weight:500; color:#475569; margin-top:2px;">Flatbar Division™️ • Version 3.1</div>
+              </div>
+              <div style="text-align:right; flex-shrink:0;">
+                <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">วันที่และเวลาส่งออก</div>
+                <div style="font-size:13px; font-weight:600; color:#1e293b; margin-top:2px;">${escapeHtml(exportDateText)}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          headerHtml = `
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding-bottom:10px; border-bottom:1.5px solid #cbd5e1; margin-bottom:16px;">
+              <div style="font-size:15px; font-weight:700; color:#0f172a;">รายงานจดน้ำหนักท่อเกรดบี (ต่อ)</div>
+              <div style="font-size:12px; font-weight:500; color:#475569;">${escapeHtml(exportDateText)}</div>
+            </div>
+          `;
+        }
+
+        // 2. Summary Box Row (Displayed on Page 1)
+        let summaryHtml = '';
+        if (isFirstPage) {
+          const isOverweight = hasValidMax && remainingWeightVal < 0;
+          const colsCount = hasValidMax ? 5 : 3;
+          const liftSubtext =
+            totalLiftCount > totalGroupedCount
+              ? `<div style="font-size:11px; color:#64748b; margin-top:1px;">(${formatInteger(totalLiftCount)} รอบชั่ง)</div>`
+              : '';
+
+          const maxCardsHtml = hasValidMax
+            ? `
+              <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:10px 12px;">
+                <div style="font-size:11px; font-weight:600; color:#475569; line-height:1.4;">น้ำหนักสูงสุด (KG)</div>
+                <div style="font-size:16px; font-weight:700; color:#0f172a; margin-top:2px; font-variant-numeric:tabular-nums;">${formatWeight(maxWeightVal)}</div>
+              </div>
+              <div style="background:${isOverweight ? '#fef2f2' : '#ecfdf5'}; border:1px solid ${isOverweight ? '#fca5a5' : '#a7f3d0'}; border-radius:10px; padding:10px 12px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:4px;">
+                  <span style="font-size:11px; font-weight:600; color:${isOverweight ? '#b91c1c' : '#047857'}; line-height:1.4;">น้ำหนักที่เหลือ (KG)</span>
+                  ${isOverweight ? '<span style="background:#dc2626; color:#ffffff; font-size:9px; font-weight:700; padding:1px 5px; border-radius:4px; line-height:1.3;">เกินพิกัด</span>' : ''}
+                </div>
+                <div style="font-size:16px; font-weight:700; color:${isOverweight ? '#b91c1c' : '#065f46'}; margin-top:2px; font-variant-numeric:tabular-nums;">${formatWeight(remainingWeightVal)}</div>
+              </div>
+            `
+            : '';
+
+          summaryHtml = `
+            <div style="display:grid; grid-template-columns:repeat(${colsCount}, minmax(0, 1fr)); gap:10px; margin-bottom:18px;">
+              <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:10px 12px;">
+                <div style="font-size:11px; font-weight:600; color:#475569; line-height:1.4;">จำนวนรายการ</div>
+                <div style="font-size:16px; font-weight:700; color:#0f172a; margin-top:2px; font-variant-numeric:tabular-nums;">${formatInteger(totalGroupedCount)} <span style="font-size:12px; font-weight:600; color:#64748b;">รายการ</span></div>
+                ${liftSubtext}
+              </div>
+              <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:10px 12px;">
+                <div style="font-size:11px; font-weight:600; color:#475569; line-height:1.4;">จำนวนรวม (Pcs)</div>
+                <div style="font-size:16px; font-weight:700; color:#0f172a; margin-top:2px; font-variant-numeric:tabular-nums;">${formatInteger(totalQuantity)} <span style="font-size:12px; font-weight:600; color:#64748b;">Pcs</span></div>
+              </div>
+              <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 12px;">
+                <div style="font-size:11px; font-weight:600; color:#1d4ed8; line-height:1.4;">น้ำหนักรวม (KG)</div>
+                <div style="font-size:16px; font-weight:700; color:#1e3a8a; margin-top:2px; font-variant-numeric:tabular-nums;">${formatWeight(totalWeight)} <span style="font-size:12px; font-weight:600; color:#1d4ed8;">KG</span></div>
+              </div>
+              ${maxCardsHtml}
+            </div>
+          `;
+        }
+
+        // 3. Report Table Rows (Grouped matching "ตารางจดน้ำหนัก")
+        const rowsHtml = rowsChunk
+          .map((group, idx) => {
+            const seqNum = startIndex + idx + 1;
+            const rowBg = idx % 2 === 1 ? '#f8fafc' : '#ffffff';
+            const roundsNote =
+              group.items.length > 1
+                ? ` <span style="font-size:11px; font-weight:600; color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe; border-radius:999px; padding:1px 7px; margin-left:4px; display:inline-block; line-height:1.4;">(${formatInteger(group.items.length)} รอบ)</span>`
+                : '';
+
+            let materialBadgeHtml = '<span style="color:#94a3b8;">-</span>';
+            if (group.material === 'GI' || group.material === 'Galvanized') {
+              materialBadgeHtml =
+                '<span style="display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600; background:#f0f9ff; color:#0369a1; border:1px solid #bae6fd; line-height:1.45;">GI</span>';
+            } else if (group.material === 'เหล็กดำ' || group.material === 'Steel') {
+              materialBadgeHtml =
+                '<span style="display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600; background:#f4f4f5; color:#3f3f46; border:1px solid #d4d4d8; line-height:1.45;">เหล็กดำ</span>';
+            }
+
+            let typeBadgeHtml = '<span style="color:#94a3b8;">-</span>';
+            if (group.type === 'BN') {
+              typeBadgeHtml =
+                '<span style="display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:700; background:#eef2ff; color:crimson; border:1px solid #c7d2fe; line-height:1.45;">BN</span>';
+            } else if (group.type === 'BJ') {
+              typeBadgeHtml =
+                '<span style="display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:700; background:#fffbeb; color:#b45309; border:1px solid #fde68a; line-height:1.45;">BJ</span>';
+            }
+
+            return `
+              <tr style="background-color:${rowBg};">
+                <td style="padding:8px 8px; border:1px solid #cbd5e1; text-align:center; font-size:13px; color:#475569; font-variant-numeric:tabular-nums; vertical-align:middle;">${formatInteger(seqNum)}</td>
+                <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:left; font-size:13px; font-weight:600; color:#0f172a; vertical-align:middle;">${escapeHtml(group.pipeSize)}${roundsNote}</td>
+                <td style="padding:8px 8px; border:1px solid #cbd5e1; text-align:center; vertical-align:middle;">${materialBadgeHtml}</td>
+                <td style="padding:8px 8px; border:1px solid #cbd5e1; text-align:center; vertical-align:middle;">${typeBadgeHtml}</td>
+                <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:right; font-size:13px; font-weight:600; color:#1e293b; font-variant-numeric:tabular-nums; vertical-align:middle;">${formatInteger(group.totalQuantity)}</td>
+                <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:right; font-size:13px; font-weight:600; color:#0f172a; font-variant-numeric:tabular-nums; vertical-align:middle;">${formatWeight(group.totalNetWeight)}</td>
+              </tr>
+            `;
+          })
+          .join('');
+
+        // 4. Table Footer Row (Displayed on the final page)
+        const tfootHtml = isLastPage
+          ? `
+            <tfoot>
+              <tr style="background-color:#eff6ff;">
+                <td colspan="4" style="padding:10px 12px; border:1px solid #94a3b8; text-align:right; font-size:14px; font-weight:700; color:#1e3a8a; vertical-align:middle;">รวมทั้งหมด</td>
+                <td style="padding:10px 10px; border:1px solid #94a3b8; text-align:right; font-size:14px; font-weight:700; color:#1e3a8a; font-variant-numeric:tabular-nums; vertical-align:middle;">${formatInteger(totalQuantity)} <span style="font-size:11px; font-weight:600; color:#3b82f6;">Pcs</span></td>
+                <td style="padding:10px 10px; border:1px solid #94a3b8; text-align:right; font-size:14px; font-weight:700; color:#1e3a8a; font-variant-numeric:tabular-nums; vertical-align:middle;">${formatWeight(totalWeight)} <span style="font-size:11px; font-weight:600; color:#3b82f6;">KG</span></td>
+              </tr>
+            </tfoot>
+          `
+          : '';
+
+        // 5. Page Footer (Pinned to bottom of A4 page)
+        const footerHtml = `
+          <div style="margin-top:auto; padding-top:12px; border-top:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; font-size:11px; color:#64748b;">
+            <span>Powered by Flatbar Division™️ | Version 3.1</span>
+            <span style="font-weight:600; color:#475569;">หน้า ${formatInteger(pageNumber)} / ${formatInteger(totalPages)}</span>
+          </div>
+        `;
+
+        pageDiv.innerHTML = `
+          ${headerHtml}
+          ${summaryHtml}
+          <div style="flex:1 1 auto;">
+            <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+              <thead>
+                <tr style="background-color:#f1f5f9;">
+                  <th style="width:8%; padding:9px 6px; border:1px solid #94a3b8; text-align:center; font-size:12px; font-weight:700; color:#334155;">ลำดับ</th>
+                  <th style="width:34%; padding:9px 10px; border:1px solid #94a3b8; text-align:left; font-size:12px; font-weight:700; color:#334155;">ไซส์ท่อ</th>
+                  <th style="width:14%; padding:9px 6px; border:1px solid #94a3b8; text-align:center; font-size:12px; font-weight:700; color:#334155;">วัสดุ</th>
+                  <th style="width:11%; padding:9px 6px; border:1px solid #94a3b8; text-align:center; font-size:12px; font-weight:700; color:#334155;">ชนิด</th>
+                  <th style="width:15%; padding:9px 10px; border:1px solid #94a3b8; text-align:right; font-size:12px; font-weight:700; color:#334155;">จำนวน (Pcs)</th>
+                  <th style="width:18%; padding:9px 10px; border:1px solid #94a3b8; text-align:right; font-size:12px; font-weight:700; color:#334155;">น้ำหนัก (KG)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+              ${tfootHtml}
+            </table>
+          </div>
+          ${footerHtml}
+        `;
+
+        return pageDiv;
+      }
+
+      /**
+       * Builds paginated A4 report page elements from the current grouped table data.
+       */
+      function buildPdfReportPages(exportDate) {
+        const groupedRows = buildGroupedRecords(inventoryData);
+        const { totalRecords, totalQuantity, totalWeight } = getInventoryStats();
+        const exportDateText = formatThaiExportDateTime(exportDate);
+
+        // Read current Max Weight ("ตั้งน้ำหนักสูงสุด") if valid
+        const rawMax = maxWeightInput.value.trim();
+        const parsedMax = Number(rawMax);
+        const hasValidMax =
+          rawMax !== '' && !Number.isNaN(parsedMax) && Number.isFinite(parsedMax) && parsedMax >= 0;
+        const maxWeightVal = hasValidMax ? round2(parsedMax) : 0;
+        const remainingWeightVal = hasValidMax ? round2(maxWeightVal - totalWeight) : 0;
+
+        // Clean pagination: ~18 rows on page 1 (with header & summary cards), ~24 rows on subsequent pages
+        const FIRST_PAGE_ROWS = 18;
+        const NEXT_PAGE_ROWS = 24;
+        const chunks = [];
+
+        if (groupedRows.length <= FIRST_PAGE_ROWS) {
+          chunks.push({ rows: groupedRows, startIndex: 0 });
+        } else {
+          chunks.push({ rows: groupedRows.slice(0, FIRST_PAGE_ROWS), startIndex: 0 });
+          let offset = FIRST_PAGE_ROWS;
+          while (offset < groupedRows.length) {
+            chunks.push({
+              rows: groupedRows.slice(offset, offset + NEXT_PAGE_ROWS),
+              startIndex: offset
+            });
+            offset += NEXT_PAGE_ROWS;
+          }
+        }
+
+        const totalPages = chunks.length;
+        return chunks.map((chunk, idx) =>
+          createPdfReportPageElement({
+            rowsChunk: chunk.rows,
+            startIndex: chunk.startIndex,
+            pageNumber: idx + 1,
+            totalPages: totalPages,
+            isFirstPage: idx === 0,
+            isLastPage: idx === totalPages - 1,
+            exportDateText: exportDateText,
+            totalGroupedCount: groupedRows.length,
+            totalLiftCount: totalRecords,
+            totalQuantity: totalQuantity,
+            totalWeight: totalWeight,
+            hasValidMax: hasValidMax,
+            maxWeightVal: maxWeightVal,
+            remainingWeightVal: remainingWeightVal
+          })
+        );
+      }
+
+      /**
+       * Graceful offline fallback: injects the formatted A4 report into the print-only container
+       * and opens window.print() so the user can save as PDF even without CDN libraries.
+       */
+      function triggerPrintPdfFallback(pageElements) {
+        pdfPrintFallbackContainer.innerHTML = '';
+        pageElements.forEach((pageEl) => {
+          pdfPrintFallbackContainer.appendChild(pageEl.cloneNode(true));
+        });
+
+        const cleanupFallback = () => {
+          pdfPrintFallbackContainer.innerHTML = '';
+          window.removeEventListener('afterprint', cleanupFallback);
+        };
+
+        window.addEventListener('afterprint', cleanupFallback);
+        showToast('ไม่พบไลบรารีสร้าง PDF กำลังเปิดหน้าต่างพิมพ์ (Save as PDF) แทน');
+
+        setTimeout(() => {
+          window.print();
+          // Safety cleanup in case afterprint does not fire on some mobile browsers
+          setTimeout(cleanupFallback, 4000);
+        }, 180);
+      }
+
+      /**
+       * Exports the grouped report table ("ตารางจดน้ำหนัก") to a multi-page A4 portrait PDF
+       * using html2canvas + jsPDF so Thai characters, vowels, and tone marks render accurately.
+       * Does NOT clear inventoryData.
+       */
+      async function exportReportToPdf() {
+        if (isExportingPdf || isSubmitting) return;
+
+        if (inventoryData.length === 0) {
+          showToast('ไม่มีรายการสำหรับส่งออก PDF');
+          return;
+        }
+
+        closeSystemMenuModal();
+        isExportingPdf = true;
+
+        let offscreenHost = null;
+        const exportDate = new Date();
+        const filename = formatPdfFilename(exportDate);
+        const pageElements = buildPdfReportPages(exportDate);
+
+        // Graceful offline fallback if html2canvas or jsPDF failed to load from CDN
+        const hasPdfLibs =
+          typeof window.html2canvas === 'function' &&
+          window.jspdf &&
+          typeof window.jspdf.jsPDF === 'function';
+
+        if (!hasPdfLibs) {
+          isExportingPdf = false;
+          triggerPrintPdfFallback(pageElements);
+          return;
+        }
+
+        openProcessingModal(
+          pageElements.length,
+          'กำลังสร้างไฟล์ PDF...',
+          'กำลังจัดรูปแบบรายงาน A4 ภาษาไทย กรุณารอสักครู่',
+          'หน้า'
+        );
+
+        try {
+          // Mount pages off-screen at exact A4 pixel width (794px)
+          offscreenHost = document.createElement('div');
+          offscreenHost.setAttribute('aria-hidden', 'true');
+          offscreenHost.style.cssText = [
+            'position: fixed',
+            'left: -10000px',
+            'top: 0',
+            'width: 794px',
+            'background: #ffffff',
+            'pointer-events: none',
+            'z-index: -1'
+          ].join('; ');
+
+          pageElements.forEach((pageEl) => offscreenHost.appendChild(pageEl));
+          document.body.appendChild(offscreenHost);
+
+          // Wait for Sarabun & Inter web fonts to finish loading for crisp Thai rendering
+          if (document.fonts && document.fonts.ready) {
+            await document.fonts.ready;
+          }
+          await sleep(80);
+
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4',
+            compress: true
+          });
+
+          const a4WidthMm = 210;
+          const a4HeightMm = 297;
+
+          for (let i = 0; i < pageElements.length; i++) {
+            const pageNum = i + 1;
+            const midPercent = Math.round(((i + 0.5) / pageElements.length) * 100);
+            processingStatusText.textContent = `กำลังสร้างรายงานหน้า ${pageNum} / ${pageElements.length}...`;
+            processingProgressBar.style.width = `${midPercent}%`;
+            processingCounterText.textContent = `${formatInteger(pageNum)} / ${formatInteger(pageElements.length)} หน้า`;
+            processingPercentText.textContent = `${midPercent}%`;
+
+            const canvas = await window.html2canvas(pageElements[i], {
+              scale: 2,
+              backgroundColor: '#ffffff',
+              useCORS: true,
+              logging: false,
+              width: 794,
+              windowWidth: 794
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            if (i > 0) {
+              pdf.addPage();
+            }
+
+            // Fit proportionally onto A4 portrait page
+            let renderWidth = a4WidthMm;
+            let renderHeight = (canvas.height * a4WidthMm) / canvas.width;
+            let offsetX = 0;
+
+            if (renderHeight > a4HeightMm) {
+              renderHeight = a4HeightMm;
+              renderWidth = (canvas.width * a4HeightMm) / canvas.height;
+              offsetX = (a4WidthMm - renderWidth) / 2;
+            }
+
+            pdf.addImage(imgData, 'PNG', offsetX, 0, renderWidth, renderHeight, undefined, 'FAST');
+
+            const donePercent = Math.round((pageNum / pageElements.length) * 100);
+            processingProgressBar.style.width = `${donePercent}%`;
+            processingPercentText.textContent = `${donePercent}%`;
+          }
+
+          processingStatusText.textContent = `กำลังดาวน์โหลดไฟล์ ${filename}...`;
+          await sleep(120);
+
+          pdf.save(filename);
+          showToast(`ส่งออกไฟล์ PDF เรียบร้อยแล้ว (${filename})`);
+        } catch (err) {
+          console.error('[Export PDF] Generation failed, falling back to print:', err);
+          triggerPrintPdfFallback(pageElements);
+        } finally {
+          if (offscreenHost && offscreenHost.parentNode) {
+            offscreenHost.parentNode.removeChild(offscreenHost);
+          }
+          closeProcessingModal();
+          isExportingPdf = false;
+        }
+      }
+
+      /**
        * Sequentially submits a snapshot of all rows in local memory to Google Forms
        * via summitGS(size, nogi, gi) with a 600ms delay between rows so Google Forms
        * records every single row reliably without burst drops or caching.
        */
       async function executeSubmitToSystem() {
-        if (isSubmitting) return;
+        if (isSubmitting || isExportingPdf) return;
 
         // Snapshot inventoryData so it is never mutated mid-loop
         const rowsToSubmit = inventoryData.slice();
@@ -1995,7 +2526,12 @@
         }
 
         isSubmitting = true;
-        openProcessingModal(rowsToSubmit.length);
+        openProcessingModal(
+          rowsToSubmit.length,
+          'กำลังบันทึกลงระบบ...',
+          'กำลังเตรียมส่งข้อมูล กรุณาอย่าปิดหน้าต่างนี้',
+          'รายการ'
+        );
 
         try {
           for (let i = 0; i < rowsToSubmit.length; i++) {
@@ -2064,7 +2600,7 @@
       // 8. Modal Controls, About Modal, Average Split, Multi-Weigh & Validation
       // =========================================================================
       function openAboutModal() {
-        if (isSubmitting) return;
+        if (isSubmitting || isExportingPdf) return;
         aboutModal.classList.remove('hidden');
         aboutModal.classList.add('flex');
         requestAnimationFrame(() => closeAboutBtn.focus());
@@ -2523,7 +3059,7 @@
       }
 
       function openModal() {
-        if (isSubmitting) return;
+        if (isSubmitting || isExportingPdf) return;
         addRecordForm.reset();
         clearValidationErrors();
         selectedDeductionIds.clear();
@@ -2804,6 +3340,7 @@
           closeSystemMenuModal();
         }
       });
+      exportPdfBtn.addEventListener('click', exportReportToPdf);
       submitSystemBtn.addEventListener('click', () => openConfirmActionModal('submit'));
       clearAllDataBtn.addEventListener('click', () => openConfirmActionModal('clear'));
 
@@ -2961,7 +3498,7 @@
       // Close topmost dismissible modal on Escape key (blocked while #processingModal is active)
       document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
-        if (isSubmitting || !processingModal.classList.contains('hidden')) return;
+        if (isSubmitting || isExportingPdf || !processingModal.classList.contains('hidden')) return;
 
         if (!confirmActionModal.classList.contains('hidden')) {
           closeConfirmActionModal();
