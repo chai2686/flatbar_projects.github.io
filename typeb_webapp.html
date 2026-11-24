@@ -267,7 +267,7 @@
     <!-- 4. BOTTOM BRANDING & VERSION BAR -->
     <div class="footer-text">
       <span>Powered by Flatbar Division™️</span>
-      <span onclick="about()">Version 3.2</span>
+      <span onclick="about()">Version 3.3</span>
     </div>
   </div>
 
@@ -952,7 +952,217 @@
     </div>
   </div>
 
-  <!-- ABOUT MODAL POPUP (Triggered by global window.about() on Version 3.2 click) -->
+  <!-- PDF REPORT OPTIONS MODAL ("สร้างรายงาน PDF", z-[63]) -->
+  <div
+    id="pdfMenuModal"
+    class="fixed inset-0 z-[63] hidden items-center justify-center p-4 bg-slate-900/55 backdrop-blur-[2px] transition-opacity"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pdfMenuTitle"
+  >
+    <div class="w-full max-w-sm bg-white border border-slate-300 rounded-2xl shadow-2xl overflow-hidden">
+      <!-- PDF Options Header -->
+      <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <h3 id="pdfMenuTitle" class="text-base font-bold text-slate-900">สร้างรายงาน PDF</h3>
+          <p class="text-xs text-slate-500 mt-0.5">เลือกรูปแบบรายงานที่ต้องการส่งออก</p>
+        </div>
+        <button
+          id="closePdfMenuIconBtn"
+          type="button"
+          class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 shrink-0"
+          aria-label="ปิดหน้าต่างสร้างรายงาน PDF"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" style="color: red;" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- PDF Options Action Buttons -->
+      <div class="p-5 space-y-3">
+        <!-- Option 1: Normal Grouped Table PDF Export -->
+        <button
+          id="exportNormalPdfBtn"
+          type="button"
+          class="w-full flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-left text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 border border-emerald-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
+        >
+          <span class="flex items-center gap-3 min-w-0">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            </svg>
+            <span class="min-w-0">
+              <span class="block text-sm font-semibold">รายการสินค้าที่ขึ้น</span>
+              <span class="block text-[11px] text-emerald-100 font-normal mt-0.5">ส่งออกตารางจดน้ำหนักทั้งหมดแบบปกติ</span>
+            </span>
+          </span>
+          <svg class="w-4 h-4 shrink-0 opacity-85" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+
+        <!-- Option 2: Item Summary Setup & Export -->
+        <button
+          id="openItemSetupBtn"
+          type="button"
+          class="w-full flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-left text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 border border-indigo-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+        >
+          <span class="flex items-center gap-3 min-w-0">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+            </svg>
+            <span class="min-w-0">
+              <span class="block text-sm font-semibold">สรุปแยกตามไอเท็ม</span>
+              <span class="block text-[11px] text-indigo-100 font-normal mt-0.5">จัดกลุ่มไซส์ท่อตามเลขไอเท็มและสร้างหน้าสรุป</span>
+            </span>
+          </span>
+          <svg class="w-4 h-4 shrink-0 opacity-85" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- PDF Options Footer -->
+      <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button
+          id="closePdfMenuBtn"
+          type="button"
+          class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+        >
+          ปิด
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ITEM SETUP MODAL ("ตั้งค่าสรุปแยกตามไอเท็ม", z-[64]) -->
+  <div
+    id="itemSetupModal"
+    class="fixed inset-0 z-[64] hidden items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-[2px] transition-opacity"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="itemSetupTitle"
+  >
+    <div class="w-full max-w-xl max-h-[90dvh] flex flex-col bg-white border border-slate-300 rounded-2xl shadow-2xl overflow-hidden">
+      <!-- Item Setup Header -->
+      <div class="shrink-0 px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <h3 id="itemSetupTitle" class="text-base font-bold text-slate-900">ตั้งค่าสรุปแยกตามไอเท็ม</h3>
+          <p class="text-xs text-slate-500 mt-0.5">สร้างเลขไอเท็มและเลือกไซส์ท่อเพื่อจัดกลุ่มสรุปรายงาน</p>
+        </div>
+        <button
+          id="closeItemSetupIconBtn"
+          type="button"
+          class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 shrink-0"
+          aria-label="ปิดหน้าต่างตั้งค่าสรุปแยกตามไอเท็ม"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" style="color: red;" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Create New Item Bar + Assignment Status -->
+      <div class="shrink-0 px-5 pt-4 pb-3 bg-white border-b border-slate-200 space-y-2.5">
+        <div>
+          <label for="newItemNumberInput" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            สร้างไอเท็มใหม่
+          </label>
+          <div class="flex items-stretch gap-2">
+            <input
+              id="newItemNumberInput"
+              type="text"
+              placeholder="ระบุเลขไอเท็ม เช่น 150, 200"
+              autocomplete="off"
+              class="flex-1 min-w-0 bg-slate-50 focus:bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+            />
+            <button
+              id="addItemGroupBtn"
+              type="button"
+              class="shrink-0 inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 border border-indigo-700 shadow-xs transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+            >
+              <span>+ เพิ่มไอเท็ม</span>
+            </button>
+          </div>
+          <p id="itemSetupError" class="hidden text-xs text-red-600 mt-1.5 font-medium"></p>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="flex items-center justify-between gap-2 pt-0.5 text-xs">
+          <span id="itemAssignedStatusText" class="inline-flex items-center gap-1.5 font-semibold text-slate-600">
+            จัดกลุ่มแล้ว 0 / 0 ไซส์ท่อ
+          </span>
+          <button
+            id="clearAllItemGroupsBtn"
+            type="button"
+            class="hidden px-2.5 py-1 rounded-lg text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-200 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400"
+          >
+            ล้างไอเท็มทั้งหมด
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrollable Item Groups List -->
+      <div class="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 bg-slate-50/70">
+        <!-- Empty State -->
+        <div id="itemGroupsEmptyState" class="flex flex-col items-center justify-center text-center px-4 py-10 bg-white border border-dashed border-slate-300 rounded-xl">
+          <div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-500 mb-2.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+          </div>
+          <p class="text-sm font-semibold text-slate-700">ยังไม่มีเลขไอเท็ม</p>
+          <p class="text-xs text-slate-500 mt-1 max-w-xs">
+            ยังไม่มีเลขไอเท็ม กรุณาระบุเลขไอเท็มด้านบนแล้วกด + เพิ่มไอเท็ม
+          </p>
+        </div>
+
+        <!-- Dynamic Item Cards Container -->
+        <div id="itemGroupsContainer" class="space-y-3"></div>
+      </div>
+
+      <!-- Item Setup Footer -->
+      <div class="shrink-0 bg-white border-t border-slate-200 px-5 py-3.5 space-y-2.5">
+        <p id="itemSetupSubmitError" class="hidden text-xs text-red-600 font-medium"></p>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <!-- Include Normal Report Checkbox -->
+          <label
+            for="includeNormalReportCheck"
+            class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 cursor-pointer select-none"
+          >
+            <input
+              id="includeNormalReportCheck"
+              type="checkbox"
+              checked
+              class="w-4 h-4 rounded accent-indigo-600 text-indigo-600 border-slate-300 focus:ring-indigo-500 cursor-pointer"
+            />
+            <span>รวมหน้ารายการสินค้าที่ขึ้นด้วย</span>
+          </label>
+
+          <!-- Cancel & OK Action Buttons -->
+          <div class="flex items-center justify-end gap-2.5">
+            <button
+              id="cancelItemSetupBtn"
+              type="button"
+              class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+            >
+              ยกเลิก
+            </button>
+            <button
+              id="confirmItemSetupBtn"
+              type="button"
+              class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 border border-indigo-700 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT MODAL POPUP (Triggered by global window.about() on Version 3.3 click) -->
   <div
     id="aboutModal"
     class="fixed inset-0 z-[65] hidden items-center justify-center p-4 bg-slate-900/55 backdrop-blur-[2px] transition-opacity"
@@ -973,7 +1183,7 @@
           </div>
           <div class="min-w-0">
             <h3 id="aboutModalTitle" class="text-base font-bold text-slate-900 truncate">จดน้ำหนักท่อเกรดบี</h3>
-            <p class="text-xs font-medium text-blue-600">Version 3.2</p>
+            <p class="text-xs font-medium text-blue-600">Version 3.3</p>
           </div>
         </div>
         <button
@@ -1020,7 +1230,7 @@
             </li>
             <li class="flex items-start gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></span>
-              <span>ส่งออกรายงานตารางจดน้ำหนักเป็นไฟล์ <strong>PDF (A4)</strong> ภาษาไทยคมชัดได้ทันทีจากเมนูระบบ</span>
+              <span>ส่งออกรายงานตารางจดน้ำหนักเป็นไฟล์ <strong>PDF (A4)</strong> ได้ทั้งแบบ <strong>รายการสินค้าที่ขึ้น</strong> และ <strong>สรุปแยกตามไอเท็ม</strong></span>
             </li>
           </ul>
         </div>
@@ -1195,13 +1405,13 @@
     window.summitGS = summitGS;
 
     /**
-     * Pipe Inventory Web Application (จดน้ำหนักท่อเกรดบี - Version 3.2)
+     * Pipe Inventory Web Application (จดน้ำหนักท่อเกรดบี - Version 3.3)
      * Stores individual pipe weighing lifts ({ id, pipeSize, material, type, quantity, hoist1Weight, hoist2Weight, netWeight })
      * in local memory with automatic localStorage persistence and safe fallback.
      * All weight values are whole numbers (rounded UP on calculations via roundUpWeight).
      * Groups rows in "ตารางจดน้ำหนัก" by identical (pipeSize, material, type) with expandable per-lift detail rows,
      * supports "ชั่งรวม" / "ชั่งหลายไซส์" deduction, "เฉลี่ย" BN/BJ split mode,
-     * remaining weight capacity, A4 Thai PDF export, and sequential Google Forms submission via summitGS().
+     * remaining weight capacity, A4 Thai PDF export (normal + Item Summary), and sequential Google Forms submission via summitGS().
      */
     (function () {
       'use strict';
@@ -1211,6 +1421,7 @@
       // =========================================================================
       const STORAGE_KEY = 'pipe_inventory_records_v1';
       const MAX_WEIGHT_STORAGE_KEY = 'pipe_inventory_max_weight_v1';
+      const ITEM_GROUPS_STORAGE_KEY = 'pipe_inventory_item_groups_v1';
 
       const DEFAULT_SAMPLE_DATA = [
         { id: 'rec-1', pipeSize: 'ท่อดำ 2"', material: 'เหล็กดำ', type: 'BN', quantity: 15, hoist1Weight: 93, hoist2Weight: 92, netWeight: 185 },
@@ -1220,6 +1431,8 @@
 
       // In-memory state array (stores individual lifts for full auditability)
       let inventoryData = [];
+      // Item Summary configuration groups: [{ id, itemNumber, pipeSizes: [] }]
+      let itemGroups = [];
       // Tracks which grouped rows are currently expanded in the UI
       const expandedGroupKeys = new Set();
       // Tracks applied & draft selected record IDs for "ชั่งรวม" / "ชั่งหลายไซส์" deduction
@@ -1262,6 +1475,28 @@
       const exportPdfBtn = document.getElementById('exportPdfBtn');
       const submitSystemBtn = document.getElementById('submitSystemBtn');
       const clearAllDataBtn = document.getElementById('clearAllDataBtn');
+
+      // PDF Report Options modal elements
+      const pdfMenuModal = document.getElementById('pdfMenuModal');
+      const closePdfMenuIconBtn = document.getElementById('closePdfMenuIconBtn');
+      const closePdfMenuBtn = document.getElementById('closePdfMenuBtn');
+      const exportNormalPdfBtn = document.getElementById('exportNormalPdfBtn');
+      const openItemSetupBtn = document.getElementById('openItemSetupBtn');
+
+      // Item Setup modal elements
+      const itemSetupModal = document.getElementById('itemSetupModal');
+      const closeItemSetupIconBtn = document.getElementById('closeItemSetupIconBtn');
+      const newItemNumberInput = document.getElementById('newItemNumberInput');
+      const addItemGroupBtn = document.getElementById('addItemGroupBtn');
+      const itemSetupError = document.getElementById('itemSetupError');
+      const itemAssignedStatusText = document.getElementById('itemAssignedStatusText');
+      const clearAllItemGroupsBtn = document.getElementById('clearAllItemGroupsBtn');
+      const itemGroupsEmptyState = document.getElementById('itemGroupsEmptyState');
+      const itemGroupsContainer = document.getElementById('itemGroupsContainer');
+      const itemSetupSubmitError = document.getElementById('itemSetupSubmitError');
+      const includeNormalReportCheck = document.getElementById('includeNormalReportCheck');
+      const cancelItemSetupBtn = document.getElementById('cancelItemSetupBtn');
+      const confirmItemSetupBtn = document.getElementById('confirmItemSetupBtn');
 
       // Confirm Action modal elements
       const confirmActionModal = document.getElementById('confirmActionModal');
@@ -1470,6 +1705,53 @@
             window.localStorage.removeItem(MAX_WEIGHT_STORAGE_KEY);
           } else {
             window.localStorage.setItem(MAX_WEIGHT_STORAGE_KEY, rawValue);
+          }
+        } catch (err) {
+          // Silently degrade if storage write fails
+        }
+      }
+
+      /**
+       * Loads persisted Item Summary group setup from localStorage.
+       */
+      function loadItemGroups() {
+        if (!storageAvailable) {
+          itemGroups = [];
+          return;
+        }
+        try {
+          const raw = window.localStorage.getItem(ITEM_GROUPS_STORAGE_KEY);
+          if (raw !== null) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              itemGroups = parsed
+                .filter((g) => g && typeof g.itemNumber === 'string' && g.itemNumber.trim() !== '')
+                .map((g, idx) => ({
+                  id: g.id || `item-${Date.now()}-${idx}`,
+                  itemNumber: g.itemNumber.trim(),
+                  pipeSizes: Array.isArray(g.pipeSizes)
+                    ? Array.from(new Set(g.pipeSizes.filter((s) => typeof s === 'string' && s.trim() !== '')))
+                    : []
+                }));
+              return;
+            }
+          }
+        } catch (err) {
+          // Ignore corrupted stored item groups cleanly
+        }
+        itemGroups = [];
+      }
+
+      /**
+       * Persists Item Summary group setup to localStorage safely.
+       */
+      function saveItemGroups() {
+        if (!storageAvailable) return;
+        try {
+          if (itemGroups.length === 0) {
+            window.localStorage.removeItem(ITEM_GROUPS_STORAGE_KEY);
+          } else {
+            window.localStorage.setItem(ITEM_GROUPS_STORAGE_KEY, JSON.stringify(itemGroups));
           }
         } catch (err) {
           // Silently degrade if storage write fails
@@ -1982,22 +2264,24 @@
 
       /**
        * Clears all local memory records, writes "[]" to localStorage so sample data
-       * does not reload on refresh, clears max weight, resets UI state, and re-renders.
+       * does not reload on refresh, clears max weight & item groups, resets UI state, and re-renders.
        */
       function clearAllLocalData() {
         inventoryData = [];
+        itemGroups = [];
         expandedGroupKeys.clear();
         selectedDeductionIds.clear();
         draftDeductionIds.clear();
         appliedDeductedWeight = 0;
         saveRecords();
+        saveItemGroups();
         maxWeightInput.value = '';
         saveMaxWeight('');
         renderApp();
       }
 
       // =========================================================================
-      // 7. System Menu, Confirmation Dialog, PDF Export & Sequential summitGS Submission
+      // 7. System Menu, PDF Menu, Item Setup, Confirmation Dialog, PDF Export & summitGS
       // =========================================================================
       function openSystemMenuModal() {
         if (isSubmitting || isExportingPdf) return;
@@ -2024,6 +2308,422 @@
       function closeSystemMenuModal() {
         systemMenuModal.classList.add('hidden');
         systemMenuModal.classList.remove('flex');
+      }
+
+      // -------------------------------------------------------------------------
+      // 7A. PDF Report Options Modal ("สร้างรายงาน PDF")
+      // -------------------------------------------------------------------------
+      function openPdfMenuModal() {
+        if (isSubmitting || isExportingPdf) return;
+        if (inventoryData.length === 0) {
+          showToast('ไม่มีรายการสำหรับส่งออก PDF');
+          return;
+        }
+        closeSystemMenuModal();
+        pdfMenuModal.classList.remove('hidden');
+        pdfMenuModal.classList.add('flex');
+        requestAnimationFrame(() => exportNormalPdfBtn.focus());
+      }
+
+      function closePdfMenuModal() {
+        pdfMenuModal.classList.add('hidden');
+        pdfMenuModal.classList.remove('flex');
+      }
+
+      // -------------------------------------------------------------------------
+      // 7B. Item Summary Setup Modal ("ตั้งค่าสรุปแยกตามไอเท็ม")
+      // -------------------------------------------------------------------------
+
+      /**
+       * Returns all unique pipeSize strings currently present in inventoryData,
+       * preserving the order of first appearance.
+       */
+      function getUniqueInventoryPipeSizes() {
+        const seen = new Set();
+        const result = [];
+        inventoryData.forEach((item) => {
+          const size = String(item.pipeSize ?? '').trim();
+          if (size && !seen.has(size)) {
+            seen.add(size);
+            result.push(size);
+          }
+        });
+        return result;
+      }
+
+      /**
+       * Prunes any pipeSize stored in itemGroups that no longer exists in inventoryData
+       * and enforces that each pipeSize belongs to at most one Item.
+       */
+      function pruneStaleItemGroupPipeSizes() {
+        const validSizes = new Set(getUniqueInventoryPipeSizes());
+        const claimedSizes = new Set();
+        let changed = false;
+
+        itemGroups.forEach((group) => {
+          const nextSizes = [];
+          group.pipeSizes.forEach((size) => {
+            if (validSizes.has(size) && !claimedSizes.has(size)) {
+              claimedSizes.add(size);
+              nextSizes.push(size);
+            } else {
+              changed = true;
+            }
+          });
+          group.pipeSizes = nextSizes;
+        });
+
+        if (changed) {
+          saveItemGroups();
+        }
+      }
+
+      /**
+       * Aggregates all inventoryData records matching the given pipeSizes list
+       * into the exact 4 required categories in order:
+       *   1) ท่อเหล็กดำ BN
+       *   2) ท่อเหล็กดำ BJ
+       *   3) ท่อ GI BN
+       *   4) ท่อ GI BJ
+       */
+      function computeItemSummaryBreakdown(pipeSizes) {
+        const sizeSet = new Set(pipeSizes);
+        const categories = [
+          { label: 'ท่อเหล็กดำ BN', materialLabel: 'ท่อเหล็กดำ', type: 'BN', quantity: 0, netWeight: 0 },
+          { label: 'ท่อเหล็กดำ BJ', materialLabel: 'ท่อเหล็กดำ', type: 'BJ', quantity: 0, netWeight: 0 },
+          { label: 'ท่อ GI BN', materialLabel: 'ท่อ GI', type: 'BN', quantity: 0, netWeight: 0 },
+          { label: 'ท่อ GI BJ', materialLabel: 'ท่อ GI', type: 'BJ', quantity: 0, netWeight: 0 }
+        ];
+
+        inventoryData.forEach((item) => {
+          if (!sizeSet.has(item.pipeSize)) return;
+
+          const mat = String(item.material ?? '').trim();
+          const type = String(item.type ?? '').trim();
+          const qty = Number(item.quantity || 0);
+          const weight = roundUpWeight(item.netWeight || 0);
+
+          const isSteel = mat === 'เหล็กดำ' || mat === 'Steel';
+          const isGI = mat === 'GI' || mat === 'Galvanized';
+
+          if (isSteel && type === 'BN') {
+            categories[0].quantity += qty;
+            categories[0].netWeight = roundUpWeight(categories[0].netWeight + weight);
+          } else if (isSteel && type === 'BJ') {
+            categories[1].quantity += qty;
+            categories[1].netWeight = roundUpWeight(categories[1].netWeight + weight);
+          } else if (isGI && type === 'BN') {
+            categories[2].quantity += qty;
+            categories[2].netWeight = roundUpWeight(categories[2].netWeight + weight);
+          } else if (isGI && type === 'BJ') {
+            categories[3].quantity += qty;
+            categories[3].netWeight = roundUpWeight(categories[3].netWeight + weight);
+          }
+        });
+
+        const totalQuantity = categories.reduce((sum, c) => sum + c.quantity, 0);
+        const totalWeight = roundUpWeight(categories.reduce((sum, c) => sum + c.netWeight, 0));
+
+        return { categories, totalQuantity, totalWeight };
+      }
+
+      function clearItemSetupErrors() {
+        newItemNumberInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        itemSetupError.textContent = '';
+        itemSetupError.classList.add('hidden');
+        itemSetupSubmitError.textContent = '';
+        itemSetupSubmitError.classList.add('hidden');
+      }
+
+      function renderItemSetupModal() {
+        const allUniqueSizes = getUniqueInventoryPipeSizes();
+
+        // Build map of pipeSize -> owning itemNumber so each pipeSize belongs to at most 1 Item
+        const sizeOwnerMap = new Map();
+        itemGroups.forEach((group) => {
+          group.pipeSizes.forEach((size) => {
+            sizeOwnerMap.set(size, group.itemNumber);
+          });
+        });
+
+        // Update status bar & clear-all button visibility
+        itemAssignedStatusText.textContent = `จัดกลุ่มแล้ว ${formatInteger(sizeOwnerMap.size)} / ${formatInteger(allUniqueSizes.length)} ไซส์ท่อ`;
+        if (itemGroups.length > 0) {
+          clearAllItemGroupsBtn.classList.remove('hidden');
+        } else {
+          clearAllItemGroupsBtn.classList.add('hidden');
+        }
+
+        itemGroupsContainer.innerHTML = '';
+
+        if (itemGroups.length === 0) {
+          itemGroupsEmptyState.classList.remove('hidden');
+          itemGroupsEmptyState.classList.add('flex');
+          return;
+        }
+
+        itemGroupsEmptyState.classList.add('hidden');
+        itemGroupsEmptyState.classList.remove('flex');
+
+        const fragment = document.createDocumentFragment();
+
+        itemGroups.forEach((group) => {
+          const breakdown = computeItemSummaryBreakdown(group.pipeSizes);
+
+          const card = document.createElement('div');
+          card.className = 'bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden';
+
+          // Card Header: Item Number + Pipe Count + Live Totals + Delete Button
+          const cardHeader = document.createElement('div');
+          cardHeader.className = 'px-3.5 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-2';
+
+          const headerLeft = document.createElement('div');
+          headerLeft.className = 'flex items-center gap-2 min-w-0';
+
+          const itemTitle = document.createElement('span');
+          itemTitle.className = 'text-sm font-bold text-indigo-900 truncate';
+          itemTitle.textContent = `Item ${group.itemNumber}`;
+
+          const countBadge = document.createElement('span');
+          countBadge.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 tabular-nums';
+          countBadge.textContent = `${formatInteger(group.pipeSizes.length)} ไซส์`;
+
+          headerLeft.appendChild(itemTitle);
+          headerLeft.appendChild(countBadge);
+
+          const headerRight = document.createElement('div');
+          headerRight.className = 'flex items-center gap-2 shrink-0';
+
+          const totalsText = document.createElement('span');
+          totalsText.className = 'text-xs font-semibold text-slate-700 tabular-nums';
+          totalsText.textContent = `${formatInteger(breakdown.totalQuantity)} Pcs / ${formatWeight(breakdown.totalWeight)} KG`;
+
+          const deleteItemBtn = document.createElement('button');
+          deleteItemBtn.type = 'button';
+          deleteItemBtn.className =
+            'p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 active:bg-red-100 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400';
+          deleteItemBtn.title = `ลบ Item ${group.itemNumber}`;
+          deleteItemBtn.setAttribute('aria-label', `ลบ Item ${group.itemNumber}`);
+          deleteItemBtn.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+            </svg>
+          `;
+          deleteItemBtn.addEventListener('click', () => handleDeleteItemGroup(group.id));
+
+          headerRight.appendChild(totalsText);
+          headerRight.appendChild(deleteItemBtn);
+
+          cardHeader.appendChild(headerLeft);
+          cardHeader.appendChild(headerRight);
+          card.appendChild(cardHeader);
+
+          // Card Body: Selectable Pipe Size Chips + Live Mini Breakdown
+          const cardBody = document.createElement('div');
+          cardBody.className = 'p-3.5 space-y-3';
+
+          const chipsLabel = document.createElement('p');
+          chipsLabel.className = 'text-[11px] font-semibold text-slate-500';
+          chipsLabel.textContent = 'เลือกไซส์ท่อสำหรับไอเท็มนี้:';
+          cardBody.appendChild(chipsLabel);
+
+          const chipsWrap = document.createElement('div');
+          chipsWrap.className = 'flex flex-wrap gap-2';
+
+          allUniqueSizes.forEach((size) => {
+            const isSelectedHere = group.pipeSizes.includes(size);
+            const ownerItemNumber = sizeOwnerMap.get(size);
+            const isAssignedElsewhere = ownerItemNumber !== undefined && ownerItemNumber !== group.itemNumber;
+
+            const chipBtn = document.createElement('button');
+            chipBtn.type = 'button';
+            chipBtn.disabled = isAssignedElsewhere;
+
+            if (isSelectedHere) {
+              chipBtn.className =
+                'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white border border-indigo-700 shadow-xs transition-all focus:outline-none focus:ring-2 focus:ring-indigo-400';
+              chipBtn.innerHTML = `
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+                <span>${escapeHtml(size)}</span>
+              `;
+            } else if (isAssignedElsewhere) {
+              chipBtn.className =
+                'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-400 border border-slate-200 opacity-65 cursor-not-allowed';
+              chipBtn.title = `ถูกจัดกลุ่มไว้ใน Item ${ownerItemNumber} แล้ว`;
+              chipBtn.innerHTML = `
+                <span>${escapeHtml(size)}</span>
+                <span class="px-1.5 py-0.5 rounded bg-slate-200/90 text-[10px] font-semibold text-slate-500 leading-none">(Item ${escapeHtml(ownerItemNumber)})</span>
+              `;
+            } else {
+              chipBtn.className =
+                'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-800 border border-slate-300 hover:border-indigo-300 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-400';
+              chipBtn.innerHTML = `
+                <span class="w-3.5 h-3.5 rounded border border-slate-300 bg-slate-50 inline-block shrink-0" aria-hidden="true"></span>
+                <span>${escapeHtml(size)}</span>
+              `;
+            }
+
+            if (!isAssignedElsewhere) {
+              chipBtn.addEventListener('click', () => handleTogglePipeSizeInItemGroup(group.id, size));
+            }
+
+            chipsWrap.appendChild(chipBtn);
+          });
+
+          cardBody.appendChild(chipsWrap);
+
+          // Live Mini 4-Category Summary inside Card
+          if (group.pipeSizes.length > 0) {
+            const miniGrid = document.createElement('div');
+            miniGrid.className = 'grid grid-cols-2 gap-1.5 pt-2.5 border-t border-slate-100';
+
+            breakdown.categories.forEach((cat) => {
+              const cell = document.createElement('div');
+              cell.className = 'flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200/80 text-[11px]';
+
+              const typeColorStyle = cat.type === 'BN' ? 'color: crimson;' : 'color: #b45309;';
+              cell.innerHTML = `
+                <span class="font-semibold text-slate-700 truncate">
+                  ${escapeHtml(cat.materialLabel)} <span class="font-bold" style="${typeColorStyle}">${escapeHtml(cat.type)}</span>
+                </span>
+                <span class="font-bold text-slate-800 tabular-nums shrink-0">
+                  ${formatInteger(cat.quantity)} <span class="font-normal text-slate-400">Pcs</span> · ${formatWeight(cat.netWeight)} <span class="font-normal text-slate-400">KG</span>
+                </span>
+              `;
+              miniGrid.appendChild(cell);
+            });
+
+            cardBody.appendChild(miniGrid);
+          }
+
+          card.appendChild(cardBody);
+          fragment.appendChild(card);
+        });
+
+        itemGroupsContainer.appendChild(fragment);
+      }
+
+      function handleAddItemGroup() {
+        clearItemSetupErrors();
+        const rawInput = newItemNumberInput.value.trim();
+        // Clean optional leading "Item " prefix so headers never duplicate as "Item Item 150"
+        const normalizedNumber = rawInput.replace(/^item\s+/i, '').trim();
+
+        if (!normalizedNumber) {
+          newItemNumberInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+          itemSetupError.textContent = 'กรุณาระบุเลขไอเท็ม เช่น 150, 200';
+          itemSetupError.classList.remove('hidden');
+          newItemNumberInput.focus();
+          return;
+        }
+
+        const isDuplicate = itemGroups.some(
+          (g) => g.itemNumber.toLowerCase() === normalizedNumber.toLowerCase()
+        );
+        if (isDuplicate) {
+          newItemNumberInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+          itemSetupError.textContent = `มีเลขไอเท็ม "Item ${normalizedNumber}" อยู่แล้ว กรุณาระบุเลขไอเท็มอื่น`;
+          itemSetupError.classList.remove('hidden');
+          newItemNumberInput.focus();
+          return;
+        }
+
+        itemGroups.push({
+          id: `item-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          itemNumber: normalizedNumber,
+          pipeSizes: []
+        });
+        saveItemGroups();
+        newItemNumberInput.value = '';
+        renderItemSetupModal();
+        newItemNumberInput.focus();
+      }
+
+      function handleDeleteItemGroup(groupId) {
+        clearItemSetupErrors();
+        itemGroups = itemGroups.filter((g) => g.id !== groupId);
+        saveItemGroups();
+        renderItemSetupModal();
+      }
+
+      function handleTogglePipeSizeInItemGroup(groupId, pipeSize) {
+        clearItemSetupErrors();
+        const group = itemGroups.find((g) => g.id === groupId);
+        if (!group) return;
+
+        const idx = group.pipeSizes.indexOf(pipeSize);
+        if (idx === -1) {
+          group.pipeSizes.push(pipeSize);
+        } else {
+          group.pipeSizes.splice(idx, 1);
+        }
+        saveItemGroups();
+        renderItemSetupModal();
+      }
+
+      function handleClearAllItemGroups() {
+        clearItemSetupErrors();
+        itemGroups = [];
+        saveItemGroups();
+        renderItemSetupModal();
+        showToast('ล้างเลขไอเท็มทั้งหมดแล้ว');
+      }
+
+      function openItemSetupModal() {
+        if (isSubmitting || isExportingPdf) return;
+        if (inventoryData.length === 0) {
+          showToast('ไม่มีรายการสำหรับส่งออก PDF');
+          return;
+        }
+
+        closePdfMenuModal();
+        pruneStaleItemGroupPipeSizes();
+        clearItemSetupErrors();
+        newItemNumberInput.value = '';
+        includeNormalReportCheck.checked = true;
+        renderItemSetupModal();
+
+        itemSetupModal.classList.remove('hidden');
+        itemSetupModal.classList.add('flex');
+        requestAnimationFrame(() => newItemNumberInput.focus());
+      }
+
+      function closeItemSetupModal() {
+        itemSetupModal.classList.add('hidden');
+        itemSetupModal.classList.remove('flex');
+      }
+
+      function handleConfirmItemSetupAndExport() {
+        clearItemSetupErrors();
+        pruneStaleItemGroupPipeSizes();
+
+        if (itemGroups.length === 0) {
+          itemSetupSubmitError.textContent = 'กรุณาสร้างเลขไอเท็มอย่างน้อย 1 ไอเท็มก่อนส่งออกรายงาน';
+          itemSetupSubmitError.classList.remove('hidden');
+          newItemNumberInput.focus();
+          return;
+        }
+
+        const activeItemGroups = itemGroups.filter((g) => g.pipeSizes.length > 0);
+        if (activeItemGroups.length === 0) {
+          itemSetupSubmitError.textContent = 'กรุณาเลือกไซส์ท่ออย่างน้อย 1 ไซส์ให้กับไอเท็มก่อนส่งออกรายงาน';
+          itemSetupSubmitError.classList.remove('hidden');
+          return;
+        }
+
+        const includeNormal = includeNormalReportCheck.checked;
+        saveItemGroups();
+        closeItemSetupModal();
+        exportReportToPdf({
+          includeNormal: includeNormal,
+          itemGroups: activeItemGroups.map((g) => ({
+            id: g.id,
+            itemNumber: g.itemNumber,
+            pipeSizes: g.pipeSizes.slice()
+          }))
+        });
       }
 
       /**
@@ -2104,37 +2804,19 @@
       }
 
       /**
-       * Formats a Date instance into a clean Thai date/time string for the PDF report header.
+       * Builds the standardized PDF download filename:
+       * - Normal report: pipe-report-YYYYMMDD-HHmm.pdf
+       * - Item summary report: pipe-report-items-YYYYMMDD-HHmm.pdf
        */
-      function formatThaiExportDateTime(date) {
-        try {
-          const datePart = date.toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          });
-          const timePart = date.toLocaleTimeString('th-TH', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          });
-          return `${datePart} เวลา ${timePart} น.`;
-        } catch (err) {
-          return date.toLocaleString();
-        }
-      }
-
-      /**
-       * Builds the standardized PDF download filename: pipe-report-YYYYMMDD-HHmm.pdf
-       */
-      function formatPdfFilename(date) {
+      function formatPdfFilename(date, isItemReport) {
         const pad2 = (n) => String(n).padStart(2, '0');
         const yyyy = date.getFullYear();
         const mm = pad2(date.getMonth() + 1);
         const dd = pad2(date.getDate());
         const hh = pad2(date.getHours());
         const min = pad2(date.getMinutes());
-        return `pipe-report-${yyyy}${mm}${dd}-${hh}${min}.pdf`;
+        const prefix = isItemReport ? 'pipe-report-items' : 'pipe-report';
+        return `${prefix}-${yyyy}${mm}${dd}-${hh}${min}.pdf`;
       }
 
       /**
@@ -2181,7 +2863,7 @@
             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding-bottom:14px; border-bottom:2px solid #0f172a; margin-bottom:16px;">
               <div>
                 <div style="font-size:22px; font-weight:700; color:#0f172a; line-height:1.35;">รายงานจดน้ำหนักท่อเกรดบี</div>
-                <div style="font-size:13px; font-weight:500; color:#475569; margin-top:2px;">Flatbar Division™️ • Version 3.2</div>
+                <div style="font-size:13px; font-weight:500; color:#475569; margin-top:2px;">Flatbar Division™️ • Version 3.3</div>
               </div>
               <div style="text-align:right; flex-shrink:0;">
                 <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">วันที่และเวลาส่งออก</div>
@@ -2301,7 +2983,7 @@
         // 5. Page Footer (Pinned to bottom of A4 page)
         const footerHtml = `
           <div style="margin-top:auto; padding-top:12px; border-top:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; font-size:11px; color:#64748b;">
-            <span>Powered by Flatbar Division™️ | Version 3.2</span>
+            <span>Powered by Flatbar Division™️ | Version 3.3</span>
             <span style="font-weight:600; color:#475569;">หน้า ${formatInteger(pageNumber)} / ${formatInteger(totalPages)}</span>
           </div>
         `;
@@ -2334,9 +3016,184 @@
       }
 
       /**
-       * Builds paginated A4 report page elements from the current grouped table data.
+       * Builds a dedicated A4 portrait (794x1123 px at 96dpi) Item Summary PDF page
+       * displaying up to 3 Item blocks per page with exact 4-row Material × Type breakdowns,
+       * Item subtotals, and a final grand total summary bar on the last Item Summary page.
        */
-      function buildPdfReportPages(exportDate) {
+      function createPdfItemSummaryPageElement(options) {
+        const {
+          itemBlocksChunk,
+          pageNumber,
+          totalPages,
+          isFirstItemPage,
+          isLastItemPage,
+          exportDateText,
+          totalItemCount,
+          grandTotalQuantity,
+          grandTotalWeight
+        } = options;
+
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'pdf-report-page';
+        pageDiv.style.cssText = [
+          'width: 794px',
+          'min-height: 1123px',
+          'background-color: #ffffff',
+          'color: #0f172a',
+          'padding: 36px 40px 30px 40px',
+          'box-sizing: border-box',
+          "font-family: 'Sarabun', 'Inter', system-ui, -apple-system, sans-serif",
+          'display: flex',
+          'flex-direction: column',
+          'line-height: 1.5'
+        ].join('; ');
+
+        // 1. Item Summary Page Header
+        const headerHtml = isFirstItemPage
+          ? `
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding-bottom:14px; border-bottom:2px solid #0f172a; margin-bottom:18px;">
+              <div>
+                <div style="font-size:22px; font-weight:700; color:#0f172a; line-height:1.35;">รายงานสรุปแยกตามไอเท็ม</div>
+                <div style="font-size:13px; font-weight:500; color:#475569; margin-top:2px;">Flatbar Division™️ • Version 3.3</div>
+              </div>
+              <div style="text-align:right; flex-shrink:0;">
+                <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">วันที่และเวลาส่งออก</div>
+                <div style="font-size:13px; font-weight:600; color:#1e293b; margin-top:2px;">${escapeHtml(exportDateText)}</div>
+              </div>
+            </div>
+          `
+          : `
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding-bottom:10px; border-bottom:1.5px solid #cbd5e1; margin-bottom:18px;">
+              <div style="font-size:15px; font-weight:700; color:#0f172a;">รายงานสรุปแยกตามไอเท็ม (ต่อ)</div>
+              <div style="font-size:12px; font-weight:500; color:#475569;">${escapeHtml(exportDateText)}</div>
+            </div>
+          `;
+
+        // 2. Render up to 3 Item blocks cleanly on this page
+        const blocksHtml = itemBlocksChunk
+          .map((block) => {
+            const pipeListText = block.pipeSizes.join(', ');
+
+            const categoryRowsHtml = block.categories
+              .map((cat, idx) => {
+                const rowBg = idx % 2 === 1 ? '#f8fafc' : '#ffffff';
+                const typeColor = cat.type === 'BN' ? 'crimson' : '#b45309';
+                const typeBg = cat.type === 'BN' ? '#eef2ff' : '#fffbeb';
+                const typeBorder = cat.type === 'BN' ? '#c7d2fe' : '#fde68a';
+
+                return `
+                  <tr style="background-color:${rowBg};">
+                    <td style="padding:7px 12px; border:1px solid #cbd5e1; text-align:left; font-size:13px; font-weight:600; color:#1e293b; vertical-align:middle;">
+                      <span>${escapeHtml(cat.materialLabel)}</span>
+                      <span style="display:inline-block; margin-left:6px; padding:1px 7px; border-radius:6px; font-size:12px; font-weight:700; background:${typeBg}; color:${typeColor}; border:1px solid ${typeBorder}; line-height:1.4;">${escapeHtml(cat.type)}</span>
+                    </td>
+                    <td style="padding:7px 12px; border:1px solid #cbd5e1; text-align:right; font-size:13px; font-weight:600; color:#1e293b; font-variant-numeric:tabular-nums; vertical-align:middle;">
+                      ${formatInteger(cat.quantity)} <span style="font-size:11px; font-weight:500; color:#64748b;">Pcs</span>
+                    </td>
+                    <td style="padding:7px 12px; border:1px solid #cbd5e1; text-align:right; font-size:13px; font-weight:700; color:#0f172a; font-variant-numeric:tabular-nums; vertical-align:middle;">
+                      ${formatWeight(cat.netWeight)} <span style="font-size:11px; font-weight:500; color:#64748b;">KG</span>
+                    </td>
+                  </tr>
+                `;
+              })
+              .join('');
+
+            return `
+              <div style="border:1.5px solid #94a3b8; border-radius:10px; overflow:hidden; margin-bottom:16px; background:#ffffff;">
+                <!-- Item Block Header -->
+                <div style="padding:9px 14px; background:#eef2ff; border-bottom:1.5px solid #94a3b8; display:flex; align-items:baseline; justify-content:space-between; gap:12px;">
+                  <div style="font-size:16px; font-weight:700; color:#1e1b4b; white-space:nowrap; flex-shrink:0;">
+                    Item ${escapeHtml(block.itemNumber)}
+                  </div>
+                  <div style="font-size:12px; font-weight:500; color:#334155; text-align:right; line-height:1.4;">
+                    ไซส์ท่อ: ${escapeHtml(pipeListText)}
+                  </div>
+                </div>
+
+                <!-- 4-Row Category Table + Subtotal Row -->
+                <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+                  <thead>
+                    <tr style="background-color:#f1f5f9;">
+                      <th style="width:52%; padding:7px 12px; border:1px solid #cbd5e1; text-align:left; font-size:12px; font-weight:700; color:#334155;">รายการ</th>
+                      <th style="width:24%; padding:7px 12px; border:1px solid #cbd5e1; text-align:right; font-size:12px; font-weight:700; color:#334155;">จำนวน (Pcs)</th>
+                      <th style="width:24%; padding:7px 12px; border:1px solid #cbd5e1; text-align:right; font-size:12px; font-weight:700; color:#334155;">น้ำหนัก (KG)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${categoryRowsHtml}
+                  </tbody>
+                  <tfoot>
+                    <tr style="background-color:#eff6ff;">
+                      <td style="padding:8px 12px; border:1px solid #94a3b8; text-align:right; font-size:13px; font-weight:700; color:#1e3a8a; vertical-align:middle;">
+                        รวม Item ${escapeHtml(block.itemNumber)}
+                      </td>
+                      <td style="padding:8px 12px; border:1px solid #94a3b8; text-align:right; font-size:13px; font-weight:700; color:#1e3a8a; font-variant-numeric:tabular-nums; vertical-align:middle;">
+                        ${formatInteger(block.totalQuantity)} <span style="font-size:11px; font-weight:600; color:#3b82f6;">Pcs</span>
+                      </td>
+                      <td style="padding:8px 12px; border:1px solid #94a3b8; text-align:right; font-size:13px; font-weight:700; color:#1e3a8a; font-variant-numeric:tabular-nums; vertical-align:middle;">
+                        ${formatWeight(block.totalWeight)} <span style="font-size:11px; font-weight:600; color:#3b82f6;">KG</span>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            `;
+          })
+          .join('');
+
+        // 3. Grand Total Bar across all Items (Shown on final Item Summary page)
+        const grandTotalHtml = isLastItemPage
+          ? `
+            <div style="margin-top:6px; background:#eff6ff; border:1.5px solid #93c5fd; border-radius:10px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+              <div>
+                <div style="font-size:15px; font-weight:700; color:#1e3a8a;">รวมทั้งหมดทุกไอเท็ม</div>
+                <div style="font-size:12px; font-weight:500; color:#3b82f6;">จำนวน ${formatInteger(totalItemCount)} ไอเท็ม</div>
+              </div>
+              <div style="display:flex; align-items:center; gap:20px; font-variant-numeric:tabular-nums;">
+                <div style="text-align:right;">
+                  <div style="font-size:11px; font-weight:600; color:#3b82f6;">จำนวนรวม</div>
+                  <div style="font-size:16px; font-weight:700; color:#1e3a8a;">${formatInteger(grandTotalQuantity)} <span style="font-size:12px; font-weight:600; color:#2563eb;">Pcs</span></div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:11px; font-weight:600; color:#3b82f6;">น้ำหนักรวม</div>
+                  <div style="font-size:16px; font-weight:700; color:#1e3a8a;">${formatWeight(grandTotalWeight)} <span style="font-size:12px; font-weight:600; color:#2563eb;">KG</span></div>
+                </div>
+              </div>
+            </div>
+          `
+          : '';
+
+        // 4. Page Footer (Pinned to bottom of A4 page)
+        const footerHtml = `
+          <div style="margin-top:auto; padding-top:12px; border-top:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; font-size:11px; color:#64748b;">
+            <span>Powered by Flatbar Division™️ | Version 3.3</span>
+            <span style="font-weight:600; color:#475569;">หน้า ${formatInteger(pageNumber)} / ${formatInteger(totalPages)}</span>
+          </div>
+        `;
+
+        pageDiv.innerHTML = `
+          ${headerHtml}
+          <div style="flex:1 1 auto;">
+            ${blocksHtml}
+            ${grandTotalHtml}
+          </div>
+          ${footerHtml}
+        `;
+
+        return pageDiv;
+      }
+
+      /**
+       * Builds paginated A4 report page elements from the current grouped table data
+       * and/or configured Item Summary blocks with continuous page numbering across all pages.
+       */
+      function buildPdfReportPages(exportDate, options) {
+        const opts = options || {};
+        const includeNormal = opts.includeNormal !== false;
+        const activeItemGroups = Array.isArray(opts.itemGroups)
+          ? opts.itemGroups.filter((g) => g && Array.isArray(g.pipeSizes) && g.pipeSizes.length > 0)
+          : [];
+
         const groupedRows = buildGroupedRecords(inventoryData);
         const { totalRecords, totalQuantity, totalWeight } = getInventoryStats();
         const exportDateText = formatThaiExportDateTime(exportDate);
@@ -2349,44 +3206,93 @@
         const maxWeightVal = hasValidMax ? roundUpWeight(parsedMax) : 0;
         const remainingWeightVal = hasValidMax ? roundUpWeight(maxWeightVal - totalWeight) : 0;
 
-        // Standard A4 portrait pagination: 18 rows on page 1 (with header & summary cards), 24 rows on subsequent pages
-        const FIRST_PAGE_ROWS = 18;
-        const NEXT_PAGE_ROWS = 24;
-        const chunks = [];
+        // 1. Prepare normal grouped table page chunks (when includeNormal is true)
+        const normalChunks = [];
+        if (includeNormal) {
+          const FIRST_PAGE_ROWS = 18;
+          const NEXT_PAGE_ROWS = 24;
 
-        if (groupedRows.length <= FIRST_PAGE_ROWS) {
-          chunks.push({ rows: groupedRows, startIndex: 0 });
-        } else {
-          chunks.push({ rows: groupedRows.slice(0, FIRST_PAGE_ROWS), startIndex: 0 });
-          let offset = FIRST_PAGE_ROWS;
-          while (offset < groupedRows.length) {
-            chunks.push({
-              rows: groupedRows.slice(offset, offset + NEXT_PAGE_ROWS),
-              startIndex: offset
-            });
-            offset += NEXT_PAGE_ROWS;
+          if (groupedRows.length <= FIRST_PAGE_ROWS) {
+            normalChunks.push({ rows: groupedRows, startIndex: 0 });
+          } else {
+            normalChunks.push({ rows: groupedRows.slice(0, FIRST_PAGE_ROWS), startIndex: 0 });
+            let offset = FIRST_PAGE_ROWS;
+            while (offset < groupedRows.length) {
+              normalChunks.push({
+                rows: groupedRows.slice(offset, offset + NEXT_PAGE_ROWS),
+                startIndex: offset
+              });
+              offset += NEXT_PAGE_ROWS;
+            }
           }
         }
 
-        const totalPages = chunks.length;
-        return chunks.map((chunk, idx) =>
-          createPdfReportPageElement({
-            rowsChunk: chunk.rows,
-            startIndex: chunk.startIndex,
-            pageNumber: idx + 1,
-            totalPages: totalPages,
-            isFirstPage: idx === 0,
-            isLastPage: idx === totalPages - 1,
-            exportDateText: exportDateText,
-            totalGroupedCount: groupedRows.length,
-            totalLiftCount: totalRecords,
-            totalQuantity: totalQuantity,
-            totalWeight: totalWeight,
-            hasValidMax: hasValidMax,
-            maxWeightVal: maxWeightVal,
-            remainingWeightVal: remainingWeightVal
-          })
+        // 2. Prepare Item Summary page chunks (max 3 Item blocks per A4 portrait page)
+        const itemSummaryBlocks = activeItemGroups.map((group) => {
+          const breakdown = computeItemSummaryBreakdown(group.pipeSizes);
+          return {
+            itemNumber: group.itemNumber,
+            pipeSizes: group.pipeSizes,
+            categories: breakdown.categories,
+            totalQuantity: breakdown.totalQuantity,
+            totalWeight: breakdown.totalWeight
+          };
+        });
+
+        const ITEMS_PER_PAGE = 3;
+        const itemChunks = [];
+        for (let i = 0; i < itemSummaryBlocks.length; i += ITEMS_PER_PAGE) {
+          itemChunks.push(itemSummaryBlocks.slice(i, i + ITEMS_PER_PAGE));
+        }
+
+        const grandTotalItemQty = itemSummaryBlocks.reduce((sum, b) => sum + b.totalQuantity, 0);
+        const grandTotalItemWeight = roundUpWeight(
+          itemSummaryBlocks.reduce((sum, b) => sum + b.totalWeight, 0)
         );
+
+        const totalPages = normalChunks.length + itemChunks.length;
+        const pages = [];
+
+        // 3. Render normal pages first
+        normalChunks.forEach((chunk, idx) => {
+          pages.push(
+            createPdfReportPageElement({
+              rowsChunk: chunk.rows,
+              startIndex: chunk.startIndex,
+              pageNumber: idx + 1,
+              totalPages: totalPages,
+              isFirstPage: idx === 0,
+              isLastPage: idx === normalChunks.length - 1,
+              exportDateText: exportDateText,
+              totalGroupedCount: groupedRows.length,
+              totalLiftCount: totalRecords,
+              totalQuantity: totalQuantity,
+              totalWeight: totalWeight,
+              hasValidMax: hasValidMax,
+              maxWeightVal: maxWeightVal,
+              remainingWeightVal: remainingWeightVal
+            })
+          );
+        });
+
+        // 4. Append Item Summary pages with continuous page numbering
+        itemChunks.forEach((blocksChunk, idx) => {
+          pages.push(
+            createPdfItemSummaryPageElement({
+              itemBlocksChunk: blocksChunk,
+              pageNumber: normalChunks.length + idx + 1,
+              totalPages: totalPages,
+              isFirstItemPage: idx === 0,
+              isLastItemPage: idx === itemChunks.length - 1,
+              exportDateText: exportDateText,
+              totalItemCount: itemSummaryBlocks.length,
+              grandTotalQuantity: grandTotalItemQty,
+              grandTotalWeight: grandTotalItemWeight
+            })
+          );
+        });
+
+        return pages;
       }
 
       /**
@@ -2415,11 +3321,13 @@
       }
 
       /**
-       * Exports the grouped report table ("ตารางจดน้ำหนัก") to a multi-page A4 portrait PDF
-       * using html2canvas + jsPDF so Thai characters, vowels, and tone marks render accurately.
+       * Exports the grouped report table ("ตารางจดน้ำหนัก") and/or Item Summary pages to a multi-page
+       * A4 portrait PDF using html2canvas + jsPDF so Thai characters render accurately.
        * Does NOT clear inventoryData.
+       *
+       * @param {{ includeNormal?: boolean, itemGroups?: Array }} [options]
        */
-      async function exportReportToPdf() {
+      async function exportReportToPdf(options) {
         if (isExportingPdf || isSubmitting) return;
 
         if (inventoryData.length === 0) {
@@ -2427,13 +3335,20 @@
           return;
         }
 
+        const exportOptions = options && typeof options === 'object' && !('target' in options)
+          ? options
+          : { includeNormal: true, itemGroups: null };
+        const isItemReport = Array.isArray(exportOptions.itemGroups) && exportOptions.itemGroups.length > 0;
+
         closeSystemMenuModal();
+        closePdfMenuModal();
+        closeItemSetupModal();
         isExportingPdf = true;
 
         let offscreenHost = null;
         const exportDate = new Date();
-        const filename = formatPdfFilename(exportDate);
-        const pageElements = buildPdfReportPages(exportDate);
+        const filename = formatPdfFilename(exportDate, isItemReport);
+        const pageElements = buildPdfReportPages(exportDate, exportOptions);
 
         // Graceful offline fallback if html2canvas or jsPDF failed to load from CDN
         const hasPdfLibs =
@@ -2646,7 +3561,7 @@
         aboutModal.classList.remove('flex');
       }
 
-      // Expose global window.about() for inline onclick="about()" on Version 3.2
+      // Expose global window.about() for inline onclick="about()" on Version 3.3
       window.about = openAboutModal;
 
       function clearRadioGroupError(labels, errorEl) {
@@ -3369,9 +4284,45 @@
           closeSystemMenuModal();
         }
       });
-      exportPdfBtn.addEventListener('click', exportReportToPdf);
+      exportPdfBtn.addEventListener('click', openPdfMenuModal);
       submitSystemBtn.addEventListener('click', () => openConfirmActionModal('submit'));
       clearAllDataBtn.addEventListener('click', () => openConfirmActionModal('clear'));
+
+      // PDF Report Options Modal Controls ("รายการสินค้าที่ขึ้น" / "สรุปแยกตามไอเท็ม")
+      closePdfMenuIconBtn.addEventListener('click', closePdfMenuModal);
+      closePdfMenuBtn.addEventListener('click', closePdfMenuModal);
+      pdfMenuModal.addEventListener('click', (e) => {
+        if (e.target === pdfMenuModal) {
+          closePdfMenuModal();
+        }
+      });
+      exportNormalPdfBtn.addEventListener('click', () => {
+        closePdfMenuModal();
+        exportReportToPdf({ includeNormal: true, itemGroups: null });
+      });
+      openItemSetupBtn.addEventListener('click', openItemSetupModal);
+
+      // Item Summary Setup Modal Controls ("ตั้งค่าสรุปแยกตามไอเท็ม")
+      closeItemSetupIconBtn.addEventListener('click', closeItemSetupModal);
+      cancelItemSetupBtn.addEventListener('click', closeItemSetupModal);
+      itemSetupModal.addEventListener('click', (e) => {
+        if (e.target === itemSetupModal) {
+          closeItemSetupModal();
+        }
+      });
+      addItemGroupBtn.addEventListener('click', handleAddItemGroup);
+      newItemNumberInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleAddItemGroup();
+        }
+      });
+      newItemNumberInput.addEventListener('input', () => {
+        newItemNumberInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        itemSetupError.classList.add('hidden');
+      });
+      clearAllItemGroupsBtn.addEventListener('click', handleClearAllItemGroups);
+      confirmItemSetupBtn.addEventListener('click', handleConfirmItemSetupAndExport);
 
       // Custom Confirm Action Modal Controls
       cancelConfirmActionBtn.addEventListener('click', closeConfirmActionModal);
@@ -3547,6 +4498,10 @@
           closeConfirmActionModal();
         } else if (!aboutModal.classList.contains('hidden')) {
           closeAboutModal();
+        } else if (!itemSetupModal.classList.contains('hidden')) {
+          closeItemSetupModal();
+        } else if (!pdfMenuModal.classList.contains('hidden')) {
+          closePdfMenuModal();
         } else if (!systemMenuModal.classList.contains('hidden')) {
           closeSystemMenuModal();
         } else if (!multiWeighModal.classList.contains('hidden')) {
@@ -3561,8 +4516,30 @@
       // =========================================================================
       loadRecords();
       loadMaxWeight();
+      loadItemGroups();
       renderApp();
     })();
+	
+	/**
+       * Formats a Date instance into a clean Thai date/time string for the PDF report header.
+       */
+      function formatThaiExportDateTime(date) {
+        try {
+          const datePart = date.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          const timePart = date.toLocaleTimeString('th-TH', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          });
+          return `${datePart} เวลา ${timePart} น.`;
+        } catch (err) {
+          return date.toLocaleString();
+        }
+      }
   </script>
 </body>
 </html>
