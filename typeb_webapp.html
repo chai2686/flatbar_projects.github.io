@@ -267,7 +267,7 @@
     <!-- 4. BOTTOM BRANDING & VERSION BAR -->
     <div class="footer-text">
       <span>Powered by Flatbar Division™️</span>
-      <span onclick="about()">Version 3.3</span>
+      <span onclick="about()">Version 3.4</span>
     </div>
   </div>
 
@@ -1162,7 +1162,7 @@
     </div>
   </div>
 
-  <!-- ABOUT MODAL POPUP (Triggered by global window.about() on Version 3.3 click) -->
+  <!-- ABOUT MODAL POPUP (Triggered by global window.about() on Version 3.4 click) -->
   <div
     id="aboutModal"
     class="fixed inset-0 z-[65] hidden items-center justify-center p-4 bg-slate-900/55 backdrop-blur-[2px] transition-opacity"
@@ -1183,7 +1183,7 @@
           </div>
           <div class="min-w-0">
             <h3 id="aboutModalTitle" class="text-base font-bold text-slate-900 truncate">จดน้ำหนักท่อเกรดบี</h3>
-            <p class="text-xs font-medium text-blue-600">Version 3.3</p>
+            <p class="text-xs font-medium text-blue-600">Version 3.4</p>
           </div>
         </div>
         <button
@@ -1405,7 +1405,7 @@
     window.summitGS = summitGS;
 
     /**
-     * Pipe Inventory Web Application (จดน้ำหนักท่อเกรดบี - Version 3.3)
+     * Pipe Inventory Web Application (จดน้ำหนักท่อเกรดบี - Version 3.4)
      * Stores individual pipe weighing lifts ({ id, pipeSize, material, type, quantity, hoist1Weight, hoist2Weight, netWeight })
      * in local memory with automatic localStorage persistence and safe fallback.
      * All weight values are whole numbers (rounded UP on calculations via roundUpWeight).
@@ -2335,42 +2335,138 @@
       // -------------------------------------------------------------------------
 
       /**
-       * Returns all unique pipeSize strings currently present in inventoryData,
-       * preserving the order of first appearance.
+       * Normalizes material values across Thai and legacy English labels.
        */
-      function getUniqueInventoryPipeSizes() {
+      function normalizeMaterial(material) {
+        const raw = String(material ?? '').trim();
+        if (raw === 'เหล็กดำ' || raw === 'Steel') return 'เหล็กดำ';
+        if (raw === 'GI' || raw === 'Galvanized') return 'GI';
+        return raw || 'อื่นๆ';
+      }
+
+      /**
+       * Builds a composite key uniquely identifying a (pipeSize, material) pair.
+       */
+      function getPipeMaterialKey(pipeSize, material) {
+        return `${String(pipeSize ?? '').trim()}|||${normalizeMaterial(material)}`;
+      }
+
+      /**
+       * Parses a composite "pipeSize|||material" key back into { pipeSize, material }.
+       * Handles legacy plain pipeSize strings gracefully.
+       */
+      function parsePipeMaterialKey(key) {
+        const str = String(key ?? '').trim();
+        const sepIdx = str.indexOf('|||');
+        if (sepIdx === -1) {
+          return { pipeSize: str, material: null };
+        }
+        return {
+          pipeSize: str.slice(0, sepIdx).trim(),
+          material: normalizeMaterial(str.slice(sepIdx + 3))
+        };
+      }
+
+      /**
+       * Formats an Item's selected "pipeSize|||material" keys grouped cleanly by material
+       * for display in the PDF report (never exposing raw "|||" separators).
+       */
+      function formatItemPipeSizesByMaterial(selectedKeys) {
+        const grouped = new Map();
+        const materialOrder = [];
+
+        (selectedKeys || []).forEach((key) => {
+          const parsed = parsePipeMaterialKey(key);
+          if (!parsed.pipeSize) return;
+          const mat = parsed.material || 'อื่นๆ';
+          if (!grouped.has(mat)) {
+            grouped.set(mat, []);
+            materialOrder.push(mat);
+          }
+          const list = grouped.get(mat);
+          if (!list.includes(parsed.pipeSize)) {
+            list.push(parsed.pipeSize);
+          }
+        });
+
+        const preferredOrder = ['เหล็กดำ', 'GI'];
+        const sortedMaterials = [
+          ...preferredOrder.filter((m) => grouped.has(m)),
+          ...materialOrder.filter((m) => !preferredOrder.includes(m))
+        ];
+
+        return sortedMaterials
+          .map((mat) => `${mat}: ${grouped.get(mat).join(', ')}`)
+          .join(' | ');
+      }
+
+      /**
+       * Returns all unique { key, pipeSize, material } entries currently present in inventoryData,
+       * preserving the order of first appearance so identical pipe sizes with different materials
+       * can be assigned independently.
+       */
+      function getUniqueInventoryPipeMaterials() {
         const seen = new Set();
         const result = [];
         inventoryData.forEach((item) => {
-          const size = String(item.pipeSize ?? '').trim();
-          if (size && !seen.has(size)) {
-            seen.add(size);
-            result.push(size);
+          const pipeSize = String(item.pipeSize ?? '').trim();
+          if (!pipeSize) return;
+          const material = normalizeMaterial(item.material);
+          const key = getPipeMaterialKey(pipeSize, material);
+          if (!seen.has(key)) {
+            seen.add(key);
+            result.push({ key, pipeSize, material });
           }
         });
         return result;
       }
 
       /**
-       * Prunes any pipeSize stored in itemGroups that no longer exists in inventoryData
-       * and enforces that each pipeSize belongs to at most one Item.
+       * Prunes stale entries in itemGroups against currently valid "pipeSize|||material" keys,
+       * migrates any legacy plain pipeSize entries from localStorage to matching composite keys,
+       * and ensures each (pipeSize, material) pair belongs to at most one Item.
        */
       function pruneStaleItemGroupPipeSizes() {
-        const validSizes = new Set(getUniqueInventoryPipeSizes());
-        const claimedSizes = new Set();
+        const allEntries = getUniqueInventoryPipeMaterials();
+        const validKeySet = new Set(allEntries.map((entry) => entry.key));
+        const keysByPlainSize = new Map();
+
+        allEntries.forEach((entry) => {
+          if (!keysByPlainSize.has(entry.pipeSize)) {
+            keysByPlainSize.set(entry.pipeSize, []);
+          }
+          keysByPlainSize.get(entry.pipeSize).push(entry.key);
+        });
+
+        const claimedKeys = new Set();
         let changed = false;
 
         itemGroups.forEach((group) => {
-          const nextSizes = [];
-          group.pipeSizes.forEach((size) => {
-            if (validSizes.has(size) && !claimedSizes.has(size)) {
-              claimedSizes.add(size);
-              nextSizes.push(size);
+          const nextKeys = [];
+          group.pipeSizes.forEach((entryKey) => {
+            const rawKey = String(entryKey ?? '').trim();
+            if (validKeySet.has(rawKey)) {
+              if (!claimedKeys.has(rawKey)) {
+                claimedKeys.add(rawKey);
+                nextKeys.push(rawKey);
+              } else {
+                changed = true;
+              }
+            } else if (rawKey && !rawKey.includes('|||')) {
+              // Migrate legacy plain pipeSize string to matching (pipeSize, material) keys
+              changed = true;
+              const matchingKeys = keysByPlainSize.get(rawKey) || [];
+              matchingKeys.forEach((matchedKey) => {
+                if (!claimedKeys.has(matchedKey)) {
+                  claimedKeys.add(matchedKey);
+                  nextKeys.push(matchedKey);
+                }
+              });
             } else {
               changed = true;
             }
           });
-          group.pipeSizes = nextSizes;
+          group.pipeSizes = nextKeys;
         });
 
         if (changed) {
@@ -2379,15 +2475,15 @@
       }
 
       /**
-       * Aggregates all inventoryData records matching the given pipeSizes list
+       * Aggregates all inventoryData records matching the given selectedKeys ("pipeSize|||material")
        * into the exact 4 required categories in order:
        *   1) ท่อเหล็กดำ BN
        *   2) ท่อเหล็กดำ BJ
        *   3) ท่อ GI BN
        *   4) ท่อ GI BJ
        */
-      function computeItemSummaryBreakdown(pipeSizes) {
-        const sizeSet = new Set(pipeSizes);
+      function computeItemSummaryBreakdown(selectedKeys) {
+        const keySet = new Set(selectedKeys);
         const categories = [
           { label: 'ท่อเหล็กดำ BN', materialLabel: 'ท่อเหล็กดำ', type: 'BN', quantity: 0, netWeight: 0 },
           { label: 'ท่อเหล็กดำ BJ', materialLabel: 'ท่อเหล็กดำ', type: 'BJ', quantity: 0, netWeight: 0 },
@@ -2396,26 +2492,24 @@
         ];
 
         inventoryData.forEach((item) => {
-          if (!sizeSet.has(item.pipeSize)) return;
+          const itemKey = getPipeMaterialKey(item.pipeSize, item.material);
+          if (!keySet.has(itemKey)) return;
 
-          const mat = String(item.material ?? '').trim();
+          const mat = normalizeMaterial(item.material);
           const type = String(item.type ?? '').trim();
           const qty = Number(item.quantity || 0);
           const weight = roundUpWeight(item.netWeight || 0);
 
-          const isSteel = mat === 'เหล็กดำ' || mat === 'Steel';
-          const isGI = mat === 'GI' || mat === 'Galvanized';
-
-          if (isSteel && type === 'BN') {
+          if (mat === 'เหล็กดำ' && type === 'BN') {
             categories[0].quantity += qty;
             categories[0].netWeight = roundUpWeight(categories[0].netWeight + weight);
-          } else if (isSteel && type === 'BJ') {
+          } else if (mat === 'เหล็กดำ' && type === 'BJ') {
             categories[1].quantity += qty;
             categories[1].netWeight = roundUpWeight(categories[1].netWeight + weight);
-          } else if (isGI && type === 'BN') {
+          } else if (mat === 'GI' && type === 'BN') {
             categories[2].quantity += qty;
             categories[2].netWeight = roundUpWeight(categories[2].netWeight + weight);
-          } else if (isGI && type === 'BJ') {
+          } else if (mat === 'GI' && type === 'BJ') {
             categories[3].quantity += qty;
             categories[3].netWeight = roundUpWeight(categories[3].netWeight + weight);
           }
@@ -2436,18 +2530,35 @@
       }
 
       function renderItemSetupModal() {
-        const allUniqueSizes = getUniqueInventoryPipeSizes();
+        const allUniqueEntries = getUniqueInventoryPipeMaterials();
 
-        // Build map of pipeSize -> owning itemNumber so each pipeSize belongs to at most 1 Item
-        const sizeOwnerMap = new Map();
+        // Build map of "pipeSize|||material" -> owning itemNumber so each pair belongs to at most 1 Item
+        const keyOwnerMap = new Map();
         itemGroups.forEach((group) => {
-          group.pipeSizes.forEach((size) => {
-            sizeOwnerMap.set(size, group.itemNumber);
+          group.pipeSizes.forEach((entryKey) => {
+            keyOwnerMap.set(entryKey, group.itemNumber);
           });
         });
 
+        // Group available pipe entries by material in fixed priority order: เหล็กดำ, GI, then others
+        const entriesByMaterial = new Map();
+        const seenMaterials = [];
+        allUniqueEntries.forEach((entry) => {
+          if (!entriesByMaterial.has(entry.material)) {
+            entriesByMaterial.set(entry.material, []);
+            seenMaterials.push(entry.material);
+          }
+          entriesByMaterial.get(entry.material).push(entry);
+        });
+
+        const preferredMaterials = ['เหล็กดำ', 'GI'];
+        const orderedMaterials = [
+          ...preferredMaterials.filter((m) => entriesByMaterial.has(m)),
+          ...seenMaterials.filter((m) => !preferredMaterials.includes(m))
+        ];
+
         // Update status bar & clear-all button visibility
-        itemAssignedStatusText.textContent = `จัดกลุ่มแล้ว ${formatInteger(sizeOwnerMap.size)} / ${formatInteger(allUniqueSizes.length)} ไซส์ท่อ`;
+        itemAssignedStatusText.textContent = `จัดกลุ่มแล้ว ${formatInteger(keyOwnerMap.size)} / ${formatInteger(allUniqueEntries.length)} ไซส์ท่อ`;
         if (itemGroups.length > 0) {
           clearAllItemGroupsBtn.classList.remove('hidden');
         } else {
@@ -2518,7 +2629,7 @@
           cardHeader.appendChild(headerRight);
           card.appendChild(cardHeader);
 
-          // Card Body: Selectable Pipe Size Chips + Live Mini Breakdown
+          // Card Body: Material-separated Pipe Size Chip Subsections + Live Mini Breakdown
           const cardBody = document.createElement('div');
           cardBody.className = 'p-3.5 space-y-3';
 
@@ -2527,52 +2638,94 @@
           chipsLabel.textContent = 'เลือกไซส์ท่อสำหรับไอเท็มนี้:';
           cardBody.appendChild(chipsLabel);
 
-          const chipsWrap = document.createElement('div');
-          chipsWrap.className = 'flex flex-wrap gap-2';
+          const materialSectionsWrap = document.createElement('div');
+          materialSectionsWrap.className = 'space-y-2.5';
 
-          allUniqueSizes.forEach((size) => {
-            const isSelectedHere = group.pipeSizes.includes(size);
-            const ownerItemNumber = sizeOwnerMap.get(size);
-            const isAssignedElsewhere = ownerItemNumber !== undefined && ownerItemNumber !== group.itemNumber;
+          orderedMaterials.forEach((material) => {
+            const materialEntries = entriesByMaterial.get(material) || [];
+            if (materialEntries.length === 0) return;
 
-            const chipBtn = document.createElement('button');
-            chipBtn.type = 'button';
-            chipBtn.disabled = isAssignedElsewhere;
-
-            if (isSelectedHere) {
-              chipBtn.className =
-                'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white border border-indigo-700 shadow-xs transition-all focus:outline-none focus:ring-2 focus:ring-indigo-400';
-              chipBtn.innerHTML = `
-                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
-                <span>${escapeHtml(size)}</span>
-              `;
-            } else if (isAssignedElsewhere) {
-              chipBtn.className =
-                'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-400 border border-slate-200 opacity-65 cursor-not-allowed';
-              chipBtn.title = `ถูกจัดกลุ่มไว้ใน Item ${ownerItemNumber} แล้ว`;
-              chipBtn.innerHTML = `
-                <span>${escapeHtml(size)}</span>
-                <span class="px-1.5 py-0.5 rounded bg-slate-200/90 text-[10px] font-semibold text-slate-500 leading-none">(Item ${escapeHtml(ownerItemNumber)})</span>
-              `;
+            // Distinct visual subsection container per material
+            const sectionBox = document.createElement('div');
+            if (material === 'เหล็กดำ') {
+              sectionBox.className = 'bg-zinc-50/80 border border-zinc-200 rounded-lg p-2.5 space-y-2';
+            } else if (material === 'GI') {
+              sectionBox.className = 'bg-sky-50/60 border border-sky-200 rounded-lg p-2.5 space-y-2';
             } else {
-              chipBtn.className =
-                'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-800 border border-slate-300 hover:border-indigo-300 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-400';
-              chipBtn.innerHTML = `
-                <span class="w-3.5 h-3.5 rounded border border-slate-300 bg-slate-50 inline-block shrink-0" aria-hidden="true"></span>
-                <span>${escapeHtml(size)}</span>
-              `;
+              sectionBox.className = 'bg-slate-50/80 border border-slate-200 rounded-lg p-2.5 space-y-2';
             }
 
-            if (!isAssignedElsewhere) {
-              chipBtn.addEventListener('click', () => handleTogglePipeSizeInItemGroup(group.id, size));
+            // Subsection header with material badge and size count
+            const sectionHeader = document.createElement('div');
+            sectionHeader.className = 'flex items-center justify-between gap-2';
+
+            if (material === 'เหล็กดำ' || material === 'GI') {
+              sectionHeader.appendChild(createMaterialBadge(material));
+            } else {
+              const otherBadge = document.createElement('span');
+              otherBadge.className = 'inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-300';
+              otherBadge.textContent = material;
+              sectionHeader.appendChild(otherBadge);
             }
 
-            chipsWrap.appendChild(chipBtn);
+            const sectionCount = document.createElement('span');
+            sectionCount.className = 'text-[11px] font-medium text-slate-500 tabular-nums';
+            sectionCount.textContent = `${formatInteger(materialEntries.length)} ไซส์`;
+            sectionHeader.appendChild(sectionCount);
+
+            sectionBox.appendChild(sectionHeader);
+
+            // Selectable chips for this material's pipe sizes
+            const chipsWrap = document.createElement('div');
+            chipsWrap.className = 'flex flex-wrap gap-2';
+
+            materialEntries.forEach((entry) => {
+              const isSelectedHere = group.pipeSizes.includes(entry.key);
+              const ownerItemNumber = keyOwnerMap.get(entry.key);
+              const isAssignedElsewhere = ownerItemNumber !== undefined && ownerItemNumber !== group.itemNumber;
+
+              const chipBtn = document.createElement('button');
+              chipBtn.type = 'button';
+              chipBtn.disabled = isAssignedElsewhere;
+
+              if (isSelectedHere) {
+                chipBtn.className =
+                  'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white border border-indigo-700 shadow-xs transition-all focus:outline-none focus:ring-2 focus:ring-indigo-400';
+                chipBtn.innerHTML = `
+                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                  <span>${escapeHtml(entry.pipeSize)}</span>
+                `;
+              } else if (isAssignedElsewhere) {
+                chipBtn.className =
+                  'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-400 border border-slate-200 opacity-65 cursor-not-allowed';
+                chipBtn.title = `ถูกจัดกลุ่มไว้ใน Item ${ownerItemNumber} แล้ว`;
+                chipBtn.innerHTML = `
+                  <span>${escapeHtml(entry.pipeSize)}</span>
+                  <span class="px-1.5 py-0.5 rounded bg-slate-200/90 text-[10px] font-semibold text-slate-500 leading-none">(Item ${escapeHtml(ownerItemNumber)})</span>
+                `;
+              } else {
+                chipBtn.className =
+                  'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-800 border border-slate-300 hover:border-indigo-300 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-400';
+                chipBtn.innerHTML = `
+                  <span class="w-3.5 h-3.5 rounded border border-slate-300 bg-slate-50 inline-block shrink-0" aria-hidden="true"></span>
+                  <span>${escapeHtml(entry.pipeSize)}</span>
+                `;
+              }
+
+              if (!isAssignedElsewhere) {
+                chipBtn.addEventListener('click', () => handleTogglePipeSizeInItemGroup(group.id, entry.key));
+              }
+
+              chipsWrap.appendChild(chipBtn);
+            });
+
+            sectionBox.appendChild(chipsWrap);
+            materialSectionsWrap.appendChild(sectionBox);
           });
 
-          cardBody.appendChild(chipsWrap);
+          cardBody.appendChild(materialSectionsWrap);
 
           // Live Mini 4-Category Summary inside Card
           if (group.pipeSizes.length > 0) {
@@ -2648,14 +2801,14 @@
         renderItemSetupModal();
       }
 
-      function handleTogglePipeSizeInItemGroup(groupId, pipeSize) {
+      function handleTogglePipeSizeInItemGroup(groupId, pipeMaterialKey) {
         clearItemSetupErrors();
         const group = itemGroups.find((g) => g.id === groupId);
         if (!group) return;
 
-        const idx = group.pipeSizes.indexOf(pipeSize);
+        const idx = group.pipeSizes.indexOf(pipeMaterialKey);
         if (idx === -1) {
-          group.pipeSizes.push(pipeSize);
+          group.pipeSizes.push(pipeMaterialKey);
         } else {
           group.pipeSizes.splice(idx, 1);
         }
@@ -2804,6 +2957,27 @@
       }
 
       /**
+       * Formats a Date instance into a clean Thai date/time string for the PDF report header.
+       */
+      function formatThaiExportDateTime(date) {
+        try {
+          const datePart = date.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          const timePart = date.toLocaleTimeString('th-TH', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          });
+          return `${datePart} เวลา ${timePart} น.`;
+        } catch (err) {
+          return date.toLocaleString();
+        }
+      }
+
+      /**
        * Builds the standardized PDF download filename:
        * - Normal report: pipe-report-YYYYMMDD-HHmm.pdf
        * - Item summary report: pipe-report-items-YYYYMMDD-HHmm.pdf
@@ -2863,7 +3037,7 @@
             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding-bottom:14px; border-bottom:2px solid #0f172a; margin-bottom:16px;">
               <div>
                 <div style="font-size:22px; font-weight:700; color:#0f172a; line-height:1.35;">รายงานจดน้ำหนักท่อเกรดบี</div>
-                <div style="font-size:13px; font-weight:500; color:#475569; margin-top:2px;">Flatbar Division™️ • Version 3.3</div>
+                <div style="font-size:13px; font-weight:500; color:#475569; margin-top:2px;">Flatbar Division™️ • Version 3.4</div>
               </div>
               <div style="text-align:right; flex-shrink:0;">
                 <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">วันที่และเวลาส่งออก</div>
@@ -2983,7 +3157,7 @@
         // 5. Page Footer (Pinned to bottom of A4 page)
         const footerHtml = `
           <div style="margin-top:auto; padding-top:12px; border-top:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; font-size:11px; color:#64748b;">
-            <span>Powered by Flatbar Division™️ | Version 3.3</span>
+            <span>Powered by Flatbar Division™️ | Version 3.4</span>
             <span style="font-weight:600; color:#475569;">หน้า ${formatInteger(pageNumber)} / ${formatInteger(totalPages)}</span>
           </div>
         `;
@@ -3054,7 +3228,7 @@
             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding-bottom:14px; border-bottom:2px solid #0f172a; margin-bottom:18px;">
               <div>
                 <div style="font-size:22px; font-weight:700; color:#0f172a; line-height:1.35;">รายงานสรุปแยกตามไอเท็ม</div>
-                <div style="font-size:13px; font-weight:500; color:#475569; margin-top:2px;">Flatbar Division™️ • Version 3.3</div>
+                <div style="font-size:13px; font-weight:500; color:#475569; margin-top:2px;">Flatbar Division™️ • Version 3.4</div>
               </div>
               <div style="text-align:right; flex-shrink:0;">
                 <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">วันที่และเวลาส่งออก</div>
@@ -3072,7 +3246,7 @@
         // 2. Render up to 3 Item blocks cleanly on this page
         const blocksHtml = itemBlocksChunk
           .map((block) => {
-            const pipeListText = block.pipeSizes.join(', ');
+            const pipeListText = formatItemPipeSizesByMaterial(block.pipeSizes);
 
             const categoryRowsHtml = block.categories
               .map((cat, idx) => {
@@ -3166,7 +3340,7 @@
         // 4. Page Footer (Pinned to bottom of A4 page)
         const footerHtml = `
           <div style="margin-top:auto; padding-top:12px; border-top:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; font-size:11px; color:#64748b;">
-            <span>Powered by Flatbar Division™️ | Version 3.3</span>
+            <span>Powered by Flatbar Division™️ | Version 3.4</span>
             <span style="font-weight:600; color:#475569;">หน้า ${formatInteger(pageNumber)} / ${formatInteger(totalPages)}</span>
           </div>
         `;
@@ -3561,7 +3735,7 @@
         aboutModal.classList.remove('flex');
       }
 
-      // Expose global window.about() for inline onclick="about()" on Version 3.3
+      // Expose global window.about() for inline onclick="about()" on Version 3.4
       window.about = openAboutModal;
 
       function clearRadioGroupError(labels, errorEl) {
@@ -4519,27 +4693,6 @@
       loadItemGroups();
       renderApp();
     })();
-	
-	/**
-       * Formats a Date instance into a clean Thai date/time string for the PDF report header.
-       */
-      function formatThaiExportDateTime(date) {
-        try {
-          const datePart = date.toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          });
-          const timePart = date.toLocaleTimeString('th-TH', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          });
-          return `${datePart} เวลา ${timePart} น.`;
-        } catch (err) {
-          return date.toLocaleString();
-        }
-      }
   </script>
 </body>
 </html>
