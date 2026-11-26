@@ -1,50 +1,45 @@
 <!DOCTYPE html>
-<html lang="th"><head>
+<html lang="th">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ส่วนงานเกรดบี - รายงานสต็อก</title>
+    <!-- Load Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&amp;display=swap" rel="stylesheet">
+    <!-- Load Noto Sans Thai Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Noto Sans Thai', sans-serif; 
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
         }
         /* Custom scrollbar for the table container */
         .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
-        .table-container::-webkit-scrollbar-track { background: #f8fafc; rounded-lg; }
+        .table-container::-webkit-scrollbar-track { background: #f8fafc; border-radius: 0.5rem; }
         .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-y-0{top:0px;bottom:0px}.bottom-0{bottom:0px}.left-0{left:0px}.top-0{top:0px}.z-10{z-index:10}.mx-auto{margin-left:auto;margin-right:auto}.block{display:block}.flex{display:flex}.h-5{height:1.25rem}.h-6{height:1.5rem}.max-h-\[600px\]{max-height:600px}.min-h-screen{min-height:100vh}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-full{width:100%}.max-w-5xl{max-width:64rem}.max-w-sm{max-width:24rem}.border-collapse{border-collapse:collapse}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-slate-100 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(241 245 249 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded{border-radius:0.25rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t-2{border-top-width:2px}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/20{background-color:rgb(255 255 255 / 0.2)}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-700{--tw-gradient-from:#1d4ed8 var(--tw-gradient-from-position);--tw-gradient-to:rgb(29 78 216 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-cyan-600{--tw-gradient-to:#0891b2 var(--tw-gradient-to-position)}.p-4{padding:1rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pl-10{padding-left:2.5rem}.pl-3{padding-left:0.75rem}.pr-3{padding-right:0.75rem}.text-left{text-align:left}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-semibold{font-weight:600}.font-medium{font-weight:500}.leading-5{line-height:1.25rem}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.placeholder-slate-400::placeholder{--tw-placeholder-opacity:1;color:rgb(148 163 184 / var(--tw-placeholder-opacity, 1))}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-shadow{transition-property:box-shadow;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-150{transition-duration:150ms}.hover\:bg-blue-50\/50:hover{background-color:rgb(239 246 255 / 0.5)}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}@media (min-width: 768px){.md\:flex-row{flex-direction:row}.md\:p-8{padding:2rem}.md\:px-6{padding-left:1.5rem;padding-right:1.5rem}}</style></head>
-<body class="bg-slate-100 text-slate-800 p-4 md:p-8 min-h-screen" style="
-    padding: 5px;
-">
+</head>
+<body class="bg-slate-100 text-slate-800 p-4 md:p-8 min-h-screen" style="padding: 5px;">
 
+    <!-- Main Stock Report Card -->
     <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-        
-        <div class="bg-gradient-to-r from-blue-700 to-cyan-600 px-6 py-5 flex flex-col md:flex-row justify-between items-center gap-4" style="
-    padding: 5px;
-	flex-direction: row;
-    /* padding-top: 5px; */
-    /* padding-bottom: 5px; */
-">
-            <h1 onclick="updateStock()" class="text-2xl font-bold text-white flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+        <!-- Header Bar -->
+        <div class="bg-gradient-to-r from-blue-700 to-cyan-600 px-6 py-5 flex flex-col md:flex-row justify-between items-center gap-4" style="padding: 5px; flex-direction: row;">
+            <h1 onclick="updateStock()" class="text-2xl font-bold text-white flex items-center gap-2 cursor-pointer select-none">
+                <!-- Settings Trigger Icon (stops propagation so it does not trigger updateStock) -->
+                <svg id="settingsIconBtn" onclick="openSettingsModal(event)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 cursor-pointer hover:opacity-80 active:scale-95 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" title="ตั้งค่า">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
                 สต็อกท่อเกรดบี
             </h1>
-            <div class="bg-white/20 text-white text-sm font-semibold px-4 py-2 rounded-full backdrop-blur-sm" style="
-    text-align: center;
-    padding: 5px;
-    font-size: 13px;
-    width: 40%;
-">
+            <div class="bg-white/20 text-white text-sm font-semibold px-4 py-2 rounded-full backdrop-blur-sm" style="text-align: center; padding: 5px; font-size: 13px; width: 40%;">
                 อัพเดทวันที่ 12-มิ.ย.-2026
             </div>
         </div>
 
-        <div class="p-4 md:px-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+        <!-- Search Bar & Edit Mode Status Pill -->
+        <div class="p-4 md:px-6 border-b border-slate-200 bg-slate-50 flex flex-wrap justify-between items-center gap-3">
             <div class="relative w-full max-w-sm">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
@@ -53,8 +48,15 @@
                 </div>
                 <input type="text" id="searchInput" placeholder="ค้นหาไซส์ท่อ..." class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow">
             </div>
+
+            <!-- Edit Mode Active Badge (shown only when "อนุญาตให้แก้ไข" is checked) -->
+            <div id="editModeBadge" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-300 text-amber-800 text-xs font-semibold shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                <span>โหมดแก้ไขเปิดอยู่</span>
+            </div>
         </div>
 
+        <!-- Scrollable Stock Table -->
         <div class="table-container overflow-x-auto max-h-[600px]">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-100 text-slate-600 sticky top-0 z-10 shadow-sm border-b border-slate-200">
@@ -65,219 +67,155 @@
                         <th class="py-4 px-6 font-semibold text-right whitespace-nowrap max-w-[80px] text-blue-700" style="padding-top: 5px; padding-bottom: 5px;">จำนวนรวม</th>
                     </tr>
                 </thead>
-                <tbody id="table-body" class="divide-y divide-slate-100"><tr class="hover:bg-blue-50/50 transition-colors duration-150" style="
-">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 1 1/2"</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">4</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">4</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 1 1/4"</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 1"</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">20</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">20</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 1/2"</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">63</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">63</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 10"</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 2 1/2"</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 2"</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 3 1/2"</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 3"</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">25</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">25</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 3/4"</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">160</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">160</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 4"</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">138</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">138</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 5"</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">1</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">1</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 6"</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">7</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">7</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อดำ 8"</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 100x100</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 125x125</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">109</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">109</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 150x150</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">28</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">28</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 19x19</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">130</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">130</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 200x200</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">9</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">9</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 25x25</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">147</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">117</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">264</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 32x32</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">473</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">473</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 38x38</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">251</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">27</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">278</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 50x50</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">78</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">130</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">208</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">ท่อเหลี่ยม 75x75</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">117</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">117</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 100x50</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">128</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">211</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">339</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 125x50</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">66</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">66</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 125x75</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">62</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">62</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 150x100</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">15</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">15</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 150x50</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">87</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">87</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 150x75</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">25</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">25</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 200x100</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">89</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">89</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 50x25</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">261</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">261</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 60x30</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">17</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">17</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 70x45</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 75x38</td>
-                    <td class="py-3 px-6 text-right"><span class="font-medium text-slate-700">172</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">172</span></td>
-                </tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">แป๊บแบน 75x45</td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr>
-				</tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;"></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr>
-				</tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;"></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr>
-				</tr><tr class="hover:bg-blue-50/50 transition-colors duration-150">
-                    <td class="py-3 px-6 text-slate-800 font-medium" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;"></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                    <td class="py-3 px-6 text-right"><span class="text-slate-300">0</span></td>
-                </tr></tbody>
+                <tbody id="table-body" class="divide-y divide-slate-100">
+                    <!-- Rows rendered dynamically via renderTable() -->
+                </tbody>
                 <tfoot class="bg-slate-50 border-t-2 border-slate-300 sticky bottom-0 z-10">
                     <tr>
                         <td colspan="3" class="py-4 px-6 font-bold text-slate-800 text-right">จำนวนทั้งหมด</td>
-                        <td id="grand-total" class="py-4 px-6 font-bold text-xl text-blue-700 text-right">3,167</td>
+                        <td id="grand-total" class="py-4 px-6 font-bold text-xl text-blue-700 text-right">0</td>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
-	<p style="font-size: 12px;text-align:right;padding-left: 60%;padding-top: 20px;margin-bottom: 5px;">Version 2.0 Beta</p>
-	<p style="font-size: 12px;text-align:right;padding-left: 45%;margin-top: 0px;margin-bottom: 0px;">Powered by Flatbar Division™️</p>
+
+    <!-- Bottom Footer Branding Bar -->
+    <div class="footer-text max-w-5xl mx-auto" style="padding-top: 1rem; display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b;">
+        <span>Powered by Flatbar Division™️</span>
+        <span onclick="about()" class="cursor-pointer hover:underline">Version 3.0</span>
+    </div>
+
+    <!-- SETTINGS POPUP MODAL -->
+    <div id="settingsModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+        <div class="w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <h2 id="settingsModalTitle" class="text-base font-bold text-slate-800">ตั้งค่า</h2>
+                <button type="button" id="closeSettingsIconBtn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="ปิดหน้าต่างตั้งค่า">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5">
+                <label for="allowEditCheckbox" class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-blue-50/40 hover:border-blue-200 cursor-pointer transition-colors select-none">
+                    <input type="checkbox" id="allowEditCheckbox" class="mt-0.5 h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 accent-blue-600 cursor-pointer shrink-0">
+                    <div class="min-w-0">
+                        <span class="block text-sm font-semibold text-slate-800">อนุญาตให้แก้ไข</span>
+                        <span class="block text-xs text-slate-500 mt-1 leading-relaxed">
+                            เมื่อเปิดใช้งาน สามารถคลิกที่ชื่อไซส์ท่อในตารางเพื่อแก้ไขจำนวน ท่อเหล็กดำ และ ท่อเหล็ก GI ได้
+                        </span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+                <button type="button" id="closeSettingsBtn" class="px-5 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400">
+                    ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT ROW POPUP MODAL -->
+    <div id="editRowModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-labelledby="editRowModalTitle">
+        <div class="w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <h2 id="editRowModalTitle" class="text-base font-bold text-slate-800">แก้ไขข้อมูลสต็อก</h2>
+                    <p class="text-xs text-blue-700 font-semibold mt-0.5 truncate">
+                        ไซส์ท่อ: <span id="editRowPipeName">-</span>
+                    </p>
+                </div>
+                <button type="button" id="closeEditRowIconBtn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0" aria-label="ปิดหน้าต่างแก้ไข">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Edit Form -->
+            <form id="editRowForm" novalidate class="p-5 space-y-4">
+                <!-- ท่อเหล็กดำ Input -->
+                <div>
+                    <label for="editBlackInput" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        ท่อเหล็กดำ
+                    </label>
+                    <input type="number" id="editBlackInput" inputmode="numeric" step="1" min="0" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors tabular-nums">
+                    <p id="editBlackError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+                </div>
+
+                <!-- ท่อเหล็ก GI Input -->
+                <div>
+                    <label for="editGiInput" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        ท่อเหล็ก GI
+                    </label>
+                    <input type="number" id="editGiInput" inputmode="numeric" step="1" min="0" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors tabular-nums">
+                    <p id="editGiError" class="hidden text-xs text-red-600 mt-1 font-medium"></p>
+                </div>
+
+                <!-- Read-only Live Total Preview -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-xs font-semibold text-blue-700">จำนวนรวม</span>
+                    <span id="editTotalPreview" class="text-base font-bold text-blue-800 tabular-nums">0</span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                    <button type="button" id="cancelEditRowBtn" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" id="saveEditRowBtn" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 border border-blue-700 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
+                        บันทึก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Subtle Non-Blocking Toast Banner -->
+    <div id="toastBanner" role="status" aria-live="polite" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] pointer-events-none opacity-0 translate-y-2 transition-all duration-200 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-xl shadow-lg max-w-[90vw] text-center">
+        <span id="toastMessage">บันทึกสำเร็จ</span>
+    </div>
+
     <script>
-    // Your clean, updateable data array
+    // =========================================================================
+    // 1. Blank Global Function for Submitting Edited Values
+    // =========================================================================
+    async function summitGS(size, black, gi) {
+        const formUrl =
+            'https://docs.google.com/forms/d/e/1FAIpQLSf4OqAabdM32leCV0UbLyqG-rmGZQNnxBBcm-ZlP5HLrYh4Fw/formResponse';
+
+        const targetItem = inventoryData.find(item => item.name === size);
+        const currentBlack = targetItem ? (Number(targetItem.black) || 0) : 0;
+        const currentGi = targetItem ? (Number(targetItem.gi) || 0) : 0;
+
+        const nogiValue = Number(black) - currentBlack;
+        const giValue = Number(gi) - currentGi;
+
+        const formBody = new URLSearchParams();
+        formBody.append('entry.1362014552', String(size));
+        formBody.append('entry.1472257121', String(nogiValue));
+        formBody.append('entry.1655074373', String(giValue));
+
+        await fetch(formUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            },
+            body: formBody.toString(),
+        });
+    }
+
+    // =========================================================================
+    // 2. Inventory Data Array (All 36 Pipe Sizes Preserved)
+    // =========================================================================
     const inventoryData = [
         { name: 'ท่อดำ 1 1/2"', black: 0, gi: 0, total: 0 },
         { name: 'ท่อดำ 1 1/4"', black: 0, gi: 0, total: 0 },
@@ -317,11 +255,95 @@
         { name: 'แป๊บแบน 75x45', black: 0, gi: 0, total: 0 }
     ];
 
+    // =========================================================================
+    // 3. State & DOM References
+    // =========================================================================
+    const ALLOW_EDIT_STORAGE_KEY = 'typeb_stock_allow_edit';
+    let allowEdit = false;
+    let editingItem = null;
+    let toastTimer = null;
+
     const tableBody = document.getElementById('table-body');
     const grandTotalElement = document.getElementById('grand-total');
     const searchInput = document.getElementById('searchInput');
+    const editModeBadge = document.getElementById('editModeBadge');
 
-    // Helper function to style zeroes differently
+    // Settings modal elements
+    const settingsModal = document.getElementById('settingsModal');
+    const allowEditCheckbox = document.getElementById('allowEditCheckbox');
+    const closeSettingsIconBtn = document.getElementById('closeSettingsIconBtn');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+
+    // Edit row modal elements
+    const editRowModal = document.getElementById('editRowModal');
+    const editRowForm = document.getElementById('editRowForm');
+    const editRowPipeName = document.getElementById('editRowPipeName');
+    const editBlackInput = document.getElementById('editBlackInput');
+    const editGiInput = document.getElementById('editGiInput');
+    const editBlackError = document.getElementById('editBlackError');
+    const editGiError = document.getElementById('editGiError');
+    const editTotalPreview = document.getElementById('editTotalPreview');
+    const closeEditRowIconBtn = document.getElementById('closeEditRowIconBtn');
+    const cancelEditRowBtn = document.getElementById('cancelEditRowBtn');
+
+    // Toast elements
+    const toastBanner = document.getElementById('toastBanner');
+    const toastMessage = document.getElementById('toastMessage');
+
+    // =========================================================================
+    // 4. Local Memory Persistence & UI Helpers
+    // =========================================================================
+    function loadAllowEditSetting() {
+        try {
+            const saved = window.localStorage.getItem(ALLOW_EDIT_STORAGE_KEY);
+            allowEdit = saved === 'true';
+        } catch (err) {
+            // Fallback cleanly to in-memory state if localStorage is restricted
+            allowEdit = false;
+        }
+        allowEditCheckbox.checked = allowEdit;
+        updateEditModeBadge();
+    }
+
+    function saveAllowEditSetting(value) {
+        allowEdit = Boolean(value);
+        try {
+            window.localStorage.setItem(ALLOW_EDIT_STORAGE_KEY, String(allowEdit));
+        } catch (err) {
+            // Silently keep in-memory state if localStorage is unavailable
+        }
+        updateEditModeBadge();
+    }
+
+    function updateEditModeBadge() {
+        if (allowEdit) {
+            editModeBadge.classList.remove('hidden');
+            editModeBadge.classList.add('inline-flex');
+        } else {
+            editModeBadge.classList.add('hidden');
+            editModeBadge.classList.remove('inline-flex');
+        }
+    }
+
+    function showToast(message) {
+        toastMessage.textContent = message;
+        toastBanner.classList.remove('opacity-0', 'translate-y-2');
+        toastBanner.classList.add('opacity-100', 'translate-y-0');
+
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            toastBanner.classList.remove('opacity-100', 'translate-y-0');
+            toastBanner.classList.add('opacity-0', 'translate-y-2');
+        }, 2500);
+    }
+
+    function about() {
+        showToast('ส่วนงานเกรดบี - รายงานสต็อก (Version 3.0) • Powered by Flatbar Division™️');
+    }
+
+    // =========================================================================
+    // 5. Table Rendering
+    // =========================================================================
     const formatNumber = (num, isTotal = false) => {
         if (num === 0) return `<span class="text-slate-300">0</span>`;
         return `<span class="${isTotal ? 'font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded' : 'font-medium text-slate-700'}">${num.toLocaleString()}</span>`;
@@ -331,7 +353,7 @@
         tableBody.innerHTML = '';
         let currentTotal = 0;
 
-        const filteredData = inventoryData.filter(item => 
+        const filteredData = inventoryData.filter(item =>
             item.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
@@ -343,13 +365,39 @@
             currentTotal += item.total;
             const row = document.createElement('tr');
             row.className = 'hover:bg-blue-50/50 transition-colors duration-150';
-            
-            row.innerHTML = `
-                <td class="py-3 px-6 text-slate-800 font-medium min-w-[100px]" style="padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;">${item.name}</td>
-                <td class="py-3 px-6 text-right">${formatNumber(item.black)}</td>
-                <td class="py-3 px-6 text-right">${formatNumber(item.gi)}</td>
-                <td class="py-3 px-6 text-right">${formatNumber(item.total, true)}</td>
-            `;
+
+            // Column 1: Pipe Size cell (clickable when allowEdit is enabled)
+            const nameCell = document.createElement('td');
+            nameCell.className = allowEdit
+                ? 'py-3 px-6 font-medium min-w-[100px] cursor-pointer text-blue-700 hover:bg-blue-100/70 hover:underline transition-colors'
+                : 'py-3 px-6 text-slate-800 font-medium min-w-[100px]';
+            nameCell.setAttribute('style', 'padding-top: 3px;text-align: center;padding-right: 3px;padding-left: 3px;padding-bottom: 3px;');
+            nameCell.textContent = item.name;
+
+            if (allowEdit) {
+                nameCell.title = 'คลิกเพื่อแก้ไขข้อมูล';
+                nameCell.addEventListener('click', () => openEditRowModal(item));
+            }
+
+            // Column 2: ท่อเหล็กดำ
+            const blackCell = document.createElement('td');
+            blackCell.className = 'py-3 px-6 text-right';
+            blackCell.innerHTML = formatNumber(item.black);
+
+            // Column 3: ท่อเหล็ก GI
+            const giCell = document.createElement('td');
+            giCell.className = 'py-3 px-6 text-right';
+            giCell.innerHTML = formatNumber(item.gi);
+
+            // Column 4: จำนวนรวม
+            const totalCell = document.createElement('td');
+            totalCell.className = 'py-3 px-6 text-right';
+            totalCell.innerHTML = formatNumber(item.total, true);
+
+            row.appendChild(nameCell);
+            row.appendChild(blackCell);
+            row.appendChild(giCell);
+            row.appendChild(totalCell);
             tableBody.appendChild(row);
         });
 
@@ -357,7 +405,155 @@
         grandTotalElement.innerText = currentTotal.toLocaleString();
     };
 
-    // --- Google Sheets Fetch Logic ---
+    // =========================================================================
+    // 6. Settings Modal Controls
+    // =========================================================================
+    function openSettingsModal(event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        allowEditCheckbox.checked = allowEdit;
+        settingsModal.classList.remove('hidden');
+        settingsModal.classList.add('flex');
+    }
+
+    function closeSettingsModal() {
+        settingsModal.classList.add('hidden');
+        settingsModal.classList.remove('flex');
+    }
+
+    allowEditCheckbox.addEventListener('change', () => {
+        saveAllowEditSetting(allowEditCheckbox.checked);
+        renderTable(searchInput.value);
+        showToast(allowEdit ? 'เปิดใช้งานโหมดแก้ไขแล้ว' : 'ปิดโหมดแก้ไขแล้ว');
+    });
+
+    closeSettingsIconBtn.addEventListener('click', closeSettingsModal);
+    closeSettingsBtn.addEventListener('click', closeSettingsModal);
+    settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+            closeSettingsModal();
+        }
+    });
+
+    // =========================================================================
+    // 7. Edit Row Modal Controls & Validation
+    // =========================================================================
+    function clearEditErrors() {
+        editBlackInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        editGiInput.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+        editBlackError.textContent = '';
+        editBlackError.classList.add('hidden');
+        editGiError.textContent = '';
+        editGiError.classList.add('hidden');
+    }
+
+    function updateEditTotalPreview() {
+        const rawBlack = editBlackInput.value.trim();
+        const rawGi = editGiInput.value.trim();
+        const valBlack = /^\d+$/.test(rawBlack) ? parseInt(rawBlack, 10) : 0;
+        const valGi = /^\d+$/.test(rawGi) ? parseInt(rawGi, 10) : 0;
+        editTotalPreview.textContent = (valBlack + valGi).toLocaleString();
+    }
+
+    function openEditRowModal(item) {
+        if (!allowEdit || !item) return;
+        editingItem = item;
+        clearEditErrors();
+        editRowPipeName.textContent = item.name;
+        editBlackInput.value = item.black;
+        editGiInput.value = item.gi;
+        updateEditTotalPreview();
+
+        editRowModal.classList.remove('hidden');
+        editRowModal.classList.add('flex');
+        requestAnimationFrame(() => editBlackInput.focus());
+    }
+
+    function closeEditRowModal() {
+        editRowModal.classList.add('hidden');
+        editRowModal.classList.remove('flex');
+        editingItem = null;
+    }
+
+    // Prevent typing decimal or scientific notation keys in integer stock fields
+    [editBlackInput, editGiInput].forEach((inputEl) => {
+        inputEl.addEventListener('keydown', (e) => {
+            if (['.', ',', 'e', 'E', '+', '-'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+        inputEl.addEventListener('input', () => {
+            clearEditErrors();
+            updateEditTotalPreview();
+        });
+    });
+
+    editRowForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!editingItem) return;
+        clearEditErrors();
+
+        let isValid = true;
+        const rawBlack = editBlackInput.value.trim();
+        const rawGi = editGiInput.value.trim();
+
+        if (rawBlack === '' || !/^\d+$/.test(rawBlack)) {
+            editBlackInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+            editBlackError.textContent = 'กรุณาระบุจำนวนเต็มตั้งแต่ 0 ขึ้นไป';
+            editBlackError.classList.remove('hidden');
+            isValid = false;
+        }
+
+        if (rawGi === '' || !/^\d+$/.test(rawGi)) {
+            editGiInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+            editGiError.textContent = 'กรุณาระบุจำนวนเต็มตั้งแต่ 0 ขึ้นไป';
+            editGiError.classList.remove('hidden');
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        const newBlack = parseInt(rawBlack, 10);
+        const newGi = parseInt(rawGi, 10);
+        const editedName = editingItem.name;
+
+        // Calculate delta from current inventoryData values and submit to Google Forms BEFORE overwriting
+        summitGS(editedName, newBlack, newGi);
+
+        // Update table row data in memory
+        editingItem.black = newBlack;
+        editingItem.gi = newGi;
+        editingItem.total = newBlack + newGi;
+
+        // Re-render table & grand total
+        renderTable(searchInput.value);
+
+        closeEditRowModal();
+        showToast(`บันทึกการแก้ไข ${editedName} เรียบร้อยแล้ว`);
+    });
+
+    closeEditRowIconBtn.addEventListener('click', closeEditRowModal);
+    cancelEditRowBtn.addEventListener('click', closeEditRowModal);
+    editRowModal.addEventListener('click', (e) => {
+        if (e.target === editRowModal) {
+            closeEditRowModal();
+        }
+    });
+
+    // Close open modal on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (!editRowModal.classList.contains('hidden')) {
+            closeEditRowModal();
+        } else if (!settingsModal.classList.contains('hidden')) {
+            closeSettingsModal();
+        }
+    });
+
+    // =========================================================================
+    // 8. Google Sheets Fetch Logic (Preserved)
+    // =========================================================================
     function updateStock() {
         const part0 = "AIzaSyAFnyXSAki4Licz";
         const part1 = "KNhyEzbhHsvTC-abfAo";
@@ -374,20 +570,20 @@
                 }
 
                 const dataArray = data.values;
-                
+
                 // Loop through the returned array of arrays
                 dataArray.forEach(row => {
                     if (row.length === 0) return; // Skip empty rows
 
                     const itemName = row[0]; // The name is in the first column (Index 0)
-                    
+
                     // Remove commas and parse to integer, default to 0 if empty
-                    const blackValue = parseInt((row[1] || "0").replace(/,/g, ''), 10) || 0; 
-                    const giValue = parseInt((row[2] || "0").replace(/,/g, ''), 10) || 0;    
+                    const blackValue = parseInt((row[1] || "0").replace(/,/g, ''), 10) || 0;
+                    const giValue = parseInt((row[2] || "0").replace(/,/g, ''), 10) || 0;
 
                     // Find matching item in inventoryData
                     const targetItem = inventoryData.find(item => item.name === itemName);
-                    
+
                     if (targetItem) {
                         targetItem.black = blackValue;
                         targetItem.gi = giValue;
@@ -404,17 +600,18 @@
             });
     }
 
-    // Initial render with zeroes while data loads
+    // =========================================================================
+    // 9. Initialize App
+    // =========================================================================
+    loadAllowEditSetting();
     renderTable();
-
-    // Call the function to fetch data and update the table immediately
     updateStock();
 
     // Search Event Listener
     searchInput.addEventListener('input', (e) => {
         renderTable(e.target.value);
     });
+    </script>
 
-</script>
-
-</body></html>
+</body>
+</html>
