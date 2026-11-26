@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="เว็บแอพสำหรับส่วนงานท่อเกรดบี และส่วนงานเหล็กแบน">
-    <meta name="Version" content="2.5 TR">
+    <meta name="Version" content="3.0">
     <title>หน้าหลัก | Flatbar Division</title>
-    
+
+    <!-- Modern Thai Font -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="icon" href="warehouse_fav.ico" type="image/x-icon">
     <link rel="icon" href="warehouse_fav.png" type="image/png">
@@ -21,10 +22,14 @@
             --border-light: #e2e8f0;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
+            min-height: 100dvh;
             width: 100%;
             font-family: 'Sarabun', sans-serif;
             background-color: var(--background);
@@ -34,17 +39,44 @@
             align-items: center;
         }
 
+        body {
+            padding: 20px 0;
+        }
+
         .container {
             width: 90%;
             max-width: 450px;
             background-color: var(--surface);
-            padding: 40px 25px;
+            padding: 36px 25px 30px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-sizing: border-box;
+        }
+
+        /* View Switching & Animation */
+        .view {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeSlideIn 0.22s ease;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h2 {
@@ -52,7 +84,7 @@
             font-size: 24px;
             font-weight: 600;
             margin-top: 0;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             color: #0f172a;
             display: flex;
             align-items: center;
@@ -65,7 +97,11 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            gap: 15px; /* Slightly larger gap for the main menu */
+            gap: 12px;
+        }
+
+        #view-main .menu-group {
+            gap: 15px;
         }
 
         /* Modern App-Style Menu Buttons */
@@ -74,18 +110,23 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            padding: 20px 20px;
+            padding: 16px 20px;
             background-color: var(--surface);
             border: 1.5px solid var(--border-light);
-            border-radius: 14px;
+            border-radius: 12px;
             font-family: 'Sarabun', sans-serif;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 500;
             color: var(--text-main);
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            box-sizing: border-box;
+        }
+
+        #view-main .menu-button {
+            padding: 20px;
+            border-radius: 14px;
+            font-size: 17px;
         }
 
         .menu-button:hover {
@@ -103,16 +144,26 @@
         .menu-button-content {
             display: flex;
             align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        #view-main .menu-button-content {
             gap: 15px;
         }
 
         .menu-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        #view-main .menu-icon {
             font-size: 22px;
         }
 
         .chevron {
             color: #cbd5e1;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             transition: color 0.2s;
         }
@@ -121,85 +172,296 @@
             color: var(--primary-blue);
         }
 
+        /* Secondary Button (Back) */
+        .btn-back {
+            margin-top: 16px;
+            justify-content: center;
+            background-color: #f8fafc;
+            border-color: transparent;
+            color: var(--text-muted);
+            box-shadow: none;
+        }
+
+        .btn-back:hover {
+            background-color: #e2e8f0;
+            border-color: transparent;
+            color: var(--text-main);
+            box-shadow: none;
+        }
+
         .footer-text {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            margin-top: 40px;
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid #f1f5f9;
             font-size: 13px;
             color: #94a3b8;
         }
 
-        .footer-text span { cursor: pointer; transition: color 0.2s; }
-        .footer-text span:hover { color: var(--primary-blue); }
+        .footer-text span {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .footer-text span:hover {
+            color: var(--primary-blue);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>🗃️ หน้าหลัก เหล็กแบน ⛓️</h2>
-        
-        <div class="menu-group">
-            <button onclick="goToSchedule()" class="menu-button">
-                <div class="menu-button-content">
-                    <span class="menu-icon">🗓️</span>
-                    <span>ตารางเวรประจำวัน</span>
-                </div>
-                <span class="chevron">›</span>
-            </button>		
 
-            <button onclick="goToFlatbar()" class="menu-button">
-                <div class="menu-button-content">
-                    <span class="menu-icon">🧱</span>
-                    <span>ส่วนงานเหล็กแบน</span>
-                </div>
-                <span class="chevron">›</span>
-            </button>
+        <!-- ==================== MAIN MENU VIEW ==================== -->
+        <section id="view-main" class="view active">
+            <h2>🗃️ หน้าหลัก เหล็กแบน ⛓️</h2>
 
-            <button onclick="goToTypeB()" class="menu-button">
-                <div class="menu-button-content">
-                    <span class="menu-icon">🆖</span>
-                    <span>ส่วนงานท่อเกรดบี</span>
-                </div>
-                <span class="chevron">›</span>
-            </button>
-        </div>
+            <div class="menu-group">
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/flatbar_schedule.html', true)" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">🗓️</span>
+                        <span>ตารางเวรประจำวัน</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
 
+                <button onclick="showView('flatbar')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">🧱</span>
+                        <span>ส่วนงานเหล็กแบน</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="showView('typeb')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">🆖</span>
+                        <span>ส่วนงานท่อเกรดบี</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== FLATBAR SECTION VIEW ==================== -->
+        <section id="view-flatbar" class="view">
+            <h2>🧱 ส่วนงานเหล็กแบน</h2>
+
+            <div class="menu-group">
+                <button style="display: none;" onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/flatbar_shipment_v5.html', true)" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">🚛</span>
+                        <span>รายการรถ</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/flatbar_calculator.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📝</span>
+                        <span>จดน้ำหนัก</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/flatbar_report.html', true)" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📋</span>
+                        <span>ตารางบันทึกจดน้ำหนัก</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <!-- Disabled items kept for future use -->
+                <button style="display: none;" onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/fbstock_input.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📦</span>
+                        <span>เช็คสต็อกประจำวัน</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button style="display: none;" onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/flatbar_bundle_check.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📟</span>
+                        <span>เช็คบันเดิ้ลเหล็กแบน</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button style="display: none;" onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/flatbar_preparing.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📦</span>
+                        <span>งานเตรียม</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button style="display: none;" onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/flatbar_pooling.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">➡️⬅️</span>
+                        <span>งานยกรวม</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/flatbar_stock_input.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">🏷️</span>
+                        <span>สแกนนับสต็อกเหล็กแบน</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button style="display: none;" onclick="openLink('https://psychic-driveway-starboard.ngrok-free.dev/wms/user/login')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📡</span>
+                        <span>เข้าระบบ WMS</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/wood_memo.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">🪓</span>
+                        <span>บันทึกการใช้ไม้</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="showView('main')" class="menu-button btn-back">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">⏮️</span>
+                        <span>กลับหน้าหลัก</span>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== TYPE B SECTION VIEW ==================== -->
+        <section id="view-typeb" class="view">
+            <h2>🅱️🆖 ส่วนงานท่อเกรดบี</h2>
+
+            <div class="menu-group">
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/inbound_input.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📥</span>
+                        <span>บันทึกรับเข้า</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/updatestock_input.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📤</span>
+                        <span>บันทึกจ่ายออก</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/typeb_webapp.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📱</span>
+                        <span>แอพจดน้ำหนัก</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/typeb_stock_report.html', true)" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">📊</span>
+                        <span>รายงานสต็อก</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="openLink('https://chai2686.github.io/flatbar_projects.github.io/pipe_count_tool.html')" class="menu-button">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">🖍️</span>
+                        <span>เครื่องมือช่วยนับ</span>
+                    </div>
+                    <span class="chevron">›</span>
+                </button>
+
+                <button onclick="showView('main')" class="menu-button btn-back">
+                    <div class="menu-button-content">
+                        <span class="menu-icon">⏮️</span>
+                        <span>กลับหน้าหลัก</span>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== SHARED FOOTER ==================== -->
         <div class="footer-text">
             <span>Powered by Flatbar Division™️</span>
-            <span id="version" onclick="about()">Version 2.0 BETA</span>
+            <span id="version" onclick="about()">Loading version...</span>
         </div>
     </div>
 
     <script>
-        loadVersion();
-        function goToSchedule() {
-            window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_schedule.html", "_blank");
+        const pageTitles = {
+            main: "หน้าหลัก | Flatbar Division",
+            flatbar: "ส่วนงานเหล็กแบน | Flatbar Division",
+            typeb: "ส่วนงานท่อเกรดบี | Flatbar Division"
+        };
+
+        function renderView(viewName) {
+            const target = pageTitles[viewName] ? viewName : "main";
+            document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+            document.getElementById("view-" + target).classList.add("active");
+            document.title = pageTitles[target];
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
-        
-        function goToFlatbar() {
-            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbarsection_landing.html";
+
+        function showView(viewName) {
+            const targetHash = "#" + viewName;
+            if (window.location.hash !== targetHash) {
+                window.location.hash = targetHash;
+            } else {
+                renderView(viewName);
+            }
         }
-        
-        function goToTypeB() {
-            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/typebsection_landing.html";
+
+        function openLink(url, newTab = false) {
+            if (newTab) {
+                window.open(url, "_blank", "noopener,noreferrer");
+            } else {
+                window.location.href = url;
+            }
         }
-        
+
         function about() {
-            window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
+            window.open("https://chai2686.github.io/flatbar_projects.github.io/version_history.log", "_blank", "noopener,noreferrer");
         }
-    async function loadVersion() {
-    try {
-        const response = await fetch(
-            'https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/refs/heads/main/version_history.log'
-        );
-        const text = await response.text();
-        const firstLine = text.split(/\r?\n/)[0];
-        document.getElementById('version').textContent = firstLine;
-    } catch (error) {
-        console.error(error);
-        document.getElementById('version').textContent = 'Failed to load version';
-    }
-  }   
+
+        async function loadVersion() {
+            const versionEl = document.getElementById("version");
+            try {
+                const response = await fetch("https://chai2686.github.io/flatbar_projects.github.io/version_history.log");
+                if (!response.ok) throw new Error("Network response error");
+                const text = await response.text();
+                const firstLine = text.split(/\r?\n/)[0].trim();
+                versionEl.textContent = firstLine || "Version 2.9";
+            } catch (error) {
+                console.error(error);
+                versionEl.textContent = "Failed to load version";
+            }
+        }
+
+        // Sync view with URL hash (supports browser Back/Forward buttons & deep links)
+        window.addEventListener("hashchange", () => {
+            const hash = window.location.hash.replace("#", "") || "main";
+            renderView(hash);
+        });
+
+        // Initialize on page load
+        window.addEventListener("DOMContentLoaded", () => {
+            const initialHash = window.location.hash.replace("#", "") || "main";
+            renderView(initialHash);
+            loadVersion();
+        });
     </script>
 </body>
 </html>
