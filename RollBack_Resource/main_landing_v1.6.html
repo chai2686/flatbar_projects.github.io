@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="เว็บแอพสำหรับส่วนงานท่อเกรดบี และส่วนงานเหล็กแบน">
+    <meta name="Version" content="2.5 TR">
+    <title>หน้าหลัก | Flatbar Division</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="warehouse_fav.ico" type="image/x-icon">
+    <link rel="icon" href="warehouse_fav.png" type="image/png">
+
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --surface: #ffffff;
+            --background: #f1f5f9;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            background-color: var(--surface);
+            padding: 40px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            width: 100%;
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 30px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .menu-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 15px; /* Slightly larger gap for the main menu */
+        }
+
+        /* Modern App-Style Menu Buttons */
+        .menu-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 20px 20px;
+            background-color: var(--surface);
+            border: 1.5px solid var(--border-light);
+            border-radius: 14px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            box-sizing: border-box;
+        }
+
+        .menu-button:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .menu-button:active {
+            transform: translateY(0);
+            background-color: #f8fafc;
+        }
+
+        .menu-button-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-icon {
+            font-size: 22px;
+        }
+
+        .chevron {
+            color: #cbd5e1;
+            font-size: 20px;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        .menu-button:hover .chevron {
+            color: var(--primary-blue);
+        }
+
+        .footer-text {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .footer-text span { cursor: pointer; transition: color 0.2s; }
+        .footer-text span:hover { color: var(--primary-blue); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🗃️ หน้าหลัก เหล็กแบน ⛓️</h2>
+        
+        <div class="menu-group">
+            <button onclick="goToSchedule()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">🗓️</span>
+                    <span>ตารางเวรประจำวัน</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>		
+
+            <button onclick="goToFlatbar()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">🧱</span>
+                    <span>ส่วนงานเหล็กแบน</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+
+            <button onclick="goToTypeB()" class="menu-button">
+                <div class="menu-button-content">
+                    <span class="menu-icon">🆖</span>
+                    <span>ส่วนงานท่อเกรดบี</span>
+                </div>
+                <span class="chevron">›</span>
+            </button>
+        </div>
+
+        <div class="footer-text">
+            <span>Powered by Flatbar Division™️</span>
+            <span id="version" onclick="about()">Version 2.0 BETA</span>
+        </div>
+    </div>
+
+    <script>
+        loadVersion();
+        function goToSchedule() {
+            window.open("https://chai2686.github.io/flatbar_projects.github.io/flatbar_schedule.html", "_blank");
+        }
+        
+        function goToFlatbar() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/flatbarsection_landing.html";
+        }
+        
+        function goToTypeB() {
+            window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/typebsection_landing.html";
+        }
+        
+        function about() {
+            window.open("https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/main/version_history.log", "_blank");
+        }
+    async function loadVersion() {
+    try {
+        const response = await fetch(
+            'https://raw.githubusercontent.com/chai2686/flatbar_projects.github.io/refs/heads/main/version_history.log'
+        );
+        const text = await response.text();
+        const firstLine = text.split(/\r?\n/)[0];
+        document.getElementById('version').textContent = firstLine;
+    } catch (error) {
+        console.error(error);
+        document.getElementById('version').textContent = 'Failed to load version';
+    }
+  }   
+    </script>
+</body>
+</html>
