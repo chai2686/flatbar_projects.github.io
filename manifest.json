@@ -1,7 +1,7 @@
 {
   "name": "Flatbar Projects",
-  "short_name": "fbapp",
-  "start_url": "/main_landing.html",
+  "short_name": "Flatbar Projects",
+  "start_url": "/flatbar_projects.github.io/main_landing.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
