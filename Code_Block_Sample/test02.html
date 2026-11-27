@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google Sheets Editor</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f5f7fa;
+  }
+
+  h2 {
+    margin-bottom: 15px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+
+  th {
+    background: #263746;
+    color: white;
+  }
+
+  td input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .save-btn {
+    background: #087f5b;
+    color: white;
+  }
+
+  #status {
+    margin: 12px 0;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>Inventory Editor</h2>
+
+<button onclick="loadData()">Refresh</button>
+<div id="status">Loading...</div>
+
+<table>
+  <thead id="tableHead"></thead>
+  <tbody id="tableBody"></tbody>
+</table>
+
+<!-- Hidden iframe used for cross-origin submissions -->
+<iframe name="saveFrame" id="saveFrame" style="display:none"></iframe>
+
+<script>
+const SPREADSHEET_ID = "1NYU6mk_fCYR47J2uI2_Ml-7C07KD5ezv-9BflAFz8fg";
+const SHEET_NAME = "Inventory";
+
+// Apps Script deployed Web App URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwl6H6WlwG0Qe5hJU9gARgOJf2b782xkFDKe3JDp25ALx_cKa2s2X28ytsEI8EYA0at-A/exec";
+
+let headers = [];
+let records = [];
+
+async function loadData() {
+  document.getElementById("status").textContent = "Loading data...";
+
+  const url =
+    `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
+    `?sheet=${encodeURIComponent(SHEET_NAME)}&tqx=out:json`;
+
+  try {
+    const response = await fetch(url);
+    const text = await response.text();
+
+    const jsonText = text.substring(
+      text.indexOf("{"),
+      text.lastIndexOf("}") + 1
+    );
+
+    const result = JSON.parse(jsonText);
+    const table = result.table;
+
+    headers = table.cols.map(col => col.label);
+    records = table.rows.map(row =>
+      row.c.map(cell => cell ? cell.v ?? "" : "")
+    );
+
+    renderTable();
+
+    document.getElementById("status").textContent =
+      `Loaded ${records.length} rows`;
+
+  } catch (error) {
+    document.getElementById("status").textContent =
+      "Load failed: " + error.message;
+  }
+}
+
+function renderTable() {
+  const head = document.getElementById("tableHead");
+  const body = document.getElementById("tableBody");
+
+  head.innerHTML = `
+    <tr>
+      ${headers.map(h => `<th>${escapeHtml(h)}</th>`).join("")}
+      <th>Action</th>
+    </tr>
+  `;
+
+  body.innerHTML = records.map((row, rowIndex) => `
+    <tr>
+      ${row.map((value, colIndex) => `
+        <td>
+          <input
+            value="${escapeHtml(value)}"
+            data-row="${rowIndex}"
+            data-col="${colIndex}"
+          >
+        </td>
+      `).join("")}
+
+      <td>
+        <button class="save-btn"
+          onclick="saveRow(${rowIndex})">
+          Save
+        </button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function saveRow(rowIndex) {
+  const inputs = document.querySelectorAll(
+    `input[data-row="${rowIndex}"]`
+  );
+
+  let savedCount = 0;
+
+  inputs.forEach(input => {
+    const colIndex = Number(input.dataset.col);
+    const value = input.value;
+
+    // Google Sheet row 1 is the header,
+    // therefore data row index starts at row 2
+    const sheetRow = rowIndex + 2;
+    const sheetColumn = colIndex + 1;
+
+    submitUpdate(sheetRow, sheetColumn, value);
+
+    records[rowIndex][colIndex] = value;
+    savedCount++;
+  });
+
+  document.getElementById("status").textContent =
+    `Submitted ${savedCount} cells in row ${rowIndex + 2}. ` +
+    `Changes are being sent to Google Sheets.`;
+}
+
+function submitUpdate(row, column, value) {
+  const form = document.createElement("form");
+
+  form.method = "POST";
+  form.action = SCRIPT_URL;
+  form.target = "saveFrame";
+  form.style.display = "none";
+
+  const data = {
+    spreadsheetId: SPREADSHEET_ID,
+    sheetName: SHEET_NAME,
+    row: row,
+    column: column,
+    value: value
+  };
+
+  Object.entries(data).forEach(([key, val]) => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = key;
+    input.value = val;
+    form.appendChild(input);
+  });
+
+  document.body.appendChild(form);
+  form.submit();
+  form.remove();
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+loadData();
+</script>
+
+</body>
+</html>
