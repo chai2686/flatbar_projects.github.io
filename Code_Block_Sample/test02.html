@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,10 +10,26 @@
     font-family: Arial, sans-serif;
     padding: 20px;
     background: #f5f7fa;
+    color: #1f2933;
   }
 
   h2 {
     margin-bottom: 15px;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
 
   table {
@@ -42,11 +57,27 @@
     border-radius: 4px;
   }
 
+  td input.dirty {
+    border-color: #087f5b;
+    background: #ebfbee;
+  }
+
   button {
     padding: 8px 14px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 14px;
+  }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .refresh-btn {
+    background: #263746;
+    color: white;
   }
 
   .save-btn {
@@ -56,6 +87,23 @@
 
   #status {
     margin: 12px 0;
+    padding: 10px 12px;
+    border-radius: 5px;
+    background: #e9ecef;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  #status.error {
+    background: #fff5f5;
+    border: 1px solid #ffc9c9;
+    color: #c92a2a;
+  }
+
+  #status.success {
+    background: #ebfbee;
+    border: 1px solid #b2f2bb;
+    color: #2b8a3e;
   }
 </style>
 </head>
@@ -64,16 +112,18 @@
 
 <h2>Inventory Editor</h2>
 
-<button onclick="loadData()">Refresh</button>
+<div class="toolbar">
+  <button id="refreshBtn" class="refresh-btn" type="button">Refresh</button>
+</div>
+
 <div id="status">Loading...</div>
 
-<table>
-  <thead id="tableHead"></thead>
-  <tbody id="tableBody"></tbody>
-</table>
-
-<!-- Hidden iframe used for cross-origin submissions -->
-<iframe name="saveFrame" id="saveFrame" style="display:none"></iframe>
+<div class="table-wrap">
+  <table>
+    <thead id="tableHead"></thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
 
 <script>
 const SPREADSHEET_ID = "1NYU6mk_fCYR47J2uI2_Ml-7C07KD5ezv-9BflAFz8fg";
@@ -85,38 +135,118 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwl6H6WlwG0Qe5hJU9gA
 let headers = [];
 let records = [];
 
-async function loadData() {
-  document.getElementById("status").textContent = "Loading data...";
+function setStatus(message, type = "") {
+  const statusEl = document.getElementById("status");
+  statusEl.textContent = message;
+  statusEl.className = type;
+}
 
+async function fetchFromGviz() {
   const url =
-    `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
+    `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SPREADSHEET_ID)}/gviz/tq` +
     `?sheet=${encodeURIComponent(SHEET_NAME)}&tqx=out:json`;
 
+  // Omit browser cookies to avoid 403 errors caused by multiple signed-in Google accounts
+  const response = await fetch(url, {
+    method: "GET",
+    credentials: "omit",
+    cache: "no-store"
+  });
+
+  if (response.status === 403 || response.status === 401) {
+    throw new Error(
+      "HTTP 403 Forbidden from Google Sheets. " +
+      "Share the spreadsheet as 'Anyone with the link' (Viewer), or serve reads via Apps Script doGet."
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} while loading Google Sheet.`);
+  }
+
+  const text = await response.text();
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+
+  if (start === -1 || end === -1) {
+    throw new Error(
+      "Unexpected response from Google Sheets (likely a sign-in or permission page). " +
+      "Ensure the sheet is shared as 'Anyone with the link'."
+    );
+  }
+
+  const result = JSON.parse(text.substring(start, end + 1));
+
+  if (result.status === "error") {
+    const detail = (result.errors || []).map(e => e.detailed_message || e.message).join("; ");
+    throw new Error(detail || "Google Visualization API returned an error.");
+  }
+
+  const table = result.table;
+  return {
+    headers: table.cols.map((col, i) => col.label || `Column ${i + 1}`),
+    records: table.rows.map(row =>
+      row.c.map(cell => (cell && cell.v !== null && cell.v !== undefined ? cell.v : ""))
+    )
+  };
+}
+
+async function fetchFromAppsScript() {
+  const url =
+    `${SCRIPT_URL}?spreadsheetId=${encodeURIComponent(SPREADSHEET_ID)}` +
+    `&sheetName=${encodeURIComponent(SHEET_NAME)}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    credentials: "omit",
+    cache: "no-store"
+  });
+
+  if (response.status === 403 || response.status === 401) {
+    throw new Error(
+      "HTTP 403 Forbidden from Apps Script. " +
+      "Redeploy the Web App with 'Execute as: Me' and 'Who has access: Anyone'."
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} from Apps Script.`);
+  }
+
+  const data = await response.json();
+  if (!Array.isArray(data.headers) || !Array.isArray(data.records)) {
+    throw new Error("Apps Script doGet did not return { headers, records }.");
+  }
+
+  return data;
+}
+
+async function loadData() {
+  const refreshBtn = document.getElementById("refreshBtn");
+  refreshBtn.disabled = true;
+  setStatus("Loading data...");
+
   try {
-    const response = await fetch(url);
-    const text = await response.text();
+    let loaded;
+    try {
+      loaded = await fetchFromGviz();
+    } catch (gvizError) {
+      // Fallback to Apps Script doGet if gviz/tq is blocked (e.g. private sheet -> 403)
+      try {
+        loaded = await fetchFromAppsScript();
+      } catch (scriptError) {
+        throw new Error(`${gvizError.message}`);
+      }
+    }
 
-    const jsonText = text.substring(
-      text.indexOf("{"),
-      text.lastIndexOf("}") + 1
-    );
-
-    const result = JSON.parse(jsonText);
-    const table = result.table;
-
-    headers = table.cols.map(col => col.label);
-    records = table.rows.map(row =>
-      row.c.map(cell => cell ? cell.v ?? "" : "")
-    );
-
+    headers = loaded.headers;
+    records = loaded.records;
     renderTable();
-
-    document.getElementById("status").textContent =
-      `Loaded ${records.length} rows`;
-
+    setStatus(`Loaded ${records.length} rows.`, "success");
   } catch (error) {
-    document.getElementById("status").textContent =
-      "Load failed: " + error.message;
+    setStatus("Load failed: " + error.message, "error");
+  } finally {
+    refreshBtn.disabled = false;
   }
 }
 
@@ -142,10 +272,8 @@ function renderTable() {
           >
         </td>
       `).join("")}
-
       <td>
-        <button class="save-btn"
-          onclick="saveRow(${rowIndex})">
+        <button class="save-btn" type="button" data-save-row="${rowIndex}">
           Save
         </button>
       </td>
@@ -153,60 +281,79 @@ function renderTable() {
   `).join("");
 }
 
-function saveRow(rowIndex) {
-  const inputs = document.querySelectorAll(
-    `input[data-row="${rowIndex}"]`
+async function saveRow(rowIndex, buttonEl) {
+  const inputs = Array.from(
+    document.querySelectorAll(`input[data-row="${rowIndex}"]`)
   );
+
+  // Only send cells that actually changed (or all cells if none marked changed)
+  const changedInputs = inputs.filter(input => {
+    const colIndex = Number(input.dataset.col);
+    return String(input.value) !== String(records[rowIndex][colIndex] ?? "");
+  });
+
+  const targets = changedInputs.length > 0 ? changedInputs : inputs;
+
+  if (buttonEl) {
+    buttonEl.disabled = true;
+    buttonEl.textContent = "Saving...";
+  }
+  setStatus(`Saving ${targets.length} cell(s) in row ${rowIndex + 2}...`);
 
   let savedCount = 0;
 
-  inputs.forEach(input => {
-    const colIndex = Number(input.dataset.col);
-    const value = input.value;
+  try {
+    // Send sequentially with fetch so requests do not cancel each other
+    for (const input of targets) {
+      const colIndex = Number(input.dataset.col);
+      const value = input.value;
+      const sheetRow = rowIndex + 2;
+      const sheetColumn = colIndex + 1;
 
-    // Google Sheet row 1 is the header,
-    // therefore data row index starts at row 2
-    const sheetRow = rowIndex + 2;
-    const sheetColumn = colIndex + 1;
+      await submitUpdate(sheetRow, sheetColumn, value);
+      records[rowIndex][colIndex] = value;
+      input.classList.remove("dirty");
+      savedCount++;
+    }
 
-    submitUpdate(sheetRow, sheetColumn, value);
-
-    records[rowIndex][colIndex] = value;
-    savedCount++;
-  });
-
-  document.getElementById("status").textContent =
-    `Submitted ${savedCount} cells in row ${rowIndex + 2}. ` +
-    `Changes are being sent to Google Sheets.`;
+    setStatus(`Saved ${savedCount} cell(s) in row ${rowIndex + 2}.`, "success");
+  } catch (error) {
+    setStatus(`Save failed on row ${rowIndex + 2}: ${error.message}`, "error");
+  } finally {
+    if (buttonEl) {
+      buttonEl.disabled = false;
+      buttonEl.textContent = "Save";
+    }
+  }
 }
 
-function submitUpdate(row, column, value) {
-  const form = document.createElement("form");
-
-  form.method = "POST";
-  form.action = SCRIPT_URL;
-  form.target = "saveFrame";
-  form.style.display = "none";
-
-  const data = {
+async function submitUpdate(row, column, value) {
+  const params = new URLSearchParams({
     spreadsheetId: SPREADSHEET_ID,
     sheetName: SHEET_NAME,
-    row: row,
-    column: column,
-    value: value
-  };
-
-  Object.entries(data).forEach(([key, val]) => {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = val;
-    form.appendChild(input);
+    row: String(row),
+    column: String(column),
+    value: String(value)
   });
 
-  document.body.appendChild(form);
-  form.submit();
-  form.remove();
+  // application/x-www-form-urlencoded is a CORS simple request (no OPTIONS preflight)
+  // and matches e.parameter in Apps Script doPost(e)
+  const response = await fetch(SCRIPT_URL, {
+    method: "POST",
+    credentials: "omit",
+    body: params
+  });
+
+  if (response.status === 403 || response.status === 401) {
+    throw new Error(
+      "HTTP 403 Forbidden from Apps Script. " +
+      "Redeploy the Web App with 'Execute as: Me' and 'Who has access: Anyone'."
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} from Apps Script.`);
+  }
 }
 
 function escapeHtml(value) {
@@ -218,6 +365,23 @@ function escapeHtml(value) {
     "'": "&#39;"
   }[char]));
 }
+
+document.getElementById("refreshBtn").addEventListener("click", loadData);
+
+document.getElementById("tableBody").addEventListener("input", event => {
+  const input = event.target.closest("input[data-row]");
+  if (!input) return;
+  const rowIndex = Number(input.dataset.row);
+  const colIndex = Number(input.dataset.col);
+  const original = String(records[rowIndex]?.[colIndex] ?? "");
+  input.classList.toggle("dirty", input.value !== original);
+});
+
+document.getElementById("tableBody").addEventListener("click", event => {
+  const btn = event.target.closest("button[data-save-row]");
+  if (!btn) return;
+  saveRow(Number(btn.dataset.saveRow), btn);
+});
 
 loadData();
 </script>
