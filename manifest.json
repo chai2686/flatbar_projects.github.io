@@ -8,11 +8,6 @@
   "icons": [
     {
       "src": "/flatbar_projects.github.io/warehouse_fav.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/flatbar_projects.github.io/warehouse_fav.png",
       "sizes": "512x512",
       "type": "image/png"
     }
