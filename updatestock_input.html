@@ -277,7 +277,7 @@
 
         <div class="footer-text">
             <span>Powered by Flatbar Division™️</span>
-            <span onclick="about()">Version 3.0</span>
+            <span id="version" onclick="about()">Version 3.0</span>
         </div>
     </div>
 
@@ -292,6 +292,8 @@
             document.getElementById('bn-wrapper').style.display = this.checked ? 'block' : 'none';
             if(!this.checked) document.getElementById('bnamount').value = ""; // Clear on uncheck
         });
+
+        loadVersion();
 
         function clearScreen() {
             document.getElementById('size').selectedIndex = 0;
@@ -386,6 +388,20 @@
         function about() {
             window.open("https://chai2686.github.io/flatbar_projects.github.io/version_history.log", "_blank");
         }
+
+        async function loadVersion() {
+    try {
+        const response = await fetch(
+            'https://chai2686.github.io/flatbar_projects.github.io/version_history.log'
+        );
+        const text = await response.text();
+        const firstLine = text.split(/\r?\n/)[0];
+        document.getElementById('version').textContent = firstLine;
+    } catch (error) {
+        console.error(error);
+        document.getElementById('version').textContent = 'Failed to load version';
+    }
+  }
     </script>
 </body>
 </html>
