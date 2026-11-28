@@ -220,25 +220,27 @@
       markerCountEl.textContent = markers.length;
     }
 
-    // Navigation
     function goBack() {
-	  const value = document.getElementById("markerCount").textContent;
+      const value = document.getElementById("markerCount").textContent.trim();
 
-    // Send data back to Page A
-    if (window.opener && !window.opener.closed) {
-        window.opener.document.getElementById("quantity").value = value;
+      // Send data back to existing inbound_input.html tab without reloading it
+      try {
+        if (window.opener && !window.opener.closed) {
+          const qtyInput = window.opener.document.getElementById("quantity");
+          if (qtyInput) {
+            qtyInput.value = value;
+            qtyInput.dispatchEvent(new Event("input", { bubbles: true }));
+            window.opener.focus();
+            window.close();
+            return;
+          }
+        }
+      } catch (err) {
+        // Fallback if browser restricts window.opener access
+      }
 
-        // Return to Page A
-        window.opener.location.href =
-            "inbound_input.html";
-
-        // Close Page B
-        window.close();
-    } else {
-        // If Page B has no opener, navigate normally
-        window.location.href =
-            "typebsection_landing.html";
-    }
+      // Fallback: navigate to inbound_input.html with quantity in URL
+      window.location.href = `inbound_input.html?quantity=${encodeURIComponent(value)}`;
     }
   </script>
 
