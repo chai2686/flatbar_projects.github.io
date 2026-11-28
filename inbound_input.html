@@ -358,6 +358,14 @@
         function about() {
             window.open("https://chai2686.github.io/flatbar_projects.github.io/version_history.log", "_blank");
         }
+		
+		window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const qty = params.get('quantity');
+            if (qty !== null && qty !== '') {
+                document.getElementById('quantity').value = qty;
+            }
+        });
     </script>
 </body>
 </html>
