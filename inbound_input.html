@@ -238,7 +238,8 @@
         <div class="button-group">
             <button onclick="save()" class="button btn-primary">💾 บันทึก</button>			 
             <button onclick="clearScreen()" class="button btn-secondary">🖥️ ล้างจอ</button>
-            <button onclick="goToReport()" class="button btn-secondary">📊 ตารางสรุป</button>
+            <button onclick="goToReport()" class="button btn-secondary" style="display: none;">📊 ตารางสรุป</button>
+            <button onclick="goToCounter()" class="button btn-secondary">🖍️เครื่องมือนับ</button>
         </div>
 
         <div class="footer-text">
@@ -348,6 +349,10 @@
 
         function goToReport() {
             window.open("https://docs.google.com/spreadsheets/d/1s7a7fQUrzceR8-TNmkQuNkvWkbCkQ7rydrS6teqicXo/htmlview", "_blank");
+        }
+
+        function goToCounter() {
+            window.open("https://chai2686.github.io/flatbar_projects.github.io/pipe_count_tool.html");
         }
 
         function about() {
