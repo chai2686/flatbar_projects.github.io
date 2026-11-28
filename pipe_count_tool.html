@@ -222,7 +222,23 @@
 
     // Navigation
     function goBack() {
-      window.location.href = "https://chai2686.github.io/flatbar_projects.github.io/typebsection_landing.html";
+	  const value = document.getElementById("markerCount").value;
+
+    // Send data back to Page A
+    if (window.opener && !window.opener.closed) {
+        window.opener.document.getElementById("quantity").value = value;
+
+        // Return to Page A
+        window.opener.location.href =
+            "https://chai2686.github.io/flatbar_projects.github.io/inbound_input.html";
+
+        // Close Page B
+        window.close();
+    } else {
+        // If Page B has no opener, navigate normally
+        window.location.href =
+            "https://chai2686.github.io/flatbar_projects.github.io/typebsection_landing.html";
+    }
     }
   </script>
 
