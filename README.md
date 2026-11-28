@@ -4,6 +4,3 @@
 
 
 รายการที่ต้องแก้ไข
-
-Flatbar Shipment
-2.1 Sort by size เรียงข้อมูลตามไซส์
